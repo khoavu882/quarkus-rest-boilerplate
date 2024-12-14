@@ -21,7 +21,8 @@ public interface StreamingService {
      * @param length the arg of object.
      * @return stream.
      */
-    InputStream getObject(String bucketName, String objectName, long offset, long length) throws MinioException, IOException, NoSuchAlgorithmException, InvalidKeyException;
+    InputStream getObject(String bucketName, String objectName, long offset, long length)
+            throws MinioException, IOException, NoSuchAlgorithmException, InvalidKeyException;
 
     /**
      * Get Object form MinIO. Helper method to get size of the object (video)
@@ -30,5 +31,6 @@ public interface StreamingService {
      * @param objectName the arg of object.
      * @return stream.
      */
-    long getSize(String bucketName, String objectName) throws IOException, MinioException, NoSuchAlgorithmException, InvalidKeyException;
+    long getSize(String bucketName, String objectName)
+            throws IOException, MinioException, NoSuchAlgorithmException, InvalidKeyException;
 }

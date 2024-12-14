@@ -2,30 +2,24 @@ package vn.fpt.services.mappers;
 
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.factory.Mappers;
 import vn.fpt.models.EntityDevice;
 import vn.fpt.services.dto.CreateEntityDTO;
+import vn.fpt.web.vm.EntityDeviceVM;
 
 /**
- * Mapper for the entity {@link EntityDevice} and its DTO {@link CreateEntityDTO}.
+ * Created by Khoa Vu.
+ * Mail: khoavu882@gmail.com
+ * Date: 12/10/24
+ * Time: 11:08 AM
  */
-
-@Mapper(
-        componentModel = "jakarta",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
-)
-public interface EntityDeviceMapper extends EntityMapper<CreateEntityDTO, EntityDevice> {
+@Mapper
+public interface EntityDeviceMapper {
+    EntityDeviceMapper map = Mappers.getMapper(EntityDeviceMapper.class);
 
     @BeanMapping(ignoreByDefault = true)
-    CreateEntityDTO toDto(EntityDevice entity);
+    EntityDeviceVM toEntityDeviceVM(EntityDevice entityDevice);
 
-    @Mapping(target = "createdBy" , ignore = true)
-    @Mapping(target = "createdDate" , ignore = true)
-    @Mapping(target = "lastModifiedBy" , ignore = true)
-    @Mapping(target = "lastModifiedDate" , ignore = true)
-    @Mapping(target = "id" , ignore = true)
-    @Mapping(target = "status" , ignore = true)
+    @BeanMapping(ignoreByDefault = true)
     EntityDevice toEntity(CreateEntityDTO dto);
-
 }

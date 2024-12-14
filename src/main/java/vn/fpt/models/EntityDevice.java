@@ -1,23 +1,32 @@
 package vn.fpt.models;
 
-import jakarta.persistence.*;
+import io.vertx.core.json.JsonObject;
+import jakarta.persistence.Cacheable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.fpt.config.ApplicationConfiguration;
-import vn.fpt.config.DataSourceProducer;
+import org.hibernate.annotations.Type;
 import vn.fpt.models.enumeration.ActionStatus;
+import vn.fpt.models.type.JsonObjectType;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Cacheable
 @Entity
-@NoArgsConstructor
 @Getter
 @Setter
+@Cacheable
+@NoArgsConstructor
 @Table(name = "entity_device")
 public class EntityDevice extends AbstractAuditingEntity implements Serializable {
 
@@ -40,7 +49,11 @@ public class EntityDevice extends AbstractAuditingEntity implements Serializable
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ActionStatus status;
-    
+
+    @Column(name = "metadata", columnDefinition = "jsonb")
+    @Type(value = JsonObjectType.class)
+    private JsonObject metadata = new JsonObject();
+
     // return name as uppercase in the model
     public String getName() {
         return name.toUpperCase();

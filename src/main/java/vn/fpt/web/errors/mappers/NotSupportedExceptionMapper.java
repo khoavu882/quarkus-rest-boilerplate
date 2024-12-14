@@ -8,6 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 
+/**
+ * Created by Khoa Vu.
+ * Mail: khoavu882@gmail.com
+ * Date: 2/12/24
+ * Time: 9:04 AM
+ */
 @Slf4j
 @Provider
 public class NotSupportedExceptionMapper implements ExceptionMapper<NotSupportedException> {
@@ -18,9 +24,6 @@ public class NotSupportedExceptionMapper implements ExceptionMapper<NotSupported
 
         log.error(errorId, ex);
 
-        return Response
-                .status(ex.getResponse().getStatus())
-                .build();
+        return Response.status(ex.getResponse().getStatus()).build();
     }
-
 }

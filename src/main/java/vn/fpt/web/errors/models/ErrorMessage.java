@@ -14,8 +14,10 @@ public class ErrorMessage {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String path;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String errorKey;
+
     private String message;
 
     public ErrorMessage(String path, String errorKey, String message) {
@@ -36,6 +38,5 @@ public class ErrorMessage {
         this.message = message;
     }
 
-    public ErrorMessage() {
-    }
+    public ErrorMessage() {}
 }

@@ -3,7 +3,6 @@ package vn.fpt.config;
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.config.MeterFilter;
 import io.micrometer.core.instrument.distribution.DistributionStatisticConfig;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 
@@ -25,5 +24,4 @@ public class ApplicationConfiguration {
             }
         };
     }
-
 }

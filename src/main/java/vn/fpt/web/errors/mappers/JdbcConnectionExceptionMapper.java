@@ -17,6 +17,12 @@ import vn.fpt.web.errors.models.ErrorResponse;
 
 import java.util.UUID;
 
+/**
+ * Created by Khoa Vu.
+ * Mail: khoavu882@gmail.com
+ * Date: 2/12/24
+ * Time: 9:04 AM
+ */
 @Slf4j
 @Provider
 @RequestScoped
@@ -31,14 +37,14 @@ public class JdbcConnectionExceptionMapper implements ExceptionMapper<JDBCConnec
 
         log.error(errorId, ex);
 
-        String key = EntitiesConstant.SYSTEM + "." + ErrorsKeyConstant.INTERNAL_SERVER_ERROR;
-        String message = ResourceBundleUtil.getKeyWithResourceBundle(AppConstant.I18N_ERROR, requestContext.getLanguage(), key);
+        String key = EntitiesConstant.SYSTEM + "." + ErrorsKeyConstant.DATABASE_CONNECTION_FAILED;
+        String message =
+                ResourceBundleUtil.getKeyWithResourceBundle(AppConstant.I18N_ERROR, requestContext.getLanguage(), key);
 
         ErrorMessage errorMessage = new ErrorMessage(key, message);
         ErrorResponse errorResponse = new ErrorResponse(errorId, errorMessage);
 
-        return Response
-                .status(Response.Status.INTERNAL_SERVER_ERROR)
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(errorResponse)
                 .build();
     }

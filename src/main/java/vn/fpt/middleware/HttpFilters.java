@@ -1,7 +1,6 @@
 package vn.fpt.middleware;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
@@ -10,17 +9,14 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.opentracing.Traced;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
+import vn.fpt.config.ConfigsProvider;
 import vn.fpt.models.audit.AuditListener;
-import vn.fpt.models.auth.DmcUserInfo;
-import vn.fpt.security.AppSecurityContext;
-import vn.fpt.security.SecurityUtil;
-import vn.fpt.services.client.DmcClientService;
-import vn.fpt.web.errors.ErrorsEnum;
-import vn.fpt.web.errors.exceptions.PermissionDeniedException;
-import vn.fpt.web.errors.exceptions.UnauthorizedException;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
 import java.util.Locale;
+import java.util.zip.GZIPOutputStream;
 
 @Slf4j
 @Traced
@@ -28,57 +24,52 @@ import java.util.Locale;
 @ApplicationScoped
 public class HttpFilters implements ContainerRequestFilter, ContainerResponseFilter {
 
-    @RestClient
-    DmcClientService dmcClient;
+    Boolean enableCompression = ConfigsProvider.ENABLE_COMPRESSION;
+
+    Boolean enableAuthLogging = ConfigsProvider.ENABLE_AUTH_LOGGING;
+
+    private static final String MANAGEMENT_PREFIX_PATH = "/q/";
+    private static final String GZIP_ENCODING = "gzip";
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws PermissionDeniedException, UnauthorizedException {
-
-        String authentication = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-        String language = requestContext.getHeaderString(HttpHeaders.CONTENT_LANGUAGE);
-
-        if(language == null) {
-            Locale locale = Locale.getDefault();
-            requestContext.getHeaders().putSingle(HttpHeaders.CONTENT_LANGUAGE, locale.getLanguage());
-        }
-
-        if (authentication != null) {
-
-            String token = authentication.replace("Bearer ", "");
-
-            if (!token.isBlank()) {
-                try {
-                    DmcUserInfo userInfo = dmcClient.getUserPermission("churn", "cads", token);
-
-                    if (SecurityUtil.isUserHasPermission("churn", userInfo)) {
-                        requestContext.setSecurityContext(new AppSecurityContext(userInfo));
-                        AuditListener.setCurrentUser(userInfo.getUsername());
-                    } else throw new PermissionDeniedException(ErrorsEnum.AUTH_NO_ACCESS);
-
-                } catch (WebApplicationException ex) {
-
-                    log.error(ex.getMessage());
-                    throw new UnauthorizedException(ErrorsEnum.AUTH_FAILED);
-                }
-            }
+    public void filter(ContainerRequestContext requestContext) {
+        if (Boolean.TRUE.equals(enableAuthLogging)) {
+            // Add authentication logging if needed
         }
     }
 
     @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-
-        final var method = requestContext
-                .getMethod()
-                .toUpperCase(Locale.ROOT);
-        final var path = requestContext
-                .getUriInfo()
-                .getPath();
-        final int status = responseContext.getStatus();
-
-        if (!path.contains("/q/metrics")) {
-            log.info("(HTTP) method: {}, path: {}, status: {}, username: {}, locate: {}", method, path, status, AuditListener.getCurrentUser(), requestContext.getLanguage());
-        }
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
+            throws IOException {
+        logHttpRequest(requestContext, responseContext);
+        handleCompression(requestContext, responseContext);
         AuditListener.clearCurrentUser();
+    }
 
+    private void logHttpRequest(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
+        String path = requestContext.getUriInfo().getPath();
+        if (!path.contains(MANAGEMENT_PREFIX_PATH)) {
+            log.info(
+                    "(HTTP) method: {}, host: {}, path: {}, status: {}, locate: {}",
+                    requestContext.getMethod().toUpperCase(Locale.ROOT),
+                    requestContext.getUriInfo().getBaseUri().getHost(),
+                    path,
+                    responseContext.getStatus(),
+                    requestContext.getLanguage());
+        }
+    }
+
+    private void handleCompression(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
+            throws IOException {
+        if (Boolean.FALSE.equals(enableCompression)) {
+            return;
+        }
+
+        String encoding = requestContext.getHeaderString(HttpHeaders.ACCEPT_ENCODING);
+        if (encoding != null && encoding.contains(GZIP_ENCODING)) {
+            responseContext.getHeaders().put(HttpHeaders.CONTENT_ENCODING, List.of(GZIP_ENCODING));
+            OutputStream outputStream = responseContext.getEntityStream();
+            responseContext.setEntityStream(new GZIPOutputStream(outputStream));
+        }
     }
 }

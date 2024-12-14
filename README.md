@@ -1,8 +1,38 @@
-# quarkus-rest
+# Demo Project
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+## Getting Started
+## Required Environment
+
+- **Java**: Ensure you have JDK 11 or later installed.
+- **Maven**: Apache Maven 3.6.3 or later is required.
+- **GraalVM**: Required for building native executables (optional).
+
+## Infrastructure
+
+- **Database**: Specify the database used (e.g., PostgreSQL, MySQL) and any setup instructions.
+- **MinIO**: Used for video streaming. Ensure MinIO is set up and accessible.
+
+## Dependencies
+
+This project uses the following key dependencies:
+- **Quarkus**: Core framework for building Java applications.
+- **Hibernate ORM Panache**: For persistence.
+- **Mapstruct**: For object mapping.
+- **RESTEasy Reactive**: For building RESTful web services.
+- **Swagger**: For API documentation.
+
+## Compiler
+
+The project is built using Maven. Ensure Maven is installed and configured correctly.
+
+## Running the application in dev mode
+
+You can run your application in dev mode that enables live coding using:
+```shell script
+./mvnw compile quarkus:dev
 
 ## Running the application in dev mode
 
@@ -58,22 +88,11 @@ Easily start your Reactive RESTful Web Services
 
 ## Service include:
 
-Persistence with Hibernate ORM Panache
-
-Mapper with Mapstruct
-
-Define Audit Data
-
-Error Handler
-
+RestAPI with Reactive
 Middleware with Declaring Routes
-
 LogFilters
-
-RestAPI with RestEasy Jackson
-
-Rest Client
-
-Base API Stream Video with MinIO
-
+Persistence with Hibernate ORM
+Define Audit Data
+Mapper with Mapstruct
+Errors Handler
 Swagger Docs

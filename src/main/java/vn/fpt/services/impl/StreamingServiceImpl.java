@@ -17,7 +17,6 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Streaming Service Implement of {@link StreamingService}.
  */
-
 @Slf4j
 @Provider
 @AllArgsConstructor
@@ -35,11 +34,11 @@ public class StreamingServiceImpl implements StreamingService {
      * @return stream.
      */
     @Override
-    public InputStream getObject(String bucketName, String objectName, long offset, long length) throws MinioException, IOException, NoSuchAlgorithmException, InvalidKeyException {
+    public InputStream getObject(String bucketName, String objectName, long offset, long length)
+            throws MinioException, IOException, NoSuchAlgorithmException, InvalidKeyException {
 
         // Stream the requested byte range
-        return minioClient.getObject(GetObjectArgs
-                .builder()
+        return minioClient.getObject(GetObjectArgs.builder()
                 .bucket(bucketName)
                 .object(objectName)
                 .offset(offset)
@@ -54,14 +53,13 @@ public class StreamingServiceImpl implements StreamingService {
      * @param objectName the arg of object.
      * @return stream.
      */
-    public long getSize(String bucketName, String objectName) throws IOException, MinioException, NoSuchAlgorithmException, InvalidKeyException {
+    public long getSize(String bucketName, String objectName)
+            throws IOException, MinioException, NoSuchAlgorithmException, InvalidKeyException {
         return minioClient
-                .statObject(
-                        StatObjectArgs
-                                .builder()
-                                .bucket(bucketName)
-                                .object(objectName)
-                                .build())
+                .statObject(StatObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(objectName)
+                        .build())
                 .size();
     }
 }

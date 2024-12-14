@@ -16,6 +16,7 @@ public class ErrorResponse {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String errorId;
+
     private List<ErrorMessage> errors;
 
     public ErrorResponse(String errorId, ErrorMessage errorMessage) {
@@ -32,7 +33,10 @@ public class ErrorResponse {
         this.errors = errors;
     }
 
-    public ErrorResponse() {
+    public ErrorResponse(String errorId, List<ErrorMessage> errors) {
+        this.errorId = errorId;
+        this.errors = errors;
     }
 
+    public ErrorResponse() {}
 }

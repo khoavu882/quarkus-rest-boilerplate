@@ -1,39 +1,38 @@
 package vn.fpt.web.errors.exceptions;
 
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.core.Context;
 import lombok.Getter;
-import lombok.ToString;
 import vn.fpt.web.errors.ErrorsEnum;
 
+import java.io.Serial;
+
+/**
+ * Created by Khoa Vu.
+ * Mail: khoavu882@gmail.com
+ * Date: 2/12/24
+ * Time: 9:04 AM
+ */
 @Getter
-@ToString
 @RequestScoped
 public class ServiceException extends RuntimeException {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-    private final String entityName;
+    private final transient String entityName;
+    private final transient String errorKey;
+    private final transient ErrorsEnum errorsEnum;
 
-    private final String errorKey;
-
-    @Context
-    ContainerRequestContext requestContext;
-
-    public ServiceException(String entityName, String errorKey, String message) {
+    public ServiceException(String entityName, String errorKey, String message, ErrorsEnum errorsEnum) {
         super(message);
         this.entityName = entityName;
         this.errorKey = errorKey;
+        this.errorsEnum = errorsEnum;
     }
 
-    public ServiceException(String format, String entityName, String errorKey, Object... objects) {
-        super(String.format(format, objects));
-        this.entityName = entityName;
-        this.errorKey = errorKey;
-    }
-
-    public ServiceException(ErrorsEnum error) {
-        super(error.getMessage());
-        this.entityName = error.getEntityName();
-        this.errorKey = error.getErrorKey();
+    public ServiceException(ErrorsEnum errorsEnum) {
+        super(errorsEnum.getMessage());
+        this.entityName = errorsEnum.getEntityName();
+        this.errorKey = errorsEnum.getErrorKey();
+        this.errorsEnum = errorsEnum;
     }
 }

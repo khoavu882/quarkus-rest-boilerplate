@@ -1,5 +1,6 @@
 package vn.fpt.web.rest;
 
+import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -11,12 +12,11 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.jboss.resteasy.reactive.RestResponse;
+import vn.fpt.models.EntityDevice;
 import vn.fpt.services.EntityDevicesService;
 import vn.fpt.services.dto.CreateEntityDTO;
 import vn.fpt.web.errors.models.ErrorResponse;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 @Slf4j
 @Path("/api/entity-devices")
@@ -27,34 +27,22 @@ public class EntityDevicesResource {
     EntityDevicesService entityDevicesService;
 
     @POST
-    @Operation(
-            operationId = "createEntityDevice",
-            summary = "Create a new Entity Device"
-    )
-    @APIResponse(
-            responseCode = "201",
-            description = "",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON)
-    )
+    @Operation(operationId = "createEntityDevice", summary = "Create a new Entity Device")
+    @APIResponse(responseCode = "201", description = "", content = @Content(mediaType = MediaType.APPLICATION_JSON))
     @APIResponse(
             responseCode = "500",
             description = "",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorResponse.class)
-            )
-    )
-    public Response entity(@RequestBody(
-            description = "Entity Device to create",
-            required = true,
-            content = @Content(schema = @Schema(implementation = CreateEntityDTO.class)))
-                           @Valid CreateEntityDTO dto,
-                           @Context SecurityContext securityContext) throws URISyntaxException {
+            content =
+                    @Content(
+                            mediaType = MediaType.APPLICATION_JSON,
+                            schema = @Schema(implementation = ErrorResponse.class)))
+    public Uni<RestResponse<EntityDevice>> entity(
+            @RequestBody(
+                            description = "Entity Device to create",
+                            content = @Content(schema = @Schema(implementation = CreateEntityDTO.class)))
+                    @Valid
+                    CreateEntityDTO dto) {
 
-        entityDevicesService.create(dto);
-        return Response
-                .created(new URI("/"))
-                .build();
+        return entityDevicesService.create(dto).map(device -> RestResponse.status(RestResponse.Status.CREATED));
     }
 }

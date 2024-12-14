@@ -1,52 +1,66 @@
 package vn.fpt.web.errors;
 
 import lombok.Getter;
+import vn.fpt.constant.AppConstant;
 import vn.fpt.constant.EntitiesConstant;
 import vn.fpt.constant.ErrorsKeyConstant;
+import vn.fpt.utils.ResourceBundleUtil;
 
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
+/**
+ * Created by Khoa Vu.
+ * Mail: khoavu882@gmail.com
+ * Date: 3/12/24
+ * Time: 10:10 AM
+ */
 @Getter
 public enum ErrorsEnum {
 
-    // System Errors
-
     // Auth Errors
-    AUTH_FAILED(EntitiesConstant.AUTH, ErrorsKeyConstant.UNAUTHORIZED, getResourceBundle("i18n/error_messages", Locale.getDefault()).getString("auth.unauthorized")),
-    AUTH_NO_ACCESS(EntitiesConstant.AUTH, ErrorsKeyConstant.PERMISSION_DENIED, getResourceBundle("i18n/error_messages", Locale.getDefault()).getString("auth.permission_denied")),
+    AUTH_UNAUTHORIZED(EntitiesConstant.AUTH, ErrorsKeyConstant.UNAUTHORIZED, ""),
+    AUTH_NO_ACCESS(EntitiesConstant.AUTH, ErrorsKeyConstant.PERMISSION_DENIED, ""),
+    AUTH_INVALID_REDIRECT(EntitiesConstant.AUTH, ErrorsKeyConstant.INVALID_REDIRECT, ""),
+
+    // System Errors
+    SYSTEM_BUNDLE_DOES_NOT_EXIST(EntitiesConstant.SYSTEM, ErrorsKeyConstant.BUNDLE_DOES_NOT_EXIST, ""),
+    SYSTEM_CLIENT_BAD_REQUEST(EntitiesConstant.SYSTEM, ErrorsKeyConstant.CLIENT_BAD_REQUEST, ""),
+    SYSTEM_INTERNAL_SERVER_ERROR(EntitiesConstant.SYSTEM, ErrorsKeyConstant.INTERNAL_SERVER_ERROR, ""),
+    SYSTEM_INVALID_SORT_ORDER(EntitiesConstant.SYSTEM, ErrorsKeyConstant.INVALID_SORT_ORDER, ""),
+    SYSTEM_INVALID_SORT_PARAMETER(EntitiesConstant.SYSTEM, ErrorsKeyConstant.INVALID_SORT_PARAMETER, ""),
+    SYSTEM_INVALID_TIME_RANGE(EntitiesConstant.SYSTEM, ErrorsKeyConstant.INVALID_TIME_RANGE, ""),
 
     // User Errors
-    USERS_HAD_BEEN_INACTIVE(EntitiesConstant.USERS, ErrorsKeyConstant.HAD_BEEN_INACTIVE, getResourceBundle("i18n/error_messages", Locale.getDefault()).getString("users.had_been_inactive")),
+    USER_NOT_FOUND(EntitiesConstant.USER, ErrorsKeyConstant.NOT_FOUND, ""),
 
-    // ... add more cases here ...
+    // Ticket Errors
+    TICKET_NOT_FOUND(EntitiesConstant.TICKET, ErrorsKeyConstant.NOT_FOUND, ""),
 
-    ;
+// ... add more cases here ...
+
+;
 
     private static final Map<String, ErrorsEnum> ENUM_MAP = new HashMap<>();
     private final String entityName;
     private final String errorKey;
     private String message;
 
-    public static ResourceBundle getResourceBundle(String bundleName, Locale locale) {
-
-        if(locale == null)
-            return ResourceBundle.getBundle(bundleName, Locale.getDefault());
-        else
-            return ResourceBundle.getBundle(bundleName, locale);
+    public String getMessage(Locale locale, String extentMessage) {
+        String bundleMessage =
+                ResourceBundleUtil.getKeyWithResourceBundle(AppConstant.I18N_ERROR, locale, getFullKey());
+        return extentMessage != null ? bundleMessage + extentMessage : bundleMessage;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setMessage(String bundleName, Locale locale) {
-
-        String messageContent = getResourceBundle(bundleName, locale).getString(getFullKey());
-        this.message = new String(messageContent.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+    public void setMessageWithExtendMessage(Locale locale, Object... args) {
+        String messageTemplate =
+                ResourceBundleUtil.getKeyWithResourceBundle(AppConstant.I18N_ERROR, locale, getFullKey());
+        if (args.length > 0) {
+            this.message = String.format(messageTemplate, args);
+        } else {
+            this.message = messageTemplate;
+        }
     }
 
     public String getFullKey() {
@@ -56,7 +70,7 @@ public enum ErrorsEnum {
     ErrorsEnum(String entityName, String errorKey, String message) {
         this.entityName = entityName;
         this.errorKey = errorKey;
-        this.message = message;
+        this.message = message != null ? message : "";
     }
 
     // Static block to initialize the enum map
@@ -69,5 +83,10 @@ public enum ErrorsEnum {
     // Static method to get ErrorsEnum instance by name
     public static ErrorsEnum getByName(String name) {
         return ENUM_MAP.get(name);
+    }
+
+    public ErrorsEnum withLocale(Locale locale, Object... args) {
+        this.setMessageWithExtendMessage(locale, args);
+        return this;
     }
 }

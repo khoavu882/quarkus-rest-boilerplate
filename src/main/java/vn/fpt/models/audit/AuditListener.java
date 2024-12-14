@@ -4,45 +4,42 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.SecurityContext;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import vn.fpt.models.AbstractAuditingEntity;
 
 import java.time.Instant;
 
+/**
+ * Listener auto-inject UserInfo in request for {@link AbstractAuditingEntity}.
+ */
 @Slf4j
 @RequestScoped
 public class AuditListener {
 
-    private static final ThreadLocal<String> currentUser = new ThreadLocal<>();
-
-    public static void setCurrentUser(String username) {
-        currentUser.set(username);
-    }
+    @Setter
+    private static String currentUser = null;
 
     public static String getCurrentUser() {
         try {
-            return currentUser.get();
+            if (currentUser == null) return "anonymous";
+            else return currentUser;
         } catch (Exception ex) {
             return "anonymous";
         }
     }
 
     public static void clearCurrentUser() {
-        currentUser.remove();
+        currentUser = null;
     }
 
     @PrePersist
     private void auditPrePersist(AbstractAuditingEntity auditingEntity) {
 
-        String username = currentUser.get();
+        String username = getCurrentUser();
 
-        if(username != null) {
-
-            auditingEntity.setCreatedBy(username);
-            auditingEntity.setLastModifiedBy(username);
-        }
+        auditingEntity.setCreatedBy(username);
+        auditingEntity.setLastModifiedBy(username);
         auditingEntity.setCreatedDate(Instant.now());
         auditingEntity.setLastModifiedDate(Instant.now());
     }
@@ -51,13 +48,9 @@ public class AuditListener {
     @PreRemove
     private void auditPreChange(AbstractAuditingEntity auditingEntity) {
 
-        String username = currentUser.get();
+        String username = getCurrentUser();
 
-        if(username != null) {
-
-            auditingEntity.setLastModifiedBy(username);
-        }
+        auditingEntity.setLastModifiedBy(username);
         auditingEntity.setLastModifiedDate(Instant.now());
     }
-
 }

@@ -6,9 +6,14 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.URISyntaxException;
 import java.util.UUID;
 
+/**
+ * Created by Khoa Vu.
+ * Mail: khoavu882@gmail.com
+ * Date: 2/12/24
+ * Time: 9:04 AM
+ */
 @Slf4j
 @Provider
 public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundException> {
@@ -19,9 +24,6 @@ public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundExceptio
 
         log.error(errorId, ex);
 
-        return Response
-                .status(Response.Status.NOT_FOUND)
-                .build();
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
-
 }
