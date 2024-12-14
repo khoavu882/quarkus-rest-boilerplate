@@ -5,6 +5,7 @@ public final class ErrorsKeyConstant {
     // Default error key
     public static final String ERROR_NON_DEFINED = "error_non_defined";
     public static final String BUNDLE_DOES_NOT_EXIST = "bundle_does_not_exist";
+    public static final String CONSTRAINT_VIOLATION = "constraint_violation";
 
     // http request defined error key constants
     public static final String INTERNAL_SERVER_ERROR = "internal_server_error";

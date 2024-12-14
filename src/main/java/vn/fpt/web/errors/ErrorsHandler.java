@@ -1,6 +1,7 @@
 package vn.fpt.web.errors;
 
-import jakarta.enterprise.context.RequestScoped;
+import io.quarkus.runtime.annotations.RegisterForReflection;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -18,7 +19,8 @@ import java.util.UUID;
 
 @Slf4j
 @Provider
-@RequestScoped
+@ApplicationScoped
+@RegisterForReflection
 public class ErrorsHandler implements ExceptionMapper<Throwable> {
 
     @Context
@@ -27,18 +29,21 @@ public class ErrorsHandler implements ExceptionMapper<Throwable> {
     @Override
     public Response toResponse(Throwable ex) {
         String errorId = UUID.randomUUID().toString();
-
-        log.error(errorId, ex);
-
         String errorKey = EntitiesConstant.SYSTEM + "." + ErrorsKeyConstant.ERROR_NON_DEFINED;
-        String defaultErrorMessage = ResourceBundleUtil.getKeyWithResourceBundle(
-                AppConstant.I18N_ERROR, requestContext.getLanguage(), errorKey);
 
-        ErrorMessage errorMessage = new ErrorMessage(defaultErrorMessage);
-        ErrorResponse errorResponse = new ErrorResponse(errorId, errorMessage);
+        log.error("Error ID: {} - Exception: {}", errorId, ex.getMessage(), ex);
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(errorResponse)
+                .entity(buildErrorResponse(errorId, errorKey))
                 .build();
+    }
+
+    private ErrorResponse buildErrorResponse(String errorId, String errorKey) {
+        String defaultErrorMessage = ResourceBundleUtil.getKeyWithResourceBundle(
+                AppConstant.I18N_ERROR,
+                requestContext.getLanguage(),
+                errorKey
+        );
+        return new ErrorResponse(errorId, new ErrorMessage(errorKey, defaultErrorMessage));
     }
 }
