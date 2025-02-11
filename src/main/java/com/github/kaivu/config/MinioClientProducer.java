@@ -1,17 +1,25 @@
 package com.github.kaivu.config;
 
+import com.github.kaivu.annotations.MinioServer;
 import io.minio.MinioClient;
-import io.quarkus.arc.DefaultBean;
-import jakarta.inject.Singleton;
+import jakarta.enterprise.inject.Default;
 import jakarta.ws.rs.Produces;
 
 public class MinioClientProducer {
 
     @Produces
-    @Singleton
-    @DefaultBean
-    public MinioClient produceMinioClient() {
-        // Initialize MinioClient with your configuration
+    @Default
+    @MinioServer("core")
+    public MinioClient coreMinioClient() {
+        return MinioClient.builder()
+                .endpoint(ConfigsProvider.MINIO_URL)
+                .credentials(ConfigsProvider.MINIO_ACCESS_KEY, ConfigsProvider.MINIO_SECRET_KEY)
+                .build();
+    }
+
+    @Produces
+    @MinioServer("web")
+    public MinioClient webMinioClient() {
         return MinioClient.builder()
                 .endpoint(ConfigsProvider.MINIO_URL)
                 .credentials(ConfigsProvider.MINIO_ACCESS_KEY, ConfigsProvider.MINIO_SECRET_KEY)

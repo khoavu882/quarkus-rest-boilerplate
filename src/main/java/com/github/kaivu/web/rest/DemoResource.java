@@ -54,7 +54,7 @@ import java.io.Serializable;
 @Path("/demo")
 @SecurityRequirement(name = "UserToken")
 @Tag(name = "Demo API", description = "Demo API Web applications")
-public class DemoController {
+public class DemoResource {
 
     @RestClient
     DemoClientService demoClient;

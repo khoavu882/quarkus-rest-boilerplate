@@ -8,9 +8,9 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Service Interface for managing {@link StreamingService}.
+ * Service Interface for managing {@link MinioService}.
  */
-public interface StreamingService {
+public interface MinioService {
 
     /**
      * Get Object form MinIO.

@@ -88,11 +88,11 @@ Easily start your Reactive RESTful Web Services
 
 ## Service include:
 
-RestAPI with Reactive
-Middleware with Declaring Routes
-LogFilters
-Persistence with Hibernate ORM
-Define Audit Data
-Mapper with Mapstruct
-Errors Handler
-Swagger Docs
+- RestAPI with Reactive
+- Middleware with Declaring Routes
+- LogFilters
+- Persistence with Hibernate ORM
+- Define Audit Data
+- Mapper with Mapstruct
+- Errors Handler
+- Swagger Docs
