@@ -1,6 +1,6 @@
 package com.github.kaivu.services.impl;
 
-import com.github.kaivu.services.StreamingService;
+import com.github.kaivu.services.MinioService;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.StatObjectArgs;
@@ -15,14 +15,14 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Streaming Service Implement of {@link StreamingService}.
+ * Streaming Service Implement of {@link MinioService}.
  */
 @Slf4j
 @Provider
 @AllArgsConstructor
-public class StreamingServiceImpl implements StreamingService {
+public class MinioServiceImpl implements MinioService {
 
-    private MinioClient minioClient;
+    private final MinioClient minioClient;
 
     /**
      * Get Object form MinIO.
