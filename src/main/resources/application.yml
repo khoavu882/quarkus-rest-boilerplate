@@ -52,11 +52,13 @@ quarkus:
     sql-load-script: no-file
 
   http:
+    auth-logging: ${ENABLE_HTTP_AUTH_LOGGING}
     cors:
       ~: true
       origins: "*"
       methods: GET, OPTIONS, POST, PUT, DELETE, PATCH
       headers: accept, authorization, content-type, x-requested-with, X-Current-Org-Id
+    enable-compression: ${ENABLE_HTTP_COMPRESSION}
 
   redis:
     hosts: ${REDIS_KIND_CONNECT}://${REDIS_HOST}:${REDIS_PORT}
