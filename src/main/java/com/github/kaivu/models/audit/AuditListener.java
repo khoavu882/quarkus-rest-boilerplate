@@ -3,7 +3,6 @@ package com.github.kaivu.models.audit;
 import com.github.kaivu.models.AbstractAuditingEntity;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,6 @@ public class AuditListener {
     }
 
     @PreUpdate
-    @PreRemove
     private void auditPreChange(AbstractAuditingEntity auditingEntity) {
 
         String username = getCurrentUser();
