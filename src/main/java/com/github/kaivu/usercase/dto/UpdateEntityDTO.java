@@ -1,4 +1,4 @@
-package com.github.kaivu.services.dto;
+package com.github.kaivu.usercase.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
-public class CreateEntityDTO implements Serializable {
+public class UpdateEntityDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

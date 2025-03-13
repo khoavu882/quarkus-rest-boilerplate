@@ -1,13 +1,13 @@
 package com.github.kaivu.web.vm;
 
-import com.github.kaivu.web.vm.common.BaseAuditVM;
+import io.vertx.core.json.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.UUID;
+import java.time.Instant;
 
 /**
  * Created by Khoa Vu.
@@ -18,12 +18,12 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-public class EntityDeviceVM extends BaseAuditVM implements Serializable {
+public class EntityDeviceDetailsVM extends EntityDeviceVM implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    private UUID id;
+    private JsonObject metadata = new JsonObject();
 
-    private String name;
+    private Instant createdDate;
 }

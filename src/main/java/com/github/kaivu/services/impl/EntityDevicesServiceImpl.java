@@ -3,11 +3,8 @@ package com.github.kaivu.services.impl;
 import com.github.kaivu.models.EntityDevice;
 import com.github.kaivu.repositories.ext.EntityDeviceRepository;
 import com.github.kaivu.services.EntityDevicesService;
-import com.github.kaivu.services.dto.CreateEntityDTO;
-import com.github.kaivu.services.mappers.EntityDeviceMapper;
 import com.github.kaivu.web.errors.ErrorsEnum;
 import com.github.kaivu.web.errors.exceptions.EntityNotFoundException;
-import com.github.kaivu.web.vm.EntityDeviceVM;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -35,13 +32,6 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
 
     @Inject
     EntityDeviceRepository entityDeviceRepository;
-
-    @Override
-    @Transactional
-    public Uni<EntityDeviceVM> create(CreateEntityDTO dto) {
-        EntityDevice entityDevice = EntityDeviceMapper.map.toEntity(dto);
-        return persist(entityDevice).map(EntityDeviceMapper.map::toEntityDeviceVM);
-    }
 
     @Override
     public Uni<Optional<EntityDevice>> findById(UUID id) {
