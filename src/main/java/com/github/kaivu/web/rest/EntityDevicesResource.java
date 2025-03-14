@@ -33,7 +33,7 @@ import java.util.UUID;
 public class EntityDevicesResource {
 
     @Inject
-    EntityDeviceUseCase entityDeviceUserCase;
+    EntityDeviceUseCase entityDeviceUseCase;
 
     @POST
     @Operation(operationId = "createEntityDevice", summary = "Create a new Entity Device")
@@ -52,7 +52,7 @@ public class EntityDevicesResource {
                     @Valid
                     CreateEntityDTO dto) {
 
-        return entityDeviceUserCase.create(dto).map(device -> {
+        return entityDeviceUseCase.create(dto).map(device -> {
             URI location = uriInfo.getAbsolutePathBuilder()
                     .path(device.getId().toString())
                     .build();
@@ -83,7 +83,7 @@ public class EntityDevicesResource {
                     @Valid
                     UpdateEntityDTO dto) {
 
-        return entityDeviceUserCase.update(id, dto).map(RestResponse::ok);
+        return entityDeviceUseCase.update(id, dto).map(RestResponse::ok);
     }
 
     @GET
@@ -102,7 +102,7 @@ public class EntityDevicesResource {
                             mediaType = MediaType.APPLICATION_JSON,
                             schema = @Schema(implementation = ErrorResponse.class)))
     public Uni<RestResponse<EntityDeviceDetailsVM>> details(@PathParam("id") UUID id) {
-        return entityDeviceUserCase.details(id).map(RestResponse::ok);
+        return entityDeviceUseCase.details(id).map(RestResponse::ok);
     }
 
     @GET
@@ -120,7 +120,7 @@ public class EntityDevicesResource {
                             mediaType = MediaType.APPLICATION_JSON,
                             schema = @Schema(implementation = ErrorResponse.class)))
     public Uni<RestResponse<PageResponse<EntityDeviceVM>>> pageable(@BeanParam EntityDeviceFilters filters) {
-        return entityDeviceUserCase.pageable(filters).map(RestResponse::ok);
+        return entityDeviceUseCase.pageable(filters).map(RestResponse::ok);
     }
 
     @DELETE
@@ -134,6 +134,6 @@ public class EntityDevicesResource {
                             mediaType = MediaType.APPLICATION_JSON,
                             schema = @Schema(implementation = ErrorResponse.class)))
     public Uni<RestResponse<Void>> delete(@PathParam("id") UUID id) {
-        return entityDeviceUserCase.delete(id).map(ignore -> RestResponse.noContent());
+        return entityDeviceUseCase.delete(id).map(ignore -> RestResponse.noContent());
     }
 }

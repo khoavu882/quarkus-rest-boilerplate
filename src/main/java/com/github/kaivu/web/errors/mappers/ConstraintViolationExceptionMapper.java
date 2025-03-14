@@ -26,8 +26,11 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
         log.error("Validation error [{}]:", errorId, ex);
 
         List<ErrorMessage> errorMessages = ex.getConstraintViolations().stream()
-                .map(violation ->
-                        new ErrorMessage(violation.getPropertyPath().toString(), ERROR_PREFIX, violation.getMessage()))
+                .map(violation -> {
+                    String propertyPath = violation.getPropertyPath().toString();
+                    String field = propertyPath.substring(propertyPath.indexOf('.') + 1);
+                    return new ErrorMessage(field, violation.getMessageTemplate(), violation.getMessage());
+                })
                 .toList();
 
         return Response.status(Response.Status.BAD_REQUEST)
