@@ -6,8 +6,8 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 ## Getting Started
 ## Required Environment
 
-- **Java**: Ensure you have JDK 11 or later installed.
-- **Maven**: Apache Maven 3.6.3 or later is required.
+- **Java**: Ensure you have JDK 17 or later installed.
+- **Maven**: Apache Maven 3.9.6 or later is required.
 - **GraalVM**: Required for building native executables (optional).
 
 ## Infrastructure
@@ -19,7 +19,7 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 
 This project uses the following key dependencies:
 - **Quarkus**: Core framework for building Java applications.
-- **Hibernate ORM Panache**: For persistence.
+- **Hibernate Reactive**: For persistence.
 - **Mapstruct**: For object mapping.
 - **RESTEasy Reactive**: For building RESTful web services.
 - **Swagger**: For API documentation.
@@ -91,7 +91,7 @@ Easily start your Reactive RESTful Web Services
 - RestAPI with Reactive
 - Middleware with Declaring Routes
 - LogFilters
-- Persistence with Hibernate ORM
+- Persistence with Hibernate Reactive
 - Define Audit Data
 - Mapper with Mapstruct
 - Errors Handler
