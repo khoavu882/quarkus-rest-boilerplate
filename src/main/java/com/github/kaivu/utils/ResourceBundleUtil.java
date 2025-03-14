@@ -14,10 +14,8 @@ import java.util.ResourceBundle;
 @Slf4j
 public class ResourceBundleUtil {
 
-    private ResourceBundleUtil() {}
-
-    public static ResourceBundleUtil createResourceBundleUtil() {
-        return new ResourceBundleUtil();
+    private ResourceBundleUtil() {
+        throw new IllegalStateException("Utility class");
     }
 
     public static String getKeyWithResourceBundle(String bundleName, Locale locale, String key) {
