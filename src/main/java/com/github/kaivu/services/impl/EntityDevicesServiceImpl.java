@@ -42,7 +42,7 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
     public Uni<EntityDevice> getById(UUID identify) throws EntityNotFoundException {
         return findById(identify)
                 .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityNotFoundException(
-                        ErrorsEnum.TICKET_NOT_FOUND.withLocale(requestContext.getLanguage()))));
+                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(requestContext.getLanguage()))));
     }
 
     @Override

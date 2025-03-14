@@ -1,7 +1,7 @@
 package com.github.kaivu.services.mappers;
 
 import com.github.kaivu.models.EntityDevice;
-import com.github.kaivu.usercase.dto.CreateEntityDTO;
+import com.github.kaivu.usecase.dto.CreateEntityDTO;
 import com.github.kaivu.web.vm.EntityDeviceDetailsVM;
 import com.github.kaivu.web.vm.EntityDeviceVM;
 import org.mapstruct.BeanMapping;

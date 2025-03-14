@@ -1,4 +1,4 @@
-package com.github.kaivu.config;
+package com.github.kaivu.bean;
 
 import com.github.kaivu.annotations.MinioServer;
 import com.github.kaivu.services.MinioService;

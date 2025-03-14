@@ -1,7 +1,7 @@
-package com.github.kaivu.usercase;
+package com.github.kaivu.usecase;
 
-import com.github.kaivu.usercase.dto.CreateEntityDTO;
-import com.github.kaivu.usercase.dto.UpdateEntityDTO;
+import com.github.kaivu.usecase.dto.CreateEntityDTO;
+import com.github.kaivu.usecase.dto.UpdateEntityDTO;
 import com.github.kaivu.web.vm.EntityDeviceDetailsVM;
 import com.github.kaivu.web.vm.EntityDeviceFilters;
 import com.github.kaivu.web.vm.EntityDeviceVM;

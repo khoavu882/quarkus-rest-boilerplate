@@ -1,9 +1,9 @@
 package com.github.kaivu.web.rest;
 
 import com.github.kaivu.models.EntityDevice;
-import com.github.kaivu.usercase.EntityDeviceUseCase;
-import com.github.kaivu.usercase.dto.CreateEntityDTO;
-import com.github.kaivu.usercase.dto.UpdateEntityDTO;
+import com.github.kaivu.usecase.EntityDeviceUseCase;
+import com.github.kaivu.usecase.dto.CreateEntityDTO;
+import com.github.kaivu.usecase.dto.UpdateEntityDTO;
 import com.github.kaivu.web.errors.models.ErrorResponse;
 import com.github.kaivu.web.vm.EntityDeviceDetailsVM;
 import com.github.kaivu.web.vm.EntityDeviceFilters;
@@ -24,6 +24,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.RestResponse;
 
+import java.net.URI;
 import java.util.UUID;
 
 @Slf4j
@@ -36,7 +37,7 @@ public class EntityDevicesResource {
 
     @POST
     @Operation(operationId = "createEntityDevice", summary = "Create a new Entity Device")
-    @APIResponse(responseCode = "201", description = "", content = @Content(mediaType = MediaType.APPLICATION_JSON))
+    @APIResponse(responseCode = "201", content = @Content(mediaType = MediaType.APPLICATION_JSON))
     @APIResponse(
             responseCode = "500",
             content =
@@ -44,26 +45,37 @@ public class EntityDevicesResource {
                             mediaType = MediaType.APPLICATION_JSON,
                             schema = @Schema(implementation = ErrorResponse.class)))
     public Uni<RestResponse<EntityDevice>> create(
+            @Context UriInfo uriInfo,
             @RequestBody(
                             description = "Entity Device to create",
                             content = @Content(schema = @Schema(implementation = CreateEntityDTO.class)))
                     @Valid
                     CreateEntityDTO dto) {
 
-        return entityDeviceUserCase.create(dto).map(device -> RestResponse.status(RestResponse.Status.CREATED));
+        return entityDeviceUserCase.create(dto).map(device -> {
+            URI location = uriInfo.getAbsolutePathBuilder()
+                    .path(device.getId().toString())
+                    .build();
+            return RestResponse.created(location);
+        });
     }
 
     @PUT
     @Path("/{id}")
     @Operation(operationId = "updateEntityDevice", summary = "Update a Entity Device by ID")
-    @APIResponse(responseCode = "201", description = "", content = @Content(mediaType = MediaType.APPLICATION_JSON))
+    @APIResponse(
+            responseCode = "200",
+            content =
+                    @Content(
+                            mediaType = MediaType.APPLICATION_JSON,
+                            schema = @Schema(implementation = EntityDeviceVM.class, type = SchemaType.OBJECT)))
     @APIResponse(
             responseCode = "500",
             content =
                     @Content(
                             mediaType = MediaType.APPLICATION_JSON,
                             schema = @Schema(implementation = ErrorResponse.class)))
-    public Uni<RestResponse<EntityDevice>> update(
+    public Uni<RestResponse<EntityDeviceVM>> update(
             @PathParam("id") UUID id,
             @RequestBody(
                             description = "Entity Device to update",
@@ -71,7 +83,7 @@ public class EntityDevicesResource {
                     @Valid
                     UpdateEntityDTO dto) {
 
-        return entityDeviceUserCase.update(id, dto).map(device -> RestResponse.status(RestResponse.Status.CREATED));
+        return entityDeviceUserCase.update(id, dto).map(RestResponse::ok);
     }
 
     @GET
@@ -114,7 +126,7 @@ public class EntityDevicesResource {
     @DELETE
     @Path("/{id}")
     @Operation(operationId = "deleteEntityDevice", summary = "Delete an Entity Device by ID")
-    @APIResponse(responseCode = "204", description = "")
+    @APIResponse(responseCode = "204")
     @APIResponse(
             responseCode = "500",
             content =

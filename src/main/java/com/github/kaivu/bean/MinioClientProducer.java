@@ -1,6 +1,7 @@
-package com.github.kaivu.config;
+package com.github.kaivu.bean;
 
 import com.github.kaivu.annotations.MinioServer;
+import com.github.kaivu.config.ConfigsProvider;
 import io.minio.MinioClient;
 import jakarta.enterprise.inject.Default;
 import jakarta.ws.rs.Produces;

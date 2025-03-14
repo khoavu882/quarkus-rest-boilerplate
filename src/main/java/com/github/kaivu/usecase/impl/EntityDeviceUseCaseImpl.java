@@ -1,12 +1,12 @@
-package com.github.kaivu.usercase.impl;
+package com.github.kaivu.usecase.impl;
 
 import com.github.kaivu.models.EntityDevice;
 import com.github.kaivu.repositories.ext.EntityDeviceRepository;
 import com.github.kaivu.services.EntityDevicesService;
 import com.github.kaivu.services.mappers.EntityDeviceMapper;
-import com.github.kaivu.usercase.EntityDeviceUseCase;
-import com.github.kaivu.usercase.dto.CreateEntityDTO;
-import com.github.kaivu.usercase.dto.UpdateEntityDTO;
+import com.github.kaivu.usecase.EntityDeviceUseCase;
+import com.github.kaivu.usecase.dto.CreateEntityDTO;
+import com.github.kaivu.usecase.dto.UpdateEntityDTO;
 import com.github.kaivu.web.vm.EntityDeviceDetailsVM;
 import com.github.kaivu.web.vm.EntityDeviceFilters;
 import com.github.kaivu.web.vm.EntityDeviceVM;

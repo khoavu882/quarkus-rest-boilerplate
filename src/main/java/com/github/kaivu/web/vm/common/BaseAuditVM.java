@@ -17,7 +17,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @ToString
-public class BaseAuditVM extends UpdateAuditVM implements Serializable {
+public abstract class BaseAuditVM implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

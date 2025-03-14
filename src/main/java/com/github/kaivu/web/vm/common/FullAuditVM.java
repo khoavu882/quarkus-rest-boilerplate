@@ -17,14 +17,10 @@ import java.time.Instant;
 @Getter
 @Setter
 @ToString
-public abstract class FullAuditVM implements Serializable {
+public class FullAuditVM extends BaseAuditVM implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    private String createdBy;
-
-    private Instant createdDate;
 
     private String lastModifiedBy;
 

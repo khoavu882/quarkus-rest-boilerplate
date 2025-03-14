@@ -1,6 +1,6 @@
-package com.fpt.cads.utils;
+package com.github.kaivu.utils;
 
-import com.fpt.cads.web.vm.PageResponse;
+import com.github.kaivu.web.vm.common.PageResponse;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
@@ -18,7 +18,9 @@ public final class PaginationUtil {
     private static final String HEADER_X_TOTAL_COUNT = "X-Total-Count";
     private static final String HEADER_LINK_FORMAT = "<{0}>; rel=\"{1}\"";
 
-    private PaginationUtil() {}
+    private PaginationUtil() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static <T> Response.ResponseBuilder generatePaginationResponse(UriBuilder uriBuilder, PageResponse<T> page) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
