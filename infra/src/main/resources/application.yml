@@ -1,0 +1,48 @@
+quarkus:
+  devservices:
+    enabled: false
+  log:
+    level: INFO
+    console:
+      format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"
+
+    category:
+      "org.jboss.resteasy.reactive.client.logging":
+        level: DEBUG
+  #      "org.hibernate":
+  #        level: DEBUG
+  #      "org.hibernate.SQL":
+  #        level: DEBUG
+
+  http:
+    auth-logging: ${ENABLE_HTTP_AUTH_LOGGING:false}
+    cors:
+      ~: true
+      origins: "*"
+      methods: GET, OPTIONS, POST, PUT, DELETE, PATCH
+      headers: accept, authorization, content-type, x-requested-with, X-Current-Org-Id
+    enable-compression: ${ENABLE_HTTP_COMPRESSION:false}
+
+  redis:
+    hosts: ${REDIS_KIND_CONNECT:redis}://${REDIS_HOST:localhost}:${REDIS_PORT:6379}
+    database: ${REDIS_DATABASE_INDEX:0}
+    timeout: ${REDIS_CONNECTION_TIMEOUT:3s}
+
+    demo:
+      hosts: ${REDIS_KIND_CONNECT:redis}://${REDIS_HOST:localhost}:${REDIS_PORT:6379}
+      timeout: ${REDIS_CONNECTION_TIMEOUT:3s}
+
+  minio:
+    url: ${MINIO_URL}
+    access-key: ${MINIO_ACCESS_KEY}
+    secret-key: ${MINIO_SECRET_KEY}
+
+  rest-client:
+    logging:
+      scope: request-response
+    "demo-client":
+      url: ${DEMO_CLIENT_URL}
+      scope: ${DEMO_CLIENT_SCOPE:jakarta.inject.Singleton}
+
+  tls:
+    trust-all: true

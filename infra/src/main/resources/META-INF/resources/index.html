@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quarkus REST API</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #bd93f9; /* Dracula purple */
+            --secondary-color: #ff79c6; /* Dracula pink */
+            --dark-color: #282a36; /* Dracula background */
+            --light-color: #44475a; /* Dracula selection */
+            --text-color: #f8f8f2; /* Dracula foreground */
+            --comment-color: #6272a4; /* Dracula comment */
+            --green-color: #50fa7b; /* Dracula green */
+            --orange-color: #ffb86c; /* Dracula orange */
+            --cyan-color: #8be9fd; /* Dracula cyan */
+            --red-color: #ff5555; /* Dracula red */
+            --yellow-color: #f1fa8c; /* Dracula yellow */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--dark-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--dark-color);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .features {
+            padding: 60px 0;
+        }
+
+        .features h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--light-color);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-card h3 {
+            color: var(--cyan-color);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .feature-card p {
+            color: var(--text-color);
+        }
+
+        .api-section {
+            background-color: var(--dark-color);
+            color: var(--text-color);
+            padding: 60px 0;
+            border-top: 1px solid var(--comment-color);
+            border-bottom: 1px solid var(--comment-color);
+        }
+
+        .api-section h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            color: var(--green-color);
+        }
+
+        .api-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .api-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: var(--light-color);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            border: 1px solid var(--primary-color);
+        }
+
+        .api-button:hover {
+            background-color: var(--primary-color);
+            color: var(--dark-color);
+            transform: scale(1.05);
+        }
+
+        .code-section {
+            padding: 60px 0;
+            background-color: var(--dark-color);
+        }
+
+        .code-section h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            color: var(--orange-color);
+        }
+
+        .code-block {
+            background-color: #21222c; /* Slightly lighter than background */
+            color: var(--text-color);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 0 auto;
+            max-width: 800px;
+            border: 1px solid var(--comment-color);
+        }
+
+        .code-block pre {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: var(--text-color);
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid var(--comment-color);
+        }
+
+        .animated-logo {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+            background-color: var(--dark-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid var(--primary-color);
+        }
+
+        .animated-logo::before {
+            content: 'Q';
+            font-size: 80px;
+            font-weight: bold;
+            color: var(--secondary-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="animated-logo"></div>
+        <h1>Quarkus REST API</h1>
+        <p>A modern, reactive REST API built with Quarkus - Supersonic Subatomic Java</p>
+    </div>
+</header>
+
+<section class="features">
+    <div class="container">
+        <h2>Features</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h3>Reactive REST API</h3>
+                <p>Built with RESTEasy Reactive for high performance and scalability.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Middleware with Routes</h3>
+                <p>Flexible middleware architecture with declarative routing.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Log Filters</h3>
+                <p>Comprehensive logging system with customizable filters.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Hibernate Reactive</h3>
+                <p>Persistence layer powered by Hibernate Reactive for efficient data management.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Audit Data</h3>
+                <p>Built-in audit trail for tracking data changes and user actions.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Mapstruct</h3>
+                <p>Efficient object mapping with Mapstruct for clean code architecture.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Error Handling</h3>
+                <p>Robust error handling system with detailed error responses.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Swagger Docs</h3>
+                <p>Comprehensive API documentation with Swagger/OpenAPI.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="api-section">
+    <div class="container">
+        <h2>API Documentation</h2>
+        <div class="api-links">
+            <a href="/q/swagger-ui" class="api-button">Swagger UI</a>
+            <a href="/q/openapi" class="api-button">OpenAPI Spec</a>
+            <a href="/demo" class="api-button">Demo API</a>
+        </div>
+    </div>
+</section>
+
+<section class="code-section">
+    <div class="container">
+        <h2>Quick Start</h2>
+        <div class="code-block">
+                <pre>
+# Run the application in dev mode
+./mvnw compile quarkus:dev
+
+# Package the application
+./mvnw package
+
+# Run the packaged application
+java -jar target/quarkus-app/quarkus-run.jar
+
+# Create a native executable
+./mvnw package -Dnative
+                </pre>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>Powered by Quarkus - Made with ❤️ by KaiVu</p>
+        <p><a href="https://github.com/khoavu882/quarkus-rest" style="color: var(--secondary-color);">GitHub Repository</a></p>
+    </div>
+</footer>
+
+<script>
+    // Add some interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        const featureCards = document.querySelectorAll('.feature-card');
+
+        featureCards.forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.backgroundColor = getRandomColor();
+                this.style.color = var(--dark-color);
+
+                setTimeout(() => {
+                    this.style.backgroundColor = var(--light-color);
+                    this.style.color = var(--text-color);
+                    this.querySelector('h3').style.color = var(--cyan-color);
+                }, 500);
+            });
+        });
+
+        function getRandomColor() {
+            const colors = ['#bd93f9', '#ff79c6', '#50fa7b', '#8be9fd', '#ffb86c', '#ff5555', '#f1fa8c'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+    });
+</script>
+</body>
+</html>

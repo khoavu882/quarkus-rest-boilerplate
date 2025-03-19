@@ -1,4 +1,4 @@
-package com.github.kaivu.web.errors;
+package com.github.kaivu.errors;
 
 import com.github.kaivu.constant.EntitiesConstant;
 import com.github.kaivu.constant.ErrorsKeyConstant;

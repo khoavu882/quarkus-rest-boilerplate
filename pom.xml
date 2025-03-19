@@ -5,7 +5,16 @@
 
   <groupId>com.github.kaivu</groupId>
   <artifactId>quarkus-rest</artifactId>
-  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  <version>2.0.0-SNAPSHOT</version>
+  <name>Quarkus Rest Boilerplate</name>
+
+  <modules>
+    <module>app</module>
+    <module>core</module>
+    <module>infra</module>
+  </modules>
+
   <properties>
     <apache-tika.version>2.9.2</apache-tika.version>
     <aspectjweaver.version>1.9.22.1</aspectjweaver.version>
@@ -54,15 +63,7 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-hibernate-reactive-panache</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-logging-json</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -71,38 +72,6 @@
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-quartz</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-jackson</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-rest-client-jackson</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-reactive-pg-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-redis-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-smallrye-openapi</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-websockets</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.quarkiverse.qute.web</groupId>
-      <artifactId>quarkus-qute-web</artifactId>
     </dependency>
     <!-- Other Dependencies -->
     <dependency>
@@ -159,11 +128,6 @@
       <artifactId>quarkus-junit5</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-panache-mock</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
@@ -189,14 +153,6 @@
         <version>${compiler-plugin.version}</version>
         <configuration>
           <annotationProcessorPaths>
-            <path>
-              <groupId>io.quarkus</groupId>
-              <artifactId>quarkus-panache-common</artifactId>
-            </path>
-            <path>
-              <groupId>org.hibernate</groupId>
-              <artifactId>hibernate-jpamodelgen</artifactId>
-            </path>
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>

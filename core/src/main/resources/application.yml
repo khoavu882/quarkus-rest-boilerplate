@@ -1,0 +1,36 @@
+quarkus:
+  devservices:
+    enabled: false
+  log:
+    level: INFO
+    console:
+      format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"
+
+  #      "org.hibernate":
+  #        level: DEBUG
+  #      "org.hibernate.SQL":
+  #        level: DEBUG
+
+  datasource:
+    db-kind: ${DEMO_DB_KIND:postgresql}
+    username: ${DEMO_USERNAME}
+    password: ${DEMO_PASSWORD}
+    jdbc: false
+    reactive:
+      url: vertx-reactive:${DEMO_DB_KIND:postgresql}://${DEMO_HOST:localhost}:${DEMO_PORT:5432}/${DEMO_DB:db_local}?currentSchema=${DEMO_SCHEMA:sch_local}&prepareThreshold=0
+      max-size: 16
+
+    demo:
+      db-kind: ${DEMO_DB_KIND:postgresql}
+      username: ${DEMO_USERNAME}
+      password: ${DEMO_PASSWORD}
+      jdbc: false
+      reactive:
+        url: vertx-reactive:${DEMO_DB_KIND:postgresql}://${DEMO_HOST:localhost}:${DEMO_PORT:5432}/${DEMO_DB:db_local}?currentSchema=${DEMO_SCHEMA:sch_local}&prepareThreshold=0
+        max-size: 16
+
+  hibernate-orm:
+    database:
+      default-schema: ${DEMO_SCHEMA:sch_local}
+      generation: create-drop
+    sql-load-script: no-file
