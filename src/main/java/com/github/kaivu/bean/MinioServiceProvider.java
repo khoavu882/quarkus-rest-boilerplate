@@ -1,21 +1,22 @@
 package com.github.kaivu.bean;
 
-import com.github.kaivu.annotations.MinioServer;
+import com.github.kaivu.annotations.MinioProfile;
 import com.github.kaivu.services.MinioService;
 import com.github.kaivu.services.impl.MinioServiceImpl;
 import io.minio.MinioClient;
 import jakarta.ws.rs.Produces;
 
 public class MinioServiceProvider {
+
     @Produces
-    @MinioServer("core")
-    public MinioService coreMinioService(@MinioServer("core") MinioClient minioClient) {
+    @MinioProfile("core")
+    public MinioService coreMinioService(@MinioProfile("core") MinioClient minioClient) {
         return new MinioServiceImpl(minioClient);
     }
 
     @Produces
-    @MinioServer("web")
-    public MinioService webMinioService(@MinioServer("web") MinioClient minioClient) {
+    @MinioProfile("web")
+    public MinioService webMinioService(@MinioProfile("web") MinioClient minioClient) {
         return new MinioServiceImpl(minioClient);
     }
 }
