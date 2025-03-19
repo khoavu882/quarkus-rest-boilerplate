@@ -1,6 +1,7 @@
 package com.github.kaivu.models;
 
 import com.github.kaivu.models.enumeration.ActionStatus;
+import com.github.kaivu.models.supplier.DeletedStatusSupplier;
 import com.github.kaivu.models.type.JsonObjectType;
 import io.vertx.core.json.JsonObject;
 import jakarta.persistence.Cacheable;
@@ -16,6 +17,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.Type;
 
 import java.io.Serial;
@@ -28,6 +32,12 @@ import java.util.UUID;
 @Cacheable
 @NoArgsConstructor
 @Table(name = "entity_device")
+@FilterDef(
+        name = "entitiesDeletedFilter",
+        autoEnabled = true,
+        defaultCondition = "status <> :statusDeleted",
+        parameters = @ParamDef(name = "statusDeleted", type = String.class, resolver = DeletedStatusSupplier.class))
+@Filter(name = "entitiesDeletedFilter")
 public class EntityDevice extends AbstractAuditingEntity implements Serializable {
 
     @Serial
@@ -54,12 +64,10 @@ public class EntityDevice extends AbstractAuditingEntity implements Serializable
     @Type(value = JsonObjectType.class)
     private JsonObject metadata = new JsonObject();
 
-    // return name as uppercase in the model
     public String getName() {
         return name.toUpperCase();
     }
 
-    // store all names in lowercase in the DB
     public void setName(String name) {
         this.name = name.toLowerCase();
     }

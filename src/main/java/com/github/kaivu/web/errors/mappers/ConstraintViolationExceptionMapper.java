@@ -1,7 +1,5 @@
 package com.github.kaivu.web.errors.mappers;
 
-import com.github.kaivu.constant.EntitiesConstant;
-import com.github.kaivu.constant.ErrorsKeyConstant;
 import com.github.kaivu.web.errors.models.ErrorMessage;
 import com.github.kaivu.web.errors.models.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
@@ -18,16 +16,17 @@ import java.util.UUID;
 @Provider
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
-    private static final String ERROR_PREFIX = EntitiesConstant.FORM + "." + ErrorsKeyConstant.CONSTRAINT_VIOLATION;
-
     @Override
     public Response toResponse(ConstraintViolationException ex) {
         String errorId = UUID.randomUUID().toString();
         log.error("Validation error [{}]:", errorId, ex);
 
         List<ErrorMessage> errorMessages = ex.getConstraintViolations().stream()
-                .map(violation ->
-                        new ErrorMessage(violation.getPropertyPath().toString(), ERROR_PREFIX, violation.getMessage()))
+                .map(violation -> {
+                    String propertyPath = violation.getPropertyPath().toString();
+                    String field = propertyPath.substring(propertyPath.indexOf('.') + 1);
+                    return new ErrorMessage(field, violation.getMessageTemplate(), violation.getMessage());
+                })
                 .toList();
 
         return Response.status(Response.Status.BAD_REQUEST)

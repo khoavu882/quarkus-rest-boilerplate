@@ -73,14 +73,12 @@ public class DemoResource {
                                         schema = @Schema(implementation = JsonObject.class))),
                 @APIResponse(
                         responseCode = "400",
-                        description = "",
                         content =
                                 @Content(
                                         mediaType = MediaType.APPLICATION_JSON,
                                         schema = @Schema(implementation = ErrorResponse.class))),
                 @APIResponse(
                         responseCode = "500",
-                        description = "",
                         content =
                                 @Content(
                                         mediaType = MediaType.APPLICATION_JSON,
@@ -105,14 +103,12 @@ public class DemoResource {
                                         schema = @Schema(implementation = JsonObject.class))),
                 @APIResponse(
                         responseCode = "400",
-                        description = "",
                         content =
                                 @Content(
                                         mediaType = MediaType.APPLICATION_JSON,
                                         schema = @Schema(implementation = ErrorResponse.class))),
                 @APIResponse(
                         responseCode = "500",
-                        description = "",
                         content =
                                 @Content(
                                         mediaType = MediaType.APPLICATION_JSON,
@@ -154,14 +150,12 @@ public class DemoResource {
                                         schema = @Schema(implementation = JsonObject.class))),
                 @APIResponse(
                         responseCode = "400",
-                        description = "",
                         content =
                                 @Content(
                                         mediaType = MediaType.APPLICATION_JSON,
                                         schema = @Schema(implementation = ErrorResponse.class))),
                 @APIResponse(
                         responseCode = "500",
-                        description = "",
                         content =
                                 @Content(
                                         mediaType = MediaType.APPLICATION_JSON,

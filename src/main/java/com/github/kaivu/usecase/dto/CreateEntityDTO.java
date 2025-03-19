@@ -1,4 +1,4 @@
-package com.github.kaivu.services.dto;
+package com.github.kaivu.usecase.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

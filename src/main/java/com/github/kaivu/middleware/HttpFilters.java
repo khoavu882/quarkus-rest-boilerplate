@@ -10,7 +10,6 @@ import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.opentracing.Traced;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,21 +18,16 @@ import java.util.Locale;
 import java.util.zip.GZIPOutputStream;
 
 @Slf4j
-@Traced
 @Provider
 @ApplicationScoped
 public class HttpFilters implements ContainerRequestFilter, ContainerResponseFilter {
-
-    Boolean enableCompression = ConfigsProvider.ENABLE_COMPRESSION;
-
-    Boolean enableAuthLogging = ConfigsProvider.ENABLE_AUTH_LOGGING;
 
     private static final String MANAGEMENT_PREFIX_PATH = "/q/";
     private static final String GZIP_ENCODING = "gzip";
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
-        if (Boolean.TRUE.equals(enableAuthLogging)) {
+        if (Boolean.TRUE.equals(ConfigsProvider.ENABLE_AUTH_LOGGING)) {
             // Add authentication logging if needed
         }
     }
@@ -61,7 +55,7 @@ public class HttpFilters implements ContainerRequestFilter, ContainerResponseFil
 
     private void handleCompression(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
             throws IOException {
-        if (Boolean.FALSE.equals(enableCompression)) {
+        if (Boolean.FALSE.equals(ConfigsProvider.ENABLE_COMPRESSION)) {
             return;
         }
 

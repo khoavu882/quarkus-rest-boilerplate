@@ -33,11 +33,11 @@ public enum ErrorsEnum {
     SYSTEM_INVALID_SORT_PARAMETER(EntitiesConstant.SYSTEM, ErrorsKeyConstant.INVALID_SORT_PARAMETER, ""),
     SYSTEM_INVALID_TIME_RANGE(EntitiesConstant.SYSTEM, ErrorsKeyConstant.INVALID_TIME_RANGE, ""),
 
+    // Entity Device Errors
+    ENTITY_DEVICE_NOT_FOUND(EntitiesConstant.ENTITY_DEVICE, ErrorsKeyConstant.NOT_FOUND, ""),
+
     // User Errors
     USER_NOT_FOUND(EntitiesConstant.USER, ErrorsKeyConstant.NOT_FOUND, ""),
-
-    // Ticket Errors
-    TICKET_NOT_FOUND(EntitiesConstant.TICKET, ErrorsKeyConstant.NOT_FOUND, ""),
     ;
 
     private static final Map<String, String> MESSAGE_CACHE = new ConcurrentHashMap<>();
