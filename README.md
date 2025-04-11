@@ -10,7 +10,7 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 - **Maven**: Apache Maven 3.9.6 or later is required.
 - **GraalVM**: Required for building native executables (optional).
 
-You can find environment variables of application in [.env.template](.env.template)
+You can find environment variables of application in [.env-template](.env.template)
 
 ## Infrastructure
 

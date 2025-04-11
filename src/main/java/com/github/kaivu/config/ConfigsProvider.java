@@ -8,7 +8,7 @@ public class ConfigsProvider {
         // Private constructor to hide the implicit public one
     }
 
-    public static final String APP_ID = ConfigProvider.getConfig().getValue("application.id", String.class);
+    public static final String APP_NAME = ConfigProvider.getConfig().getValue("quarkus.application.name", String.class);
 
     /*
      * *****************************************************************************

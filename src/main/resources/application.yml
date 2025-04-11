@@ -1,7 +1,6 @@
-application:
-  id: ${APP_ID:demo-service}
-
 quarkus:
+  application:
+    name: ${APP_NAME:demo-service}
   management:
     enabled: ${ENABLE_QUARKUS_MANAGEMENT:false}
     port: 9000
@@ -15,11 +14,11 @@ quarkus:
   log:
     level: INFO
     console:
-      format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"
+      format: "%d{HH:mm:ss} %-5p traceId=%X{traceId}, parentId=%X{parentId}, spanId=%X{spanId}, sampled=%X{sampled} [%c{2.}] (%t) %s%e%n"
 
     category:
       "org.jboss.resteasy.reactive.client.logging":
-        level: DEBUG
+        level: INFO
   #      "org.hibernate":
   #        level: DEBUG
   #      "org.hibernate.SQL":
@@ -50,6 +49,8 @@ quarkus:
     sql-load-script: no-file
 
   http:
+    access-log:
+      pattern: "...traceId=%{X,traceId} spanId=%{X,spanId}"
     auth-logging: ${ENABLE_HTTP_AUTH_LOGGING:false}
     cors:
       ~: true
@@ -107,3 +108,14 @@ quarkus:
   native:
     additional-build-args:
       - ${ADDITIONAL_BUILD_ARGS}
+#
+#  otel:
+#    exporter:
+#      otlp:
+#        endpoint: ${OTEL_EXPORTER_ENDPOINT:localhost:4317}
+#        headers:
+#          authorization: ${OTEL_EXPORTER_AUTHORIZATION:Bearer my_secret}
+#    logs:
+#      enabled: ${OTEL_LOGS_ENABLE:false}
+#    metrics:
+#      enabled: ${OTEL_METRICS_ENABLE:false}
