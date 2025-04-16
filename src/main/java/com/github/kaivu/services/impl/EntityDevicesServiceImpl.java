@@ -5,10 +5,10 @@ import com.github.kaivu.repositories.ext.EntityDeviceRepository;
 import com.github.kaivu.services.EntityDevicesService;
 import com.github.kaivu.web.errors.ErrorsEnum;
 import com.github.kaivu.web.errors.exceptions.EntityNotFoundException;
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import lombok.extern.slf4j.Slf4j;
@@ -46,31 +46,31 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
     }
 
     @Override
-    @Transactional
+    @WithTransaction
     public Uni<EntityDevice> persist(EntityDevice entity) {
         return entityDeviceRepository.persist(entity);
     }
 
     @Override
-    @Transactional
+    @WithTransaction
     public Uni<List<EntityDevice>> persist(List<EntityDevice> entities) {
         return entityDeviceRepository.persist(entities);
     }
 
     @Override
-    @Transactional
+    @WithTransaction
     public Uni<EntityDevice> update(EntityDevice entity) throws EntityNotFoundException {
         return entityDeviceRepository.update(entity);
     }
 
     @Override
-    @Transactional
+    @WithTransaction
     public Uni<List<EntityDevice>> update(List<EntityDevice> entities) throws EntityNotFoundException {
         return entityDeviceRepository.update(entities);
     }
 
     @Override
-    @Transactional
+    @WithTransaction
     public Uni<Void> delete(UUID identify) throws EntityNotFoundException {
         return getById(identify).flatMap(entity -> entityDeviceRepository.delete(entity));
     }

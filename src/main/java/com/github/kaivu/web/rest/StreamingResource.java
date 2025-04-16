@@ -1,6 +1,6 @@
 package com.github.kaivu.web.rest;
 
-import com.github.kaivu.annotations.MinioServer;
+import com.github.kaivu.annotations.MinioProfile;
 import com.github.kaivu.services.MinioService;
 import com.github.kaivu.web.errors.ErrorsEnum;
 import com.github.kaivu.web.errors.exceptions.ServiceException;
@@ -51,7 +51,7 @@ public class StreamingResource {
             "mkv", "video/x-matroska");
 
     @Inject
-    @MinioServer("core")
+    @MinioProfile("core")
     MinioService minioService;
 
     @GET

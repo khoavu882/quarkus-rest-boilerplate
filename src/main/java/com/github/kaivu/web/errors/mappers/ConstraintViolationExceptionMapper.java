@@ -1,7 +1,5 @@
 package com.github.kaivu.web.errors.mappers;
 
-import com.github.kaivu.constant.EntitiesConstant;
-import com.github.kaivu.constant.ErrorsKeyConstant;
 import com.github.kaivu.web.errors.models.ErrorMessage;
 import com.github.kaivu.web.errors.models.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
@@ -17,8 +15,6 @@ import java.util.UUID;
 @Slf4j
 @Provider
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
-
-    private static final String ERROR_PREFIX = EntitiesConstant.FORM + "." + ErrorsKeyConstant.CONSTRAINT_VIOLATION;
 
     @Override
     public Response toResponse(ConstraintViolationException ex) {

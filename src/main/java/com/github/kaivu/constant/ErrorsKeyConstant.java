@@ -18,7 +18,6 @@ public final class ErrorsKeyConstant {
     public static final String DATABASE_CONNECTION_FAILED = "database_connection_failed";
     public static final String CLIENT_BAD_REQUEST = "client_bad_request";
     public static final String CONFLICT = "conflict";
-    public static final String FORMAT_INVALID = "format_invalid";
     public static final String ID_CONFLICT = "id_conflict";
     public static final String ID_INVALID = "id_invalid";
     public static final String INVALID_SORT_ORDER = "invalid_sort_order";

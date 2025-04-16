@@ -1,4 +1,4 @@
-# Demo Project
+# Quarkus Rest Boilerplate
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
@@ -9,6 +9,8 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 - **Java**: Ensure you have JDK 17 or later installed.
 - **Maven**: Apache Maven 3.9.6 or later is required.
 - **GraalVM**: Required for building native executables (optional).
+
+You can find environment variables of application in [.env-template](.env.template)
 
 ## Infrastructure
 
@@ -41,7 +43,9 @@ You can run your application in dev mode that enables live coding using:
 ./mvnw compile quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+> **_NOTE:_**  
+> - Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev-ui/
+> - API Documents at: http://localhost:8080/q/swagger-ui/
 
 ## Packaging and running the application
 

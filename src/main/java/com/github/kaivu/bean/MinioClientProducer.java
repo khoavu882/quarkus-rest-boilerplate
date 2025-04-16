@@ -1,6 +1,6 @@
 package com.github.kaivu.bean;
 
-import com.github.kaivu.annotations.MinioServer;
+import com.github.kaivu.annotations.MinioProfile;
 import com.github.kaivu.config.ConfigsProvider;
 import io.minio.MinioClient;
 import jakarta.enterprise.inject.Default;
@@ -10,7 +10,7 @@ public class MinioClientProducer {
 
     @Produces
     @Default
-    @MinioServer("core")
+    @MinioProfile("core")
     public MinioClient coreMinioClient() {
         return MinioClient.builder()
                 .endpoint(ConfigsProvider.MINIO_URL)
@@ -19,7 +19,7 @@ public class MinioClientProducer {
     }
 
     @Produces
-    @MinioServer("web")
+    @MinioProfile("web")
     public MinioClient webMinioClient() {
         return MinioClient.builder()
                 .endpoint(ConfigsProvider.MINIO_URL)
