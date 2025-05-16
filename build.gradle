@@ -1,0 +1,79 @@
+plugins {
+    id 'java'
+    alias(libs.plugins.quarkus)
+    alias(libs.plugins.spotless)
+}
+
+group = 'com.github.kaivu'
+version = '1.0.0'
+sourceCompatibility = JavaVersion.VERSION_17
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Quarkus dependencies
+    implementation platform(libs.quarkus.bom)
+    implementation libs.quarkus.arc
+    implementation libs.quarkus.config.yaml
+    implementation libs.quarkus.hibernate.validator
+    implementation libs.quarkus.hibernate.reactive.panache
+    implementation libs.quarkus.logging.json
+    implementation libs.quarkus.micrometer.registry.prometheus
+    implementation libs.quarkus.mutiny
+    implementation libs.quarkus.quartz
+    implementation libs.quarkus.rest
+    implementation libs.quarkus.rest.jackson
+    implementation libs.quarkus.rest.client.jackson
+    implementation libs.quarkus.reactive.pg.client
+    implementation libs.quarkus.redis.client
+    implementation libs.quarkus.smallrye.openapi
+    implementation libs.quarkus.websockets
+    implementation libs.quarkus.qute.web
+
+    // Other dependencies
+    implementation libs.jackson.jsr310
+    implementation libs.jackson.hibernate
+    implementation libs.commons.io
+    implementation libs.aspectj.weaver
+    implementation libs.tika.core
+    implementation libs.mapstruct
+    implementation libs.minio
+
+    // Test dependencies
+    implementation libs.quarkus.smallrye.health
+    implementation libs.quarkus.container.image.docker
+    testImplementation libs.quarkus.junit5
+    testImplementation libs.quarkus.panache.mock
+
+    // Annotation processors
+    annotationProcessor libs.quarkus.panache.common
+    annotationProcessor libs.hibernate.jpamodelgen
+    annotationProcessor libs.lombok
+    annotationProcessor libs.mapstruct.processor
+
+    // Provided dependencies
+    compileOnly libs.lombok
+    compileOnly libs.mapstruct.processor
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+// Configure Spotless for code formatting
+spotless {
+    java {
+        palantirJavaFormat('2.47.0')
+        importOrder('', 'java|javax', '\\#')
+        removeUnusedImports()
+    }
+}
+
+// Configure test tasks
+tasks.withType(Test) {
+    systemProperty 'java.util.logging.manager', 'org.jboss.logmanager.LogManager'
+}

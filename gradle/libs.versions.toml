@@ -1,0 +1,56 @@
+[versions]
+quarkus = "3.22.3"
+jackson = "2.17.3"
+lombok = "1.18.32"
+mapstruct = "1.5.5.Final"
+tika = "2.9.2"
+minio = "8.5.11"
+commonsIo = "2.16.1"
+aspectj = "1.9.22.1"
+spotless = "6.25.0"
+hibernate-jpamodelgen = "6.4.4.Final"
+
+[libraries]
+# Quarkus BOM
+quarkus-bom = { module = "io.quarkus.platform:quarkus-bom", version.ref = "quarkus" }
+
+# Quarkus dependencies
+quarkus-arc = { module = "io.quarkus:quarkus-arc" }
+quarkus-config-yaml = { module = "io.quarkus:quarkus-config-yaml" }
+quarkus-hibernate-validator = { module = "io.quarkus:quarkus-hibernate-validator" }
+quarkus-hibernate-reactive-panache = { module = "io.quarkus:quarkus-hibernate-reactive-panache" }
+quarkus-logging-json = { module = "io.quarkus:quarkus-logging-json" }
+quarkus-micrometer-registry-prometheus = { module = "io.quarkus:quarkus-micrometer-registry-prometheus" }
+quarkus-mutiny = { module = "io.quarkus:quarkus-mutiny" }
+quarkus-quartz = { module = "io.quarkus:quarkus-quartz" }
+quarkus-rest = { module = "io.quarkus:quarkus-rest" }
+quarkus-rest-jackson = { module = "io.quarkus:quarkus-rest-jackson" }
+quarkus-rest-client-jackson = { module = "io.quarkus:quarkus-rest-client-jackson" }
+quarkus-reactive-pg-client = { module = "io.quarkus:quarkus-reactive-pg-client" }
+quarkus-redis-client = { module = "io.quarkus:quarkus-redis-client" }
+quarkus-smallrye-openapi = { module = "io.quarkus:quarkus-smallrye-openapi" }
+quarkus-websockets = { module = "io.quarkus:quarkus-websockets" }
+quarkus-qute-web = { module = "io.quarkiverse.qute.web:quarkus-qute-web" }
+quarkus-smallrye-health = { module = "io.quarkus:quarkus-smallrye-health" }
+quarkus-container-image-docker = { module = "io.quarkus:quarkus-container-image-docker" }
+quarkus-junit5 = { module = "io.quarkus:quarkus-junit5" }
+quarkus-panache-mock = { module = "io.quarkus:quarkus-panache-mock" }
+quarkus-panache-common = { module = "io.quarkus:quarkus-panache-common" }
+
+# Jackson
+jackson-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
+jackson-hibernate = { module = "com.fasterxml.jackson.datatype:jackson-datatype-hibernate6", version.ref = "jackson" }
+
+# Other dependencies
+commons-io = { module = "commons-io:commons-io", version.ref = "commonsIo" }
+aspectj-weaver = { module = "org.aspectj:aspectjweaver", version.ref = "aspectj" }
+tika-core = { module = "org.apache.tika:tika-core", version.ref = "tika" }
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+minio = { module = "io.minio:minio", version.ref = "minio" }
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+hibernate-jpamodelgen = { module = "org.hibernate:hibernate-jpamodelgen", version.ref = "hibernate-jpamodelgen" }
+
+[plugins]
+quarkus = { id = "io.quarkus", version.ref = "quarkus" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

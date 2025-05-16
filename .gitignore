@@ -1,10 +1,11 @@
-#Maven
+# Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 .flattened-pom.xml
+.mvn/wrapper/maven-wrapper.jar
 
 # Eclipse
 .project
@@ -17,16 +18,25 @@ bin/
 *.ipr
 *.iml
 *.iws
+out/
 
 # NetBeans
 nb-configuration.xml
+nbproject/
+nbactions.xml
 
 # Visual Studio Code
 .vscode
 .factorypath
+.history/
 
 # OSX
 .DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # Vim
 *.swp
@@ -38,6 +48,39 @@ nb-configuration.xml
 
 # Local environment
 .env
+.env.*
+!.env.example
 
 # Plugin directory
 /.quarkus/cli/plugins/
+
+# Quarkus specific
+.quarkus/
+quarkus.log
+quarkus-app/
+
+# Gradle
+.gradle/
+build/
+
+# Node.js (if using frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Logs
+logs/
+*.log
+
+# Test coverage reports
+coverage/
+.coverage
+htmlcov/
+
+# Temporary files
+*~
+tmp/
+temp/
+
+# Docker
+.docker/
