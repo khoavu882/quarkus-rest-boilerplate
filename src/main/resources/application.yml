@@ -28,7 +28,6 @@ quarkus:
     db-kind: ${DEMO_DB_KIND:postgresql}
     username: ${DEMO_USERNAME}
     password: ${DEMO_PASSWORD}
-    jdbc: false
     reactive:
       url: vertx-reactive:${DEMO_DB_KIND:postgresql}://${DEMO_HOST:localhost}:${DEMO_PORT:5432}/${DEMO_DB:db_local}?currentSchema=${DEMO_SCHEMA:sch_local}&prepareThreshold=0
       max-size: 16
@@ -37,7 +36,6 @@ quarkus:
       db-kind: ${DEMO_DB_KIND:postgresql}
       username: ${DEMO_USERNAME}
       password: ${DEMO_PASSWORD}
-      jdbc: false
       reactive:
         url: vertx-reactive:${DEMO_DB_KIND:postgresql}://${DEMO_HOST:localhost}:${DEMO_PORT:5432}/${DEMO_DB:db_local}?currentSchema=${DEMO_SCHEMA:sch_local}&prepareThreshold=0
         max-size: 16
@@ -51,7 +49,6 @@ quarkus:
   http:
     access-log:
       pattern: "...traceId=%{X,traceId} spanId=%{X,spanId}"
-    auth-logging: ${ENABLE_HTTP_AUTH_LOGGING:false}
     cors:
       ~: true
       origins: "*"
@@ -68,24 +65,12 @@ quarkus:
       hosts: ${REDIS_KIND_CONNECT:redis}://${REDIS_HOST:localhost}:${REDIS_PORT:6379}
       timeout: ${REDIS_CONNECTION_TIMEOUT:3s}
 
-  minio:
-    url: ${MINIO_URL}
-    access-key: ${MINIO_ACCESS_KEY}
-    secret-key: ${MINIO_SECRET_KEY}
-
   rest-client:
     logging:
       scope: request-response
     "demo-client":
       url: ${DEMO_CLIENT_URL}
       scope: ${DEMO_CLIENT_SCOPE:jakarta.inject.Singleton}
-
-  micrometer:
-    runtime:
-      binder:
-        HttpBinderConfiguration: true
-        http-client:
-          enabled: true
 
   tls:
     trust-all: true
@@ -107,15 +92,10 @@ quarkus:
 
   native:
     additional-build-args:
-      - ${ADDITIONAL_BUILD_ARGS}
-#
-#  otel:
-#    exporter:
-#      otlp:
-#        endpoint: ${OTEL_EXPORTER_ENDPOINT:localhost:4317}
-#        headers:
-#          authorization: ${OTEL_EXPORTER_AUTHORIZATION:Bearer my_secret}
-#    logs:
-#      enabled: ${OTEL_LOGS_ENABLE:false}
-#    metrics:
-#      enabled: ${OTEL_METRICS_ENABLE:false}
+      - ${ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.config.ConfigsProvider}
+    container-build: ${ENABLE_NATIVE_CONTAINER_BUILD:false}
+
+minio:
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}

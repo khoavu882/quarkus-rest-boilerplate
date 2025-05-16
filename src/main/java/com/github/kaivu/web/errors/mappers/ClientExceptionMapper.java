@@ -3,6 +3,7 @@ package com.github.kaivu.web.errors.mappers;
 import com.github.kaivu.constant.AppConstant;
 import com.github.kaivu.utils.ResourceBundleUtil;
 import com.github.kaivu.web.errors.exceptions.ClientException;
+import com.github.kaivu.web.errors.exceptions.DemoClientException;
 import com.github.kaivu.web.errors.models.ErrorMessage;
 import com.github.kaivu.web.errors.models.ErrorResponse;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -11,6 +12,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -33,7 +35,7 @@ public class ClientExceptionMapper implements ExceptionMapper<ClientException> {
 
         log.error(errorId, ex);
 
-        if (ex.getPassThrough()) {
+        if (Boolean.TRUE.equals(ex.getPassThrough())) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ex.getClientMessage())
                     .build();
@@ -43,13 +45,24 @@ public class ClientExceptionMapper implements ExceptionMapper<ClientException> {
                 requestContext.getLanguage(),
                 ex.getErrorsEnum().getFullKey());
 
-        ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setErrorKey(ex.getErrorsEnum().getFullKey());
-        errorMessage.setMessage(message);
-
-        ErrorResponse errorResponse = new ErrorResponse(errorId, errorMessage);
+        ErrorResponse errorResponse = getErrorResponse(ex, message, errorId);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(errorResponse)
                 .build();
+    }
+
+    private static @NotNull ErrorResponse getErrorResponse(ClientException ex, String message, String errorId) {
+        String formattedMessage = ex instanceof DemoClientException demoClientException
+                ? String.format(
+                        message,
+                        ex.getEntityName(),
+                        demoClientException.getResponse().getStatus())
+                : message;
+
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setErrorKey(ex.getErrorsEnum().getFullKey());
+        errorMessage.setMessage(formattedMessage);
+
+        return new ErrorResponse(errorId, errorMessage);
     }
 }

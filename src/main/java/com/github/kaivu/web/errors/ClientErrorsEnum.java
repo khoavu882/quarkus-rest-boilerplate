@@ -16,6 +16,7 @@ import java.util.Map;
 @Getter
 public enum ClientErrorsEnum {
     DEMO_REST_CLIENT_BAD_REQUEST(EntitiesConstant.DEMO_REST, ErrorsKeyConstant.CLIENT_BAD_REQUEST),
+    DEMO_REST_CLIENT_INTERNAL_SERVER_ERROR(EntitiesConstant.DEMO_REST, ErrorsKeyConstant.INTERNAL_SERVER_ERROR),
     DEMO_REST_PERMISSION_DENIED(EntitiesConstant.DEMO_REST, ErrorsKeyConstant.PERMISSION_DENIED),
     DEMO_REST_UNAUTHORIZED(EntitiesConstant.DEMO_REST, ErrorsKeyConstant.UNAUTHORIZED),
     DEMO_REST_CONFLICT(EntitiesConstant.DEMO_REST, ErrorsKeyConstant.CONFLICT),
