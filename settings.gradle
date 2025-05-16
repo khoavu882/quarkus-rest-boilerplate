@@ -1,0 +1,15 @@
+<<<<<<< Updated upstream
+rootProject.name = 'quarkus-rest'
+=======
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    plugins {
+        id "${quarkusPlatformGroupId}" version "${quarkusPlatformVersion}"
+    }
+}
+
+rootProject.name='quarkus-rest'
+>>>>>>> Stashed changes

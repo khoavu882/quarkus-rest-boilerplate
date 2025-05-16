@@ -1,0 +1,169 @@
+plugins {
+    id 'java'
+<<<<<<< Updated upstream
+    alias(libs.plugins.quarkus)
+    alias(libs.plugins.spotless)
+}
+
+group = 'com.github.kaivu'
+version = '1.0.0'
+sourceCompatibility = JavaVersion.VERSION_17
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Quarkus dependencies
+    implementation platform(libs.quarkus.bom)
+    implementation libs.quarkus.arc
+    implementation libs.quarkus.config.yaml
+    implementation libs.quarkus.hibernate.validator
+    implementation libs.quarkus.hibernate.reactive.panache
+    implementation libs.quarkus.logging.json
+    implementation libs.quarkus.micrometer.registry.prometheus
+    implementation libs.quarkus.mutiny
+    implementation libs.quarkus.quartz
+    implementation libs.quarkus.rest
+    implementation libs.quarkus.rest.jackson
+    implementation libs.quarkus.rest.client.jackson
+    implementation libs.quarkus.reactive.pg.client
+    implementation libs.quarkus.redis.client
+    implementation libs.quarkus.smallrye.openapi
+    implementation libs.quarkus.websockets
+    implementation libs.quarkus.qute.web
+
+    // Other dependencies
+    implementation libs.jackson.jsr310
+    implementation libs.jackson.hibernate
+    implementation libs.commons.io
+    implementation libs.aspectj.weaver
+    implementation libs.tika.core
+    implementation libs.mapstruct
+    implementation libs.minio
+
+    // Test dependencies
+    implementation libs.quarkus.smallrye.health
+    implementation libs.quarkus.container.image.docker
+    testImplementation libs.quarkus.junit5
+    testImplementation libs.quarkus.panache.mock
+
+    // Annotation processors
+    annotationProcessor libs.quarkus.panache.common
+    annotationProcessor libs.hibernate.jpamodelgen
+    annotationProcessor libs.lombok
+    annotationProcessor libs.mapstruct.processor
+
+    // Provided dependencies
+    compileOnly libs.lombok
+    compileOnly libs.mapstruct.processor
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+// Configure Spotless for code formatting
+spotless {
+    java {
+        palantirJavaFormat('2.47.0')
+=======
+    id 'io.quarkus' version '3.23.3'
+    id 'com.diffplug.spotless' version '6.25.0'
+}
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+
+    // Quarkus dependencies
+    implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkus:quarkus-config-yaml'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-hibernate-reactive-panache'
+    implementation 'io.quarkus:quarkus-logging-json'
+    implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
+    implementation 'io.quarkus:quarkus-mutiny'
+    implementation 'io.quarkus:quarkus-quartz'
+    implementation 'io.quarkus:quarkus-rest'
+    implementation 'io.quarkus:quarkus-rest-jackson'
+    implementation 'io.quarkus:quarkus-rest-client-jackson'
+    implementation 'io.quarkus:quarkus-reactive-pg-client'
+    implementation 'io.quarkus:quarkus-redis-client'
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'io.quarkus:quarkus-websockets'
+    implementation 'io.quarkus:quarkus-smallrye-health'
+    implementation 'io.quarkus:quarkus-container-image-docker'
+
+    // Other dependencies
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonDatatypeVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate6:${jacksonDatatypeVersion}"
+    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "org.aspectj:aspectjweaver:${aspectjweaverVersion}"
+    implementation "org.apache.tika:tika-core:${apacheTikaVersion}"
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    implementation "io.minio:minio:${minioVersion}"
+
+    // Provided dependencies
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    compileOnly "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+    // Annotation processors
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+    annotationProcessor "org.hibernate:hibernate-jpamodelgen"
+    annotationProcessor "io.quarkus:quarkus-panache-common"
+
+    // Test dependencies
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.quarkus:quarkus-panache-mock'
+}
+
+group 'com.github.kaivu'
+version '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+    useJUnitPlatform()
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.add('-parameters')
+    // Add annotation processor order to match Maven configuration
+    options.compilerArgs.add('-processor')
+    options.compilerArgs.add('lombok,org.mapstruct.ap.MappingProcessor')
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+spotless {
+    java {
+        palantirJavaFormat(palantirVersion)
+>>>>>>> Stashed changes
+        importOrder('', 'java|javax', '\\#')
+        removeUnusedImports()
+    }
+}
+
+<<<<<<< Updated upstream
+// Configure test tasks
+tasks.withType(Test) {
+    systemProperty 'java.util.logging.manager', 'org.jboss.logmanager.LogManager'
+}
+=======
+check.dependsOn spotlessCheck
+>>>>>>> Stashed changes
