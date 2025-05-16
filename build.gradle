@@ -1,0 +1,79 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+    id 'com.diffplug.spotless'
+}
+
+group = 'com.github.kaivu'
+version = '1.0.0'
+sourceCompatibility = JavaVersion.VERSION_21
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation platform("io.quarkus.platform:quarkus-bom:${quarkusVersion}")
+    implementation "io.quarkus:quarkus-arc"
+    implementation "io.quarkus:quarkus-config-yaml"
+    implementation "io.quarkus:quarkus-hibernate-validator"
+    implementation "io.quarkus:quarkus-hibernate-reactive-panache"
+    implementation "io.quarkus:quarkus-logging-json"
+    implementation "io.quarkus:quarkus-micrometer"
+    implementation "io.quarkus:quarkus-opentelemetry"
+    implementation "io.quarkus:quarkus-mutiny"
+    implementation "io.quarkus:quarkus-quartz"
+    implementation "io.quarkus:quarkus-rest"
+    implementation "io.quarkus:quarkus-rest-jackson"
+    implementation "io.quarkus:quarkus-rest-client-jackson"
+    implementation "io.quarkus:quarkus-reactive-pg-client"
+    implementation "io.quarkus:quarkus-redis-client"
+    implementation "io.quarkus:quarkus-smallrye-openapi"
+    implementation "io.quarkus:quarkus-websockets"
+    implementation "io.quarkus:quarkus-qute"
+
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate6:${jacksonVersion}"
+    implementation "commons-io:commons-io:${commonsIoVersion}"
+    implementation "org.aspectj:aspectjweaver:${aspectjVersion}"
+    implementation "org.apache.tika:tika-core:${tikaVersion}"
+    implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+    implementation "io.minio:minio:${minioVersion}"
+
+    testImplementation "io.quarkus:quarkus-smallrye-health"
+    testImplementation "io.quarkus:quarkus-container-image-docker"
+    testImplementation "io.quarkus:quarkus-junit5"
+    testImplementation "io.quarkus:quarkus-panache-mock"
+
+    annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    compileOnly "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+spotless {
+    java {
+        palantirJavaFormat("${palantirVersion}")
+        importOrder '', 'java', 'javax', '#'
+        removeUnusedImports()
+    }
+}
+
+tasks.withType(Test).configureEach {
+    systemProperty 'java.util.logging.manager', 'org.jboss.logmanager.LogManager'
+    useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ['-parameters']
+}
