@@ -28,8 +28,6 @@ public interface DemoClientService {
 
         int status = response.getStatus();
         return switch (status) {
-            case 400 -> // Response.Status.BAD_REQUEST
-            new DemoClientException(response);
             case 401 -> // Response.Status.UNAUTHORIZED
             new DemoClientException(ClientErrorsEnum.DEMO_REST_UNAUTHORIZED, response);
             case 403 -> // Response.Status.FORBIDDEN
@@ -37,8 +35,11 @@ public interface DemoClientService {
             case 409 -> // Response.Status.CONFLICT
             new DemoClientException(ClientErrorsEnum.DEMO_REST_CONFLICT, response);
             default -> {
-                if (400 <= status && status <= 511) {
-                    yield new DemoClientException(response);
+                if (400 <= status && status < 500) {
+                    yield new DemoClientException(ClientErrorsEnum.DEMO_REST_CLIENT_BAD_REQUEST, response);
+                }
+                if (500 <= status && status <= 511) {
+                    yield new DemoClientException(ClientErrorsEnum.DEMO_REST_CLIENT_INTERNAL_SERVER_ERROR, response);
                 }
                 yield null;
             }

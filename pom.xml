@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.kaivu</groupId>
@@ -21,7 +20,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>3.19.4</quarkus.platform.version>
+    <quarkus.platform.version>3.22.2</quarkus.platform.version>
     <spotless.version>2.43.0</spotless.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.3.1</surefire-plugin.version>
@@ -104,14 +103,7 @@
       <groupId>io.quarkiverse.qute.web</groupId>
       <artifactId>quarkus-qute-web</artifactId>
     </dependency>
-<!--    <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-opentelemetry</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>io.opentelemetry</groupId>
-      <artifactId>opentelemetry-exporter-logging</artifactId>
-    </dependency>-->
+
     <!-- Other Dependencies -->
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -162,6 +154,14 @@
     </dependency>
 
     <!-- Test Dependencies -->
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-smallrye-health</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-container-image-docker</artifactId>
+    </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
@@ -242,8 +242,7 @@
         </executions>
         <configuration>
           <systemPropertyVariables>
-            <native.image.path>${project.build.directory}/${project.build.finalName}-runner
-            </native.image.path>
+            <native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
             <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
@@ -269,7 +268,7 @@
             <importOrder>
               <order>,java|javax,\#</order>
             </importOrder>
-            <removeUnusedImports/>
+            <removeUnusedImports />
           </java>
         </configuration>
       </plugin>
