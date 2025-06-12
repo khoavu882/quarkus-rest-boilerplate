@@ -1,8 +1,8 @@
 package com.github.kaivu.web.rest;
 
-import com.github.kaivu.constant.AppConstant;
-import com.github.kaivu.utils.ResourceBundleUtil;
-import com.github.kaivu.web.errors.models.ErrorResponse;
+import com.github.kaivu.domain.constant.AppConstant;
+import com.github.kaivu.infrastructure.errors.models.ErrorResponse;
+import com.github.kaivu.infrastructure.utils.ResourceBundleUtil;
 import io.vertx.core.json.JsonObject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
