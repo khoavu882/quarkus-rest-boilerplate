@@ -92,7 +92,7 @@ quarkus:
 
   native:
     additional-build-args:
-      - ${ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.config.ConfigsProvider}
+      - ${ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.infrastructure.config.ConfigsProvider}
     container-build: ${ENABLE_NATIVE_CONTAINER_BUILD:false}
 
 minio:
