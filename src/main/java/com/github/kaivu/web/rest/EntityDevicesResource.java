@@ -1,14 +1,14 @@
 package com.github.kaivu.web.rest;
 
-import com.github.kaivu.models.EntityDevice;
-import com.github.kaivu.usecase.EntityDeviceUseCase;
-import com.github.kaivu.usecase.dto.CreateEntityDTO;
-import com.github.kaivu.usecase.dto.UpdateEntityDTO;
-import com.github.kaivu.web.errors.models.ErrorResponse;
-import com.github.kaivu.web.vm.EntityDeviceDetailsVM;
-import com.github.kaivu.web.vm.EntityDeviceFilters;
-import com.github.kaivu.web.vm.EntityDeviceVM;
-import com.github.kaivu.web.vm.common.PageResponse;
+import com.github.kaivu.core.dto.CreateEntityDTO;
+import com.github.kaivu.core.dto.UpdateEntityDTO;
+import com.github.kaivu.core.entities.EntityDevice;
+import com.github.kaivu.core.usecase.EntityDeviceUseCase;
+import com.github.kaivu.domain.models.EntityDeviceDetailsVM;
+import com.github.kaivu.domain.models.EntityDeviceFilters;
+import com.github.kaivu.domain.models.EntityDeviceVM;
+import com.github.kaivu.infrastructure.common.PageResponse;
+import com.github.kaivu.infrastructure.errors.models.ErrorResponse;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;

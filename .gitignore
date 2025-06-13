@@ -1,36 +1,68 @@
-#Maven
+# Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 .flattened-pom.xml
+.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+buildNumber.properties
+.mvn/wrapper/maven-wrapper.properties
+
+# Gradle
+.gradle/
+build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+**/build/
+gradle/wrapper/gradle-wrapper.jar
 
 # Eclipse
 .project
 .classpath
 .settings/
 bin/
+.apt_generated/
+.apt_generated_tests/
+.factorypath
 
 # IntelliJ
-.idea
+.idea/
 *.ipr
 *.iml
 *.iws
+out/
+.idea_modules/
 
 # NetBeans
 nb-configuration.xml
+nbproject/
+nbactions.xml
+nb-gradle/
 
 # Visual Studio Code
-.vscode
+.vscode/
 .factorypath
+.history/
+*.code-workspace
 
 # OSX
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # Vim
 *.swp
 *.swo
+*~
 
 # patch
 *.orig
@@ -38,6 +70,51 @@ nb-configuration.xml
 
 # Local environment
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Plugin directory
-/.quarkus/cli/plugins/
+# Quarkus specific
+.quarkus/
+.quarkus/cli/plugins/
+quarkus.log
+quarkus.log.*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Node (for frontend if applicable)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output
+
+# Compiled Java classes
+*.class
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build

@@ -1,13 +1,13 @@
 package com.github.kaivu.web.rest;
 
-import com.github.kaivu.services.client.DemoClientService;
-import com.github.kaivu.web.errors.ErrorsEnum;
-import com.github.kaivu.web.errors.exceptions.EntityNotFoundException;
-import com.github.kaivu.web.errors.exceptions.NotAcceptableException;
-import com.github.kaivu.web.errors.exceptions.PermissionDeniedException;
-import com.github.kaivu.web.errors.exceptions.ServiceException;
-import com.github.kaivu.web.errors.exceptions.UnauthorizedException;
-import com.github.kaivu.web.errors.models.ErrorResponse;
+import com.github.kaivu.infrastructure.errors.ErrorsEnum;
+import com.github.kaivu.infrastructure.errors.exceptions.EntityNotFoundException;
+import com.github.kaivu.infrastructure.errors.exceptions.NotAcceptableException;
+import com.github.kaivu.infrastructure.errors.exceptions.PermissionDeniedException;
+import com.github.kaivu.infrastructure.errors.exceptions.ServiceException;
+import com.github.kaivu.infrastructure.errors.exceptions.UnauthorizedException;
+import com.github.kaivu.infrastructure.errors.models.ErrorResponse;
+import com.github.kaivu.infrastructure.services.client.DemoClientService;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;
 import jakarta.validation.Valid;
