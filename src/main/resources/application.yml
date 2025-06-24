@@ -72,6 +72,13 @@ quarkus:
       url: ${DEMO_CLIENT_URL}
       scope: ${DEMO_CLIENT_SCOPE:jakarta.inject.Singleton}
 
+  otel:
+    logs:
+      enabled: ${OTEL_LOGS_ENABLE:false}
+    exporter:
+      otlp:
+        endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:localhost:4317}
+
   tls:
     trust-all: true
 
