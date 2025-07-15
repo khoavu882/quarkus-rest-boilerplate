@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>com.github.kaivu</groupId>
   <artifactId>quarkus-rest</artifactId>
   <version>1.0.0</version>
   <properties>
     <apache-tika.version>2.9.2</apache-tika.version>
     <aspectjweaver.version>1.9.22.1</aspectjweaver.version>
-    <compiler-plugin.version>3.12.1</compiler-plugin.version>
     <commons-io.version>2.16.1</commons-io.version>
-    <lombok.version>1.18.32</lombok.version>
+    <compiler-plugin.version>3.12.1</compiler-plugin.version>
     <jackson-datatype.version>2.17.3</jackson-datatype.version>
+    <lombok.version>1.18.32</lombok.version>
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <maven.compiler.release>17</maven.compiler.release>
     <minio.version>8.5.11</minio.version>
@@ -21,11 +21,10 @@
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>3.23.3</quarkus.platform.version>
-    <spotless.version>2.43.0</spotless.version>
     <skipITs>true</skipITs>
+    <spotless.version>2.43.0</spotless.version>
     <surefire-plugin.version>3.3.1</surefire-plugin.version>
   </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -37,7 +36,6 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -107,8 +105,6 @@
       <groupId>io.quarkiverse.qute.web</groupId>
       <artifactId>quarkus-qute-web</artifactId>
     </dependency>
-
-    <!-- Other Dependencies -->
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
@@ -156,8 +152,6 @@
       <artifactId>minio</artifactId>
       <version>${minio.version}</version>
     </dependency>
-
-    <!-- Test Dependencies -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-smallrye-health</artifactId>
@@ -177,7 +171,13 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
+  <repositories>
+    <repository>
+      <id>maven_central</id>
+      <name>Maven Central</name>
+      <url>https://repo.maven.apache.org/maven2/</url>
+    </repository>
+  </repositories>
   <build>
     <plugins>
       <plugin>
@@ -278,14 +278,6 @@
       </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <id>maven_central</id>
-      <name>Maven Central</name>
-      <url>https://repo.maven.apache.org/maven2/</url>
-    </repository>
-  </repositories>
-
   <profiles>
     <profile>
       <id>native</id>

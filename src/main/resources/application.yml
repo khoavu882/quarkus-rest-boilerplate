@@ -77,7 +77,8 @@ quarkus:
       enabled: ${OTEL_LOGS_ENABLE:false}
     exporter:
       otlp:
-        endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:localhost:4317}
+        traces:
+          endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:localhost:4317}
 
   tls:
     trust-all: true
