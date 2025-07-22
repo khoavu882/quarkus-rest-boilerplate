@@ -1,5 +1,7 @@
 package com.github.kaivu.web.rest;
 
+import com.github.kaivu.core.enumeration.ActionStatus;
+import com.github.kaivu.infrastructure.annotations.ValidEnumValue;
 import com.github.kaivu.infrastructure.errors.ErrorsEnum;
 import com.github.kaivu.infrastructure.errors.exceptions.EntityNotFoundException;
 import com.github.kaivu.infrastructure.errors.exceptions.NotAcceptableException;
@@ -176,6 +178,9 @@ public class DemoResource {
 
         @Email(message = "user.email.invalid")
         private String email;
+
+        @ValidEnumValue(enumClass = ActionStatus.class, message = "user.status.invalid")
+        private String status;
 
         @Valid
         @NotNull(message = "user.metadata.invalid")
