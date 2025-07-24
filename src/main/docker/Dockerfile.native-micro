@@ -6,7 +6,7 @@
 #
 # Before building the container image run:
 #
-# ./mvnw package -Dnative
+# ./gradlew build -Dquarkus.package.native=true
 #
 # Then, build the image with:
 #

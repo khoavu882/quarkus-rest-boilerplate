@@ -1,6 +1,7 @@
 package com.github.kaivu.infrastructure.errors.mappers;
 
 import com.github.kaivu.domain.constant.AppConstant;
+import com.github.kaivu.domain.constant.AppHeaderConstant;
 import com.github.kaivu.infrastructure.errors.exceptions.ClientException;
 import com.github.kaivu.infrastructure.errors.exceptions.DemoClientException;
 import com.github.kaivu.infrastructure.errors.models.ErrorMessage;
@@ -13,8 +14,6 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 /**
  * Created by Khoa Vu.
@@ -31,7 +30,7 @@ public class ClientExceptionMapper implements ExceptionMapper<ClientException> {
 
     @Override
     public Response toResponse(ClientException ex) {
-        String errorId = UUID.randomUUID().toString();
+        String errorId = requestContext.getHeaderString(AppHeaderConstant.TRACE_ID);
 
         log.error(errorId, ex);
 

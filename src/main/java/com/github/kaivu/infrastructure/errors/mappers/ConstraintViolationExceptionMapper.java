@@ -1,8 +1,11 @@
 package com.github.kaivu.infrastructure.errors.mappers;
 
+import com.github.kaivu.domain.constant.AppHeaderConstant;
 import com.github.kaivu.infrastructure.errors.models.ErrorMessage;
 import com.github.kaivu.infrastructure.errors.models.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
@@ -10,15 +13,17 @@ import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Provider
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
+    @Context
+    ContainerRequestContext requestContext;
+
     @Override
     public Response toResponse(ConstraintViolationException ex) {
-        String errorId = UUID.randomUUID().toString();
+        String errorId = requestContext.getHeaderString(AppHeaderConstant.TRACE_ID);
         log.error("Validation error [{}]:", errorId, ex);
 
         List<ErrorMessage> errorMessages = ex.getConstraintViolations().stream()
