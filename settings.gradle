@@ -1,0 +1,11 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    plugins {
+        id 'io.quarkus' version "${quarkusVersion}"
+        id 'com.diffplug.spotless' version "${spotlessVersion}"
+    }
+}
+rootProject.name = 'quarkus-rest'

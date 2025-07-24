@@ -3,7 +3,7 @@
 #
 # Before building the container image run:
 #
-# ./mvnw package -Dnative
+# ./gradle build -Dquarkus.package.native=true
 #
 # Then, build the image with:
 #
@@ -18,10 +18,14 @@ FROM ubuntu:22.04
 WORKDIR /work/
 RUN chown 1001 /work \
     && chmod "g+rwX" /work \
-    && chown 1001:root /work
+    && chown 1001:root /work \
+COPY ../../entrypoint.sh ./
+COPY ../../.env ./
 COPY --chown=1001:root target/*-runner /work/application
+
+RUN chmod +x entrypoint.sh
 
 EXPOSE 8080
 USER 1001
 
-ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]
+ENTRYPOINT ["./entrypoint.sh", "./application", "-Dquarkus.http.host=0.0.0.0"]

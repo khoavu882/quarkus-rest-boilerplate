@@ -21,8 +21,8 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 ## Getting Started
 ## Required Environment
 
-- **Java**: Ensure you have JDK 17 or later installed.
-- **Maven**: Apache Maven 3.9.6 or later is required.
+- **Java**: Ensure you have JDK 21 or later installed.
+- **Gradle**: Gradle 8.5 or later is required.
 - **GraalVM**: Required for building native executables (optional).
 
 You can find environment variables of application in [.env-template](.env.template)
@@ -45,7 +45,11 @@ This project uses the following key dependencies:
 
 ## Compiler
 
-The project is built using Maven. Ensure Maven is installed and configured correctly.
+The project is built using Gradle. Ensure Gradle is installed and configured correctly.
+After editing the source code, run the following command to compile the project if errors occur:
+```shell script
+./gradle spotlessApply
+```
 
 - Format check: `./mvnw spotless:check`, Format apply: `./mvnw spotless:apply`
 
@@ -53,13 +57,7 @@ The project is built using Maven. Ensure Maven is installed and configured corre
 
 You can run your application in dev mode that enables live coding using:
 ```shell script
-./mvnw compile quarkus:dev
-
-## Running the application in dev mode
-
-You can run your application in dev mode that enables live coding using:
-```shell script
-./mvnw compile quarkus:dev
+./gradle quarkusDev
 ```
 
 > **_NOTE:_**  
@@ -70,8 +68,9 @@ You can run your application in dev mode that enables live coding using:
 
 The application can be packaged using:
 ```shell script
-./mvnw package
+./gradle build
 ```
+
 It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
 Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
 
@@ -79,7 +78,7 @@ The application is now runnable using `java -jar target/quarkus-app/quarkus-run.
 
 If you want to build an _über-jar_, execute the following command:
 ```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
+./gradle build -Dquarkus.package.type=uber-jar
 ```
 
 The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
@@ -88,12 +87,12 @@ The application, packaged as an _über-jar_, is now runnable using `java -jar ta
 
 You can create a native executable using: 
 ```shell script
-./mvnw package -Dnative
+./gradle build -Dquarkus.package.native=true
 ```
 
 Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
 ```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
+./gradle build -Dquarkus.package.native=true -Dquarkus.native.container-build=true
 ```
 
 You can then execute your native executable with: `./target/quarkus-rest-1.0.0-runner`
