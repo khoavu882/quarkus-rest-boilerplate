@@ -18,31 +18,35 @@ import java.time.Instant;
 public class LogExecutionTimeInterceptor {
 
     @AroundInvoke
-    public Object logExecutionTime(InvocationContext context) throws Exception {
-        String methodName = context.getMethod().getDeclaringClass().getSimpleName() + "."
+    public Object logExecutionTime(final InvocationContext context) throws Exception {
+        final String methodName = context.getMethod().getDeclaringClass().getSimpleName() + "."
                 + context.getMethod().getName();
-        Instant start = Instant.now();
+        final Instant start = Instant.now();
 
-        Object result = context.proceed();
+        final Object result = context.proceed();
 
-        // If the result is a Uni, we need to measure time when it completes
         if (result instanceof Uni<?>) {
             return ((Uni<?>) result)
                     .onItem()
-                    .invoke(item -> {
-                        Duration duration = Duration.between(start, Instant.now());
-                        log.info("Async method {} execution time: {} ms", methodName, duration.toMillis());
-                    })
+                    .invoke(item -> logDuration(methodName, start, false, null))
                     .onFailure()
-                    .invoke(failure -> {
-                        Duration duration = Duration.between(start, Instant.now());
-                        log.info("Method {} failed after: {} ms", methodName, duration.toMillis());
-                    });
+                    .invoke(failure -> logDuration(methodName, start, true, failure));
         } else {
-            // For non-Uni results, measure time immediately
-            Duration duration = Duration.between(start, Instant.now());
-            log.info("Method {} execution time: {} ms", methodName, duration.toMillis());
+            logDuration(methodName, start, false, null);
             return result;
+        }
+    }
+
+    private void logDuration(final String methodName, final Instant start, final boolean failed, Throwable exception) {
+        final Duration duration = Duration.between(start, Instant.now());
+        if (failed) {
+            log.info(
+                    "Method {} failed after: {} ms with exception {}",
+                    methodName,
+                    duration.toMillis(),
+                    exception.getMessage());
+        } else {
+            log.info("Method {} execution time: {} ms", methodName, duration.toMillis());
         }
     }
 }

@@ -2,6 +2,21 @@
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
+## Architecture
+- **Framework**: Quarkus (reactive JAX-RS, not Spring)
+- **Database**: PostgreSQL with Hibernate Reactive + Panache
+- **Storage**: MinIO object storage, Redis caching
+- **Main packages**: `core/` (entities, DTOs, use cases), `domain/` (services, repos), `infrastructure/` (config, errors, utils), `web/rest/` (controllers)
+- **REST endpoints**: `/api/entity-devices`, `/demo`, `/common`, `/stream`
+
+## Code Style
+- **Formatting**: Palantir Java Format via Spotless plugin
+- **Imports**: Order: `blank,java|javax,#` with unused imports removed
+- **Annotations**: Lombok (`@Getter`, `@Slf4j`), Jakarta (`@Path`, `@GET`, `@Inject`), OpenAPI (`@Operation`, `@Tag`)
+- **Reactive**: Use `Uni<T>` return types for async operations
+- **DTOs**: Separate create/update DTOs, view models with `VM` suffix
+- **Entities**: Extend `AbstractAuditingEntity`, use UUIDs for IDs
+
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 ## Getting Started
 ## Required Environment
@@ -16,6 +31,8 @@ You can find environment variables of application in [.env-template](.env.templa
 
 - **Database**: Specify the database used (e.g., PostgreSQL, MySQL) and any setup instructions.
 - **MinIO**: Used for video streaming. Ensure MinIO is set up and accessible.
+- **Redis**: Used for caching. Ensure Redis is set up and accessible.
+- **OpenTelemetry**: For distributed tracing, ensure OpenTelemetry is configured.
 
 ## Dependencies
 
@@ -29,6 +46,8 @@ This project uses the following key dependencies:
 ## Compiler
 
 The project is built using Maven. Ensure Maven is installed and configured correctly.
+
+- Format check: `./mvnw spotless:check`, Format apply: `./mvnw spotless:apply`
 
 ## Running the application in dev mode
 
