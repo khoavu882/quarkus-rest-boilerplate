@@ -1,6 +1,7 @@
 package com.github.kaivu.infrastructure.errors.mappers;
 
 import com.github.kaivu.domain.constant.AppConstant;
+import com.github.kaivu.domain.constant.AppHeaderConstant;
 import com.github.kaivu.domain.constant.EntitiesConstant;
 import com.github.kaivu.domain.constant.ErrorsKeyConstant;
 import com.github.kaivu.infrastructure.errors.models.ErrorMessage;
@@ -14,8 +15,6 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.JDBCConnectionException;
-
-import java.util.UUID;
 
 /**
  * Created by Khoa Vu.
@@ -33,7 +32,7 @@ public class JdbcConnectionExceptionMapper implements ExceptionMapper<JDBCConnec
 
     @Override
     public Response toResponse(JDBCConnectionException ex) {
-        String errorId = UUID.randomUUID().toString();
+        String errorId = requestContext.getHeaderString(AppHeaderConstant.TRACE_ID);
 
         log.error(errorId, ex);
 

@@ -1,14 +1,15 @@
 package com.github.kaivu.infrastructure.errors.mappers;
 
+import com.github.kaivu.domain.constant.AppHeaderConstant;
 import com.github.kaivu.infrastructure.errors.exceptions.EntityNotFoundException;
 import com.github.kaivu.infrastructure.errors.models.ErrorMessage;
 import com.github.kaivu.infrastructure.errors.models.ErrorResponse;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.UUID;
 
 /**
  * Created by Khoa Vu.
@@ -20,9 +21,12 @@ import java.util.UUID;
 @Provider
 public class EntityNotFoundExceptionMapper implements ExceptionMapper<EntityNotFoundException> {
 
+    @Context
+    ContainerRequestContext requestContext;
+
     @Override
     public Response toResponse(EntityNotFoundException ex) {
-        String errorId = UUID.randomUUID().toString();
+        String errorId = requestContext.getHeaderString(AppHeaderConstant.TRACE_ID);
 
         log.error(errorId, ex);
 

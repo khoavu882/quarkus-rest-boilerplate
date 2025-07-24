@@ -1,6 +1,6 @@
 # Before building the container image run:
 #
-# ./gradle build
+# ./gradlew build
 #
 # Then, build the image with:
 #

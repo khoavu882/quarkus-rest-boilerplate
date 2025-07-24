@@ -1,7 +1,9 @@
 package com.github.kaivu.infrastructure.middleware;
 
 import com.github.kaivu.core.audit.AuditListener;
+import com.github.kaivu.domain.constant.AppHeaderConstant;
 import com.github.kaivu.infrastructure.security.AppSecurityContext;
+import io.opentelemetry.api.trace.Span;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -11,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 
 import java.util.Locale;
+import java.util.Map;
 
 @Slf4j
 @ApplicationScoped
@@ -19,16 +22,21 @@ public class DeclaringRoutes {
     private static final String DEFAULT_LANGUAGE = Locale.getDefault().getLanguage();
 
     @ServerRequestFilter(preMatching = true, nonBlocking = true)
-    public Uni<Void> setLanguage(ContainerRequestContext requestContext) {
+    public Uni<Void> setDefaultHeadersValue(ContainerRequestContext requestContext) {
+
+        Map<String, String> DEFAULT_HEADERS = Map.of(
+                HttpHeaders.ACCEPT_LANGUAGE, DEFAULT_LANGUAGE,
+                HttpHeaders.CONTENT_LANGUAGE, DEFAULT_LANGUAGE,
+                AppHeaderConstant.TRACE_ID, Span.current().getSpanContext().getTraceId()
+                // Add more headers as needed
+                );
+
         return Uni.createFrom().item(requestContext).onItem().transform(ctx -> {
-            String contentLang = ctx.getHeaderString(HttpHeaders.CONTENT_LANGUAGE);
-            String acceptLang = ctx.getHeaderString(HttpHeaders.ACCEPT_LANGUAGE);
-            if (contentLang == null) {
-                ctx.getHeaders().putSingle(HttpHeaders.CONTENT_LANGUAGE, DEFAULT_LANGUAGE);
-            }
-            if (acceptLang == null) {
-                ctx.getHeaders().putSingle(HttpHeaders.ACCEPT_LANGUAGE, DEFAULT_LANGUAGE);
-            }
+            DEFAULT_HEADERS.forEach((key, valueSupplier) -> {
+                if (ctx.getHeaderString(key) == null) {
+                    ctx.getHeaders().putSingle(key, valueSupplier);
+                }
+            });
             return null;
         });
     }

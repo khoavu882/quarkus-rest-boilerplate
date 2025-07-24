@@ -1,6 +1,7 @@
 package com.github.kaivu.infrastructure.errors;
 
 import com.github.kaivu.domain.constant.AppConstant;
+import com.github.kaivu.domain.constant.AppHeaderConstant;
 import com.github.kaivu.domain.constant.EntitiesConstant;
 import com.github.kaivu.domain.constant.ErrorsKeyConstant;
 import com.github.kaivu.infrastructure.errors.models.ErrorMessage;
@@ -15,8 +16,6 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.UUID;
-
 @Slf4j
 @Provider
 @ApplicationScoped
@@ -28,7 +27,7 @@ public class ErrorsHandler implements ExceptionMapper<Throwable> {
 
     @Override
     public Response toResponse(Throwable ex) {
-        String errorId = UUID.randomUUID().toString();
+        String errorId = requestContext.getHeaderString(AppHeaderConstant.TRACE_ID);
         String errorKey = EntitiesConstant.SYSTEM + "." + ErrorsKeyConstant.ERROR_NON_DEFINED;
 
         log.error("Error ID: {} - Exception: {}", errorId, ex.getMessage(), ex);

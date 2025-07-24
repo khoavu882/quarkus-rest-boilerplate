@@ -15,11 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-<<<<<<< Updated upstream
-# SPDX-License-Identifier: Apache-2.0
-#
-=======
->>>>>>> Stashed changes
 
 ##############################################################################
 #
@@ -60,11 +55,7 @@
 #       Darwin, MinGW, and NonStop.
 #
 #   (3) This script is generated from the Groovy template
-<<<<<<< Updated upstream
-#       https://github.com/gradle/gradle/blob/HEAD/platforms/jvm/plugins-application/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
-=======
 #       https://github.com/gradle/gradle/blob/HEAD/subprojects/plugins/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
->>>>>>> Stashed changes
 #       within the Gradle project.
 #
 #       You can find Gradle at https://github.com/gradle/gradle/.
@@ -93,12 +84,7 @@ done
 # shellcheck disable=SC2034
 APP_BASE_NAME=${0##*/}
 # Discard cd standard output in case $CDPATH is set (https://github.com/gradle/gradle/issues/25036)
-<<<<<<< Updated upstream
-APP_HOME=$( cd -P "${APP_HOME:-./}" > /dev/null && printf '%s
-' "$PWD" ) || exit
-=======
 APP_HOME=$( cd "${APP_HOME:-./}" > /dev/null && pwd -P ) || exit
->>>>>>> Stashed changes
 
 # Use the maximum available, or set MAX_FD != -1 to use that value.
 MAX_FD=maximum
