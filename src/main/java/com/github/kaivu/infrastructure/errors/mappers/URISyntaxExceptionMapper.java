@@ -1,12 +1,14 @@
 package com.github.kaivu.infrastructure.errors.mappers;
 
+import com.github.kaivu.domain.constant.AppHeaderConstant;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URISyntaxException;
-import java.util.UUID;
 
 /**
  * Created by Khoa Vu.
@@ -18,9 +20,12 @@ import java.util.UUID;
 @Provider
 public class URISyntaxExceptionMapper implements ExceptionMapper<URISyntaxException> {
 
+    @Context
+    ContainerRequestContext requestContext;
+
     @Override
     public Response toResponse(URISyntaxException ex) {
-        String errorId = UUID.randomUUID().toString();
+        String errorId = requestContext.getHeaderString(AppHeaderConstant.TRACE_ID);
 
         log.error(errorId, ex);
 

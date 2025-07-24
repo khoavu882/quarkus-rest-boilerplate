@@ -1,6 +1,7 @@
 package com.github.kaivu.infrastructure.errors.mappers;
 
 import com.github.kaivu.domain.constant.AppConstant;
+import com.github.kaivu.domain.constant.AppHeaderConstant;
 import com.github.kaivu.domain.constant.EntitiesConstant;
 import com.github.kaivu.domain.constant.ErrorsKeyConstant;
 import com.github.kaivu.infrastructure.errors.exceptions.*;
@@ -20,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.function.Function;
 
 @Slf4j
@@ -42,7 +42,7 @@ public class CompositeExceptionMapper implements ExceptionMapper<CompositeExcept
 
     @Override
     public Response toResponse(CompositeException exs) {
-        String errorId = UUID.randomUUID().toString();
+        String errorId = requestContext.getHeaderString(AppHeaderConstant.TRACE_ID);
         log.error(errorId, exs);
 
         return exs.getCauses().stream()
@@ -99,7 +99,7 @@ public class CompositeExceptionMapper implements ExceptionMapper<CompositeExcept
     }
 
     private Response buildErrorResponse(Response.Status status, String entityName, String errorKey, String message) {
-        String errorId = UUID.randomUUID().toString();
+        String errorId = requestContext.getHeaderString(AppHeaderConstant.TRACE_ID);
         ErrorMessage errorMessage = new ErrorMessage(entityName + "." + errorKey, message);
         ErrorResponse errorResponse = new ErrorResponse(errorId, errorMessage);
         return Response.status(status).entity(errorResponse).build();
