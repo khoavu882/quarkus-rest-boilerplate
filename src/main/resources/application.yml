@@ -90,6 +90,15 @@ quarkus:
     api-key-parameter-in: header
     api-key-parameter-name: authorization
 
+  smallrye-health:
+    ui:
+      enable: true
+  micrometer:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+
   native:
     additional-build-args:
       - ${ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.configuration.ConfigsProvider}
