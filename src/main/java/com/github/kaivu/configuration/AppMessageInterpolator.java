@@ -24,9 +24,9 @@ public class AppMessageInterpolator implements MessageInterpolator {
 
     // Fixed: Replace unsafe ConcurrentHashMap with Caffeine cache to prevent memory leaks
     private static final Cache<String, String> MESSAGE_CACHE = Caffeine.newBuilder()
-            .maximumSize(1000)                    // Prevent unlimited growth
+            .maximumSize(1000) // Prevent unlimited growth
             .expireAfterWrite(Duration.ofHours(1)) // Auto-expire entries
-            .recordStats()                        // Enable monitoring
+            .recordStats() // Enable monitoring
             .build();
 
     @jakarta.ws.rs.core.Context

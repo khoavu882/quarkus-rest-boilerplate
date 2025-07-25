@@ -1,0 +1,67 @@
+quarkus:
+  application:
+    name: demo-service-test
+
+  # Use random ports to avoid conflicts
+  http:
+    port: 0
+    test-port: 0
+    test-ssl-port: 0
+
+  # Test database configuration - use H2 for fast unit tests
+  datasource:
+    db-kind: h2
+    username: test
+    password: test
+    jdbc:
+      url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    reactive:
+      url: vertx-reactive:h2:mem:///testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+      max-size: 8
+
+    demo:
+      db-kind: h2
+      username: test
+      password: test
+      reactive:
+        url: vertx-reactive:h2:mem:///testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+        max-size: 8
+
+  hibernate-orm:
+    database:
+      generation: drop-and-create
+    sql-load-script: import-test.sql
+    log:
+      sql: false
+
+  # Disable external services for tests
+  devservices:
+    enabled: false
+
+  # Test logging configuration
+  log:
+    level: INFO
+    console:
+      format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"
+    category:
+      "com.github.kaivu":
+        level: DEBUG
+
+  # Disable management endpoints in tests
+  management:
+    enabled: false
+
+  # OpenAPI configuration for tests
+  smallrye-openapi:
+    enable: false
+
+  # Disable telemetry in tests
+  opentelemetry:
+    enabled: false
+
+# Test-specific MinIO configuration
+minio:
+  url: http://localhost:9000
+  access-key: testkey
+  secret-key: testsecret
+  bucket-name: test-bucket

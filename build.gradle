@@ -43,10 +43,11 @@ dependencies {
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation "io.minio:minio:${minioVersion}"
 
-    testImplementation "io.quarkus:quarkus-smallrye-health"
-    testImplementation "io.quarkus:quarkus-container-image-docker"
     testImplementation "io.quarkus:quarkus-junit5"
-    testImplementation "io.quarkus:quarkus-panache-mock"
+    testImplementation "io.rest-assured:rest-assured"
+    testImplementation "org.mockito:mockito-core:5.8.0"
+    testImplementation "org.mockito:mockito-junit-jupiter:5.8.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.1"
 
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -73,7 +74,7 @@ spotless {
 tasks.withType(Test).configureEach {
     systemProperty 'java.util.logging.manager', 'org.jboss.logmanager.LogManager'
     useJUnitPlatform()
-    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+    maxParallelForks = 1 // Reduce to 1 to prevent port conflicts
     forkEvery = 100 // Prevent memory leaks in tests
 }
 
