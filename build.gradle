@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'io.quarkus'
     id 'com.diffplug.spotless'
+    id 'jacoco'
 }
 
 group = 'com.github.kaivu'
@@ -48,6 +49,11 @@ dependencies {
     testImplementation "org.mockito:mockito-core:5.8.0"
     testImplementation "org.mockito:mockito-junit-jupiter:5.8.0"
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.10.1"
+    testImplementation "io.quarkus:quarkus-test-h2"
+    testImplementation "io.quarkus:quarkus-jdbc-h2"
+    testImplementation "org.testcontainers:junit-jupiter:1.19.3"
+    testImplementation "org.testcontainers:postgresql:1.19.3"
+    testImplementation "io.quarkus:quarkus-junit5-mockito"
 
     annotationProcessor "org.hibernate:hibernate-jpamodelgen:${hibernateJpamodelgenVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
@@ -84,3 +90,31 @@ tasks.withType(JavaCompile).configureEach {
     options.fork = true
     options.forkOptions.jvmArgs = ['-Xmx1g']
 }
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+    executionData fileTree(dir: buildDir, includes: ['**/*.exec'])
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoTestReport
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.90
+            }
+        }
+    }
+}
+
+test.finalizedBy jacocoTestReport
+check.dependsOn jacocoTestCoverageVerification

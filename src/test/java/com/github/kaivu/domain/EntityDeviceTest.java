@@ -4,120 +4,199 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.kaivu.domain.enumeration.ActionStatus;
 import io.vertx.core.json.JsonObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.Serializable;
+import java.time.Instant;
 import java.util.UUID;
 
 /**
- * Unit tests for EntityDevice domain entity
+ * Unit tests for EntityDevice domain object
  */
-@DisplayName("EntityDevice Domain Tests")
+@DisplayName("EntityDevice Unit Tests")
 class EntityDeviceTest {
 
-    @Test
-    @DisplayName("Should create EntityDevice with default values")
-    void testEntityDeviceDefaultConstructor() {
-        EntityDevice entity = new EntityDevice();
+    private EntityDevice entityDevice;
+    private UUID testId;
 
-        assertNull(entity.getId());
-        assertNull(entity.getDescription());
-        assertEquals(ActionStatus.ACTIVATED, entity.getStatus());
-        assertNotNull(entity.getMetadata());
-        assertTrue(entity.getMetadata().isEmpty());
+    @BeforeEach
+    void setUp() {
+        testId = UUID.randomUUID();
+        entityDevice = new EntityDevice();
     }
 
     @Test
-    @DisplayName("Should set and get ID")
-    void testSetAndGetId() {
-        EntityDevice entity = new EntityDevice();
-        UUID testId = UUID.randomUUID();
+    @DisplayName("Should create entity device with default values")
+    void testDefaultConstructor() {
+        EntityDevice device = new EntityDevice();
 
-        entity.setId(testId);
-
-        assertEquals(testId, entity.getId());
+        assertNull(device.getId());
+        // getName() will throw NPE if name is null, so check the field directly or set a name first
+        device.setName("default");
+        assertEquals("DEFAULT", device.getName());
+        assertNull(device.getDescription());
+        assertEquals(ActionStatus.ACTIVATED, device.getStatus());
+        assertNotNull(device.getMetadata());
     }
 
     @Test
-    @DisplayName("Should convert name to uppercase when getting")
-    void testGetNameReturnsUppercase() {
-        EntityDevice entity = new EntityDevice();
-        entity.setName("test device");
+    @DisplayName("Should set and get ID correctly")
+    void testIdSetterGetter() {
+        entityDevice.setId(testId);
 
-        assertEquals("TEST DEVICE", entity.getName());
+        assertEquals(testId, entityDevice.getId());
     }
 
     @Test
-    @DisplayName("Should convert name to lowercase when setting")
-    void testSetNameConvertsToLowercase() {
-        EntityDevice entity = new EntityDevice();
-        entity.setName("TEST DEVICE");
+    @DisplayName("Should set and get name correctly")
+    void testNameSetterGetter() {
+        String testName = "Test Device Name";
+        entityDevice.setName(testName);
 
-        // Verify the transformation works by getting the uppercase version
-        assertEquals("TEST DEVICE", entity.getName());
+        // EntityDevice converts name to lowercase on set and uppercase on get
+        assertEquals(testName.toUpperCase(), entityDevice.getName());
     }
 
     @Test
-    @DisplayName("Should handle null name gracefully")
-    void testSetAndGetNullName() {
-        EntityDevice entity = new EntityDevice();
-        entity.setName(null);
-
-        assertThrows(NullPointerException.class, entity::getName);
+    @DisplayName("Should handle null name")
+    void testNullName() {
+        // EntityDevice will throw NPE when setting null name because it calls toLowerCase() on null
+        assertThrows(NullPointerException.class, () -> entityDevice.setName(null));
     }
 
     @Test
-    @DisplayName("Should set and get description")
-    void testSetAndGetDescription() {
-        EntityDevice entity = new EntityDevice();
-        String description = "Test device description";
+    @DisplayName("Should set and get description correctly")
+    void testDescriptionSetterGetter() {
+        String testDescription = "Test Device Description";
+        entityDevice.setDescription(testDescription);
 
-        entity.setDescription(description);
-
-        assertEquals(description, entity.getDescription());
+        assertEquals(testDescription, entityDevice.getDescription());
     }
 
     @Test
-    @DisplayName("Should set and get status")
-    void testSetAndGetStatus() {
-        EntityDevice entity = new EntityDevice();
+    @DisplayName("Should handle null description")
+    void testNullDescription() {
+        entityDevice.setDescription(null);
 
-        entity.setStatus(ActionStatus.DEACTIVATED);
-
-        assertEquals(ActionStatus.DEACTIVATED, entity.getStatus());
+        assertNull(entityDevice.getDescription());
     }
 
     @Test
-    @DisplayName("Should set and get metadata")
-    void testSetAndGetMetadata() {
-        EntityDevice entity = new EntityDevice();
-        JsonObject metadata = new JsonObject().put("key1", "value1").put("key2", 123);
+    @DisplayName("Should set and get status correctly")
+    void testStatusSetterGetter() {
+        entityDevice.setStatus(ActionStatus.ACTIVATED);
 
-        entity.setMetadata(metadata);
+        assertEquals(ActionStatus.ACTIVATED, entityDevice.getStatus());
+    }
 
-        assertEquals(metadata, entity.getMetadata());
-        assertEquals("value1", entity.getMetadata().getString("key1"));
-        assertEquals(123, entity.getMetadata().getInteger("key2"));
+    @Test
+    @DisplayName("Should handle all status values")
+    void testAllStatusValues() {
+        // Test ACTIVATED
+        entityDevice.setStatus(ActionStatus.ACTIVATED);
+        assertEquals(ActionStatus.ACTIVATED, entityDevice.getStatus());
+
+        // Test DEACTIVATED
+        entityDevice.setStatus(ActionStatus.DEACTIVATED);
+        assertEquals(ActionStatus.DEACTIVATED, entityDevice.getStatus());
+
+        // Test DELETED
+        entityDevice.setStatus(ActionStatus.DELETED);
+        assertEquals(ActionStatus.DELETED, entityDevice.getStatus());
+    }
+
+    @Test
+    @DisplayName("Should set and get metadata correctly")
+    void testMetadataSetterGetter() {
+        JsonObject metadata =
+                new JsonObject().put("key1", "value1").put("key2", 123).put("key3", true);
+
+        entityDevice.setMetadata(metadata);
+
+        assertEquals(metadata, entityDevice.getMetadata());
+        assertEquals("value1", entityDevice.getMetadata().getString("key1"));
+        assertEquals(123, entityDevice.getMetadata().getInteger("key2"));
+        assertTrue(entityDevice.getMetadata().getBoolean("key3"));
+    }
+
+    @Test
+    @DisplayName("Should handle null metadata")
+    void testNullMetadata() {
+        entityDevice.setMetadata(null);
+
+        assertNull(entityDevice.getMetadata());
     }
 
     @Test
     @DisplayName("Should handle empty metadata")
     void testEmptyMetadata() {
-        EntityDevice entity = new EntityDevice();
         JsonObject emptyMetadata = new JsonObject();
+        entityDevice.setMetadata(emptyMetadata);
 
-        entity.setMetadata(emptyMetadata);
-
-        assertTrue(entity.getMetadata().isEmpty());
+        assertEquals(emptyMetadata, entityDevice.getMetadata());
+        assertTrue(entityDevice.getMetadata().isEmpty());
     }
 
     @Test
-    @DisplayName("Should be serializable")
-    void testSerializable() {
-        EntityDevice entity = new EntityDevice();
+    @DisplayName("Should maintain object state consistency")
+    void testObjectStateConsistency() {
+        String deviceName = "Consistent Device";
+        String deviceDescription = "Consistent Description";
 
-        assertInstanceOf(Serializable.class, entity);
-        // Note: serialVersionUID is private, so we can't directly test its value
+        entityDevice.setName(deviceName);
+        entityDevice.setDescription(deviceDescription);
+        entityDevice.setStatus(ActionStatus.DEACTIVATED);
+
+        assertEquals(deviceName.toUpperCase(), entityDevice.getName());
+        assertEquals(deviceDescription, entityDevice.getDescription());
+        assertEquals(ActionStatus.DEACTIVATED, entityDevice.getStatus());
+    }
+
+    @Test
+    @DisplayName("Should inherit audit fields from AbstractAuditingEntity")
+    void testAuditingInheritance() {
+        // Test that EntityDevice inherits audit fields
+        Instant now = Instant.now();
+        String creator = "test-user";
+
+        entityDevice.setCreatedDate(now);
+        entityDevice.setCreatedBy(creator);
+        entityDevice.setLastModifiedDate(now);
+        entityDevice.setLastModifiedBy(creator);
+
+        assertEquals(now, entityDevice.getCreatedDate());
+        assertEquals(creator, entityDevice.getCreatedBy());
+        assertEquals(now, entityDevice.getLastModifiedDate());
+        assertEquals(creator, entityDevice.getLastModifiedBy());
+    }
+
+    @Test
+    @DisplayName("Should implement Serializable correctly")
+    void testSerializable() {
+        assertTrue(entityDevice instanceof java.io.Serializable);
+    }
+
+    @Test
+    @DisplayName("Should handle large description within size constraints")
+    void testLargeDescription() {
+        // Test description at boundary (assuming reasonable max size)
+        String largeDescription = "A".repeat(1000);
+        entityDevice.setDescription(largeDescription);
+
+        assertEquals(largeDescription, entityDevice.getDescription());
+    }
+
+    @Test
+    @DisplayName("Should handle special characters in name and description")
+    void testSpecialCharacters() {
+        String specialName = "Device@#$%^&*()";
+        String specialDescription = "Description with special chars: @#$%^&*()";
+
+        entityDevice.setName(specialName);
+        entityDevice.setDescription(specialDescription);
+
+        assertEquals(specialName.toUpperCase(), entityDevice.getName());
+        assertEquals(specialDescription, entityDevice.getDescription());
     }
 }

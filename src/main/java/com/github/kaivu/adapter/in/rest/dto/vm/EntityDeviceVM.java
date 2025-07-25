@@ -1,28 +1,22 @@
 package com.github.kaivu.adapter.in.rest.dto.vm;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.github.kaivu.domain.enumeration.ActionStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
 
 /**
- * Created by Khoa Vu.
- * Mail: khoavu882@gmail.com
- * Date: 12/13/24
- * Time: 11:41 AM
+ * View Model for EntityDevice
  */
-@Getter
-@Setter
-@ToString
-public class EntityDeviceVM extends BaseAuditVM implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class EntityDeviceVM implements Serializable {
     private UUID id;
-
     private String name;
+    private String description;
+    private ActionStatus status;
 }

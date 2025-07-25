@@ -47,7 +47,7 @@ public class HttpFilters implements ContainerRequestFilter, ContainerResponseFil
 
     private void logHttpRequest(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
         String path = requestContext.getUriInfo().getPath();
-        if (!path.contains(MANAGEMENT_PREFIX_PATH)) {
+        if (path != null && !path.contains(MANAGEMENT_PREFIX_PATH)) {
             // Calculate execution time
             Instant startTime = (Instant) requestContext.getProperty(REQUEST_START_TIME);
             Instant endTime = Instant.now();

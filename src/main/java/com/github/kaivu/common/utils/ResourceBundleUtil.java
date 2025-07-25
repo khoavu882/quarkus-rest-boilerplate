@@ -35,13 +35,18 @@ public class ResourceBundleUtil {
     public static Map<Locale, Map<String, String>> getAllMessages(String bundleName, List<Locale> locales) {
         Map<Locale, Map<String, String>> messages = new HashMap<>();
 
-        locales.stream()
-                .map(locate -> ResourceBundle.getBundle(bundleName, locate))
-                .forEach(bundle -> {
-                    Map<String, String> messagesChill = new HashMap<>();
-                    Collections.list(bundle.getKeys()).forEach(key -> messagesChill.put(key, bundle.getString(key)));
-                    messages.put(bundle.getLocale(), messagesChill);
-                });
+        locales.forEach(locale -> {
+            try {
+                ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale);
+                Map<String, String> messagesChill = new HashMap<>();
+                Collections.list(bundle.getKeys()).forEach(key -> messagesChill.put(key, bundle.getString(key)));
+                messages.put(bundle.getLocale(), messagesChill);
+            } catch (Exception ex) {
+                log.warn("Resource bundle '{}' not found for locale '{}': {}", bundleName, locale, ex.getMessage());
+                // Return empty map for this locale instead of throwing exception
+                messages.put(locale, Collections.emptyMap());
+            }
+        });
         return Collections.unmodifiableMap(messages);
     }
 }

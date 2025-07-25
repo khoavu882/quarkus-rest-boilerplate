@@ -1,29 +1,31 @@
 package com.github.kaivu.adapter.in.rest.dto.vm;
 
+import com.github.kaivu.domain.enumeration.ActionStatus;
 import io.vertx.core.json.JsonObject;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.UUID;
 
 /**
- * Created by Khoa Vu.
- * Mail: khoavu882@gmail.com
- * Date: 12/13/24
- * Time: 11:41 AM
+ * Detailed View Model for EntityDevice
  */
-@Getter
-@Setter
-@ToString
-public class EntityDeviceDetailsVM extends EntityDeviceVM implements Serializable {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class EntityDeviceDetailsVM implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private UUID id;
+    private String name;
+    private String description;
+    private ActionStatus status;
     private JsonObject metadata = new JsonObject();
-
     private Instant createdDate;
 }

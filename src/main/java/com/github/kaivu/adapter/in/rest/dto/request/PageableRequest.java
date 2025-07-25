@@ -47,26 +47,62 @@ public abstract class PageableRequest implements Serializable {
 
     public <T> List<Order<T>> toOrders(String alternative, Class<T> clazz) {
         String sortStr = (sort == null || sort.isBlank()) ? alternative : sort;
-        List<String> orders = List.of(sortStr.split("[\s]*,[\s]*")); // Split & trim spacing around commas
+        List<String> orders = List.of(sortStr.split("[\\s]*,[\\s]*")); // Split & trim spacing around commas
 
         return orders.stream()
                 .map(order -> {
                     String[] parts = order.strip().split("\\s+");
 
-                    return switch (parts.length) {
-                        case 1 -> Order.asc(clazz, parts[0]);
-                        case 2 -> {
-                            if (!parts[1].equalsIgnoreCase("asc") && !parts[1].equalsIgnoreCase("desc")) {
-                                throw new ServiceException(ErrorsEnum.SYSTEM_INVALID_SORT_ORDER);
-                            }
+                    // Validate we have 1 or 2 parts (field and optional direction)
+                    if (parts.length == 0 || parts.length > 2) {
+                        throw new ServiceException(ErrorsEnum.SYSTEM_INVALID_SORT_PARAMETER);
+                    }
 
-                            yield parts[1].equalsIgnoreCase("desc")
-                                    ? Order.desc(clazz, parts[0])
-                                    : Order.asc(clazz, parts[0]);
-                        }
-                        default -> throw new ServiceException(ErrorsEnum.SYSTEM_INVALID_SORT_PARAMETER);
-                    };
+                    String fieldName = parts[0];
+                    String direction = parts.length > 1 ? parts[1] : "asc";
+
+                    // Validate direction
+                    if (!direction.equalsIgnoreCase("asc") && !direction.equalsIgnoreCase("desc")) {
+                        throw new ServiceException(ErrorsEnum.SYSTEM_INVALID_SORT_ORDER);
+                    }
+
+                    return direction.equalsIgnoreCase("desc")
+                            ? Order.desc(clazz, fieldName)
+                            : Order.asc(clazz, fieldName);
                 })
                 .toList();
+    }
+
+    /**
+     * Build ORDER BY clause string for JPQL queries with alias support
+     * This method allows using query aliases like "ed" in JPQL queries
+     *
+     * @param alias Query alias (e.g., "ed", "user", "product")
+     * @param defaultField Default field name if no sort parameter provided
+     * @return ORDER BY clause string (without "ORDER BY" prefix)
+     */
+    public String buildOrderByClause(String alias, String defaultField) {
+        String sortStr = (sort == null || sort.isBlank()) ? defaultField : sort;
+        List<String> orders = List.of(sortStr.split("[\\s]*,[\\s]*"));
+
+        return orders.stream()
+                .map(order -> {
+                    String[] parts = order.strip().split("\\s+");
+
+                    if (parts.length == 0 || parts.length > 2) {
+                        throw new ServiceException(ErrorsEnum.SYSTEM_INVALID_SORT_PARAMETER);
+                    }
+
+                    String fieldName = parts[0];
+                    String direction = parts.length > 1 ? parts[1].toUpperCase() : "ASC";
+
+                    if (!direction.equals("ASC") && !direction.equals("DESC")) {
+                        throw new ServiceException(ErrorsEnum.SYSTEM_INVALID_SORT_ORDER);
+                    }
+
+                    return alias + "." + fieldName + " " + direction;
+                })
+                .reduce((a, b) -> a + ", " + b)
+                .orElse(alias + "." + defaultField + " DESC");
     }
 }

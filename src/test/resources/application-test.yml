@@ -34,7 +34,20 @@ quarkus:
     log:
       sql: false
 
-  # Disable external services for tests
+  # HTTP client timeout configurations for tests
+  rest-client:
+    connect-timeout: 5000
+    read-timeout: 10000
+    follow-redirects: true
+
+  # Vert.x HTTP client timeouts for reactive operations
+  vertx:
+    http:
+      client:
+        connect-timeout: 5s
+        idle-timeout: 30s
+
+  # Devservices disabled for tests
   devservices:
     enabled: false
 

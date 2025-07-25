@@ -7,6 +7,9 @@ import com.github.kaivu.configuration.BaseQuarkusTest;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Tests for DemoResource REST controller
@@ -17,6 +20,7 @@ import org.junit.jupiter.api.Test;
 class DemoResourceTest extends BaseQuarkusTest {
 
     @Test
+    @Timeout(value = 15, unit = TimeUnit.SECONDS)
     @DisplayName("Should return appropriate response for demo endpoint")
     void testDemoExceptionWithoutCode() {
         given().header(AUTHORIZATION_HEADER, BEARER_TOKEN)
@@ -27,6 +31,7 @@ class DemoResourceTest extends BaseQuarkusTest {
     }
 
     @Test
+    @Timeout(value = 15, unit = TimeUnit.SECONDS)
     @DisplayName("Should throw 401 for unauthorized access")
     void testDemoExceptionUnauthorized() {
         given().header(AUTHORIZATION_HEADER, BEARER_TOKEN)
@@ -37,6 +42,7 @@ class DemoResourceTest extends BaseQuarkusTest {
     }
 
     @Test
+    @Timeout(value = 15, unit = TimeUnit.SECONDS)
     @DisplayName("Should throw 403 for forbidden access")
     void testDemoExceptionForbidden() {
         given().header(AUTHORIZATION_HEADER, BEARER_TOKEN)
@@ -47,6 +53,7 @@ class DemoResourceTest extends BaseQuarkusTest {
     }
 
     @Test
+    @Timeout(value = 15, unit = TimeUnit.SECONDS)
     @DisplayName("Should accept valid POST request")
     void testDemoPostExceptionWithValidRequest() {
         String validRequest =
@@ -75,6 +82,7 @@ class DemoResourceTest extends BaseQuarkusTest {
     }
 
     @Test
+    @Timeout(value = 15, unit = TimeUnit.SECONDS)
     @DisplayName("Should reject POST request with invalid name")
     void testDemoPostExceptionWithInvalidName() {
         String invalidRequest =
@@ -100,6 +108,7 @@ class DemoResourceTest extends BaseQuarkusTest {
     }
 
     @Test
+    @Timeout(value = 15, unit = TimeUnit.SECONDS)
     @DisplayName("Should handle demo endpoint appropriately")
     void testDemoEndpoint() {
         // Test that the application is running and can handle requests

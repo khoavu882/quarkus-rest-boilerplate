@@ -38,7 +38,7 @@ class EnumValueValidatorTest {
 
             @Override
             public Class<?>[] groups() {
-                return new Class[0];
+                return new Class<?>[0];
             }
 
             @Override
@@ -73,12 +73,15 @@ class EnumValueValidatorTest {
 
             @Override
             public Class<?>[] groups() {
-                return new Class[0];
+                return new Class<?>[0];
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public Class<? extends jakarta.validation.Payload>[] payload() {
-                return new Class[0];
+                @SuppressWarnings("unchecked")
+                Class<? extends jakarta.validation.Payload>[] result = new Class[0];
+                return result;
             }
 
             @Override
@@ -110,10 +113,11 @@ class EnumValueValidatorTest {
 
             @Override
             public Class<?>[] groups() {
-                return new Class[0];
+                return new Class<?>[0];
             }
 
             @Override
+            @SuppressWarnings("unchecked")
             public Class<? extends jakarta.validation.Payload>[] payload() {
                 return new Class[0];
             }
