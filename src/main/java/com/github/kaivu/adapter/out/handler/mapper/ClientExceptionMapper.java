@@ -1,12 +1,12 @@
 package com.github.kaivu.adapter.out.handler.mapper;
 
-import com.github.kaivu.adapter.in.rest.dto.response.ErrorMessage;
-import com.github.kaivu.adapter.in.rest.dto.response.ErrorResponse;
 import com.github.kaivu.adapter.out.exception.ClientException;
 import com.github.kaivu.adapter.out.exception.DemoClientException;
 import com.github.kaivu.common.constant.AppConstant;
 import com.github.kaivu.common.constant.AppHeaderConstant;
 import com.github.kaivu.common.utils.ResourceBundleUtil;
+import com.github.kaivu.configuration.handler.ErrorMessage;
+import com.github.kaivu.configuration.handler.ErrorResponse;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
