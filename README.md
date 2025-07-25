@@ -2,20 +2,22 @@
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-## Architecture
-- **Framework**: Quarkus (reactive JAX-RS, not Spring)
+## Architecture (Hexagonal/Clean Architecture)
+- **Java 21** with **Quarkus 3+** (reactive JAX-RS, not Spring)
 - **Database**: PostgreSQL with Hibernate Reactive + Panache
 - **Storage**: MinIO object storage, Redis caching
-- **Main packages**: `core/` (entities, DTOs, use cases), `domain/` (services, repos), `infrastructure/` (config, errors, utils), `web/rest/` (controllers)
+- **Packages**: `adapter/in|out/` (REST controllers, adapters), `application/` (services, use cases, repositories), `domain/` (entities, enums), `common/` (utils, constants), `configuration/`
 - **REST endpoints**: `/api/entity-devices`, `/demo`, `/common`, `/stream`
 
-## Code Style
-- **Formatting**: Palantir Java Format via Spotless plugin
+## Code Style & Conventions
+- **Formatting**: Palantir Java Format via Spotless plugin (required)
 - **Imports**: Order: `blank,java|javax,#` with unused imports removed
 - **Annotations**: Lombok (`@Getter`, `@Slf4j`), Jakarta (`@Path`, `@GET`, `@Inject`), OpenAPI (`@Operation`, `@Tag`)
-- **Reactive**: Use `Uni<T>` return types for async operations
+- **Reactive**: Use `Uni<T>` return types for async operations, `@WithTransaction` for transactional methods
 - **DTOs**: Separate create/update DTOs, view models with `VM` suffix
 - **Entities**: Extend `AbstractAuditingEntity`, use UUIDs for IDs
+- **Exceptions**: Custom exceptions in `application/exception/` (EntityNotFoundException, EntityConflictException)
+- **Error handling**: Use ErrorsEnum for standardized error responses
 
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 ## Getting Started
