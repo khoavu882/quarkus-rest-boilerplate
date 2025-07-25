@@ -1,7 +1,7 @@
 package com.github.kaivu.common.utils;
 
-import com.github.kaivu.adapter.in.rest.handler.ErrorsEnum;
 import com.github.kaivu.common.exception.ServiceException;
+import com.github.kaivu.configuration.handler.ErrorsEnum;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;

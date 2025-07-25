@@ -3,9 +3,9 @@ package com.github.kaivu.application.usecase;
 import com.github.kaivu.adapter.in.rest.dto.request.CreateEntityDTO;
 import com.github.kaivu.adapter.in.rest.dto.request.EntityDeviceFilters;
 import com.github.kaivu.adapter.in.rest.dto.request.UpdateEntityDTO;
-import com.github.kaivu.adapter.in.rest.dto.response.EntityDeviceDetailsVM;
-import com.github.kaivu.adapter.in.rest.dto.response.EntityDeviceVM;
-import com.github.kaivu.adapter.in.rest.dto.response.PageResponse;
+import com.github.kaivu.adapter.in.rest.dto.vm.EntityDeviceDetailsVM;
+import com.github.kaivu.adapter.in.rest.dto.vm.EntityDeviceVM;
+import com.github.kaivu.adapter.in.rest.dto.vm.PageResponse;
 import io.smallrye.mutiny.Uni;
 
 import java.util.UUID;
