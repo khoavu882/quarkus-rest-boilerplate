@@ -33,7 +33,6 @@ bin/
 *.ipr
 *.iml
 *.iws
-out/
 .idea_modules/
 
 # NetBeans
