@@ -1,7 +1,7 @@
 package com.github.kaivu.application.exception;
 
-import com.github.kaivu.adapter.in.rest.handler.ErrorsEnum;
 import com.github.kaivu.common.exception.ServiceException;
+import com.github.kaivu.configuration.handler.ErrorsEnum;
 
 /**
  * Created by Khoa Vu.

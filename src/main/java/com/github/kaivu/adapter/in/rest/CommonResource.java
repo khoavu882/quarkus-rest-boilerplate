@@ -1,6 +1,6 @@
 package com.github.kaivu.adapter.in.rest;
 
-import com.github.kaivu.adapter.in.rest.dto.response.ErrorResponse;
+import com.github.kaivu.configuration.handler.ErrorResponse;
 import com.github.kaivu.common.constant.AppConstant;
 import com.github.kaivu.common.utils.ResourceBundleUtil;
 import io.vertx.core.json.JsonObject;

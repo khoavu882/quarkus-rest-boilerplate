@@ -1,5 +1,6 @@
 package com.github.kaivu.domain.audit;
 
+import com.github.kaivu.domain.AbstractAuditingEntity;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;

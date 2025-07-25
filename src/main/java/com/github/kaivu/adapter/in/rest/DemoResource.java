@@ -1,7 +1,6 @@
 package com.github.kaivu.adapter.in.rest;
 
-import com.github.kaivu.adapter.in.rest.dto.response.ErrorResponse;
-import com.github.kaivu.adapter.in.rest.handler.ErrorsEnum;
+import com.github.kaivu.configuration.handler.ErrorResponse;
 import com.github.kaivu.adapter.out.api.DemoClientService;
 import com.github.kaivu.application.exception.EntityNotFoundException;
 import com.github.kaivu.application.exception.NotAcceptableException;
@@ -9,6 +8,7 @@ import com.github.kaivu.application.exception.PermissionDeniedException;
 import com.github.kaivu.application.exception.UnauthorizedException;
 import com.github.kaivu.common.exception.ServiceException;
 import com.github.kaivu.configuration.annotations.ValidEnumValue;
+import com.github.kaivu.configuration.handler.ErrorsEnum;
 import com.github.kaivu.domain.enumeration.ActionStatus;
 import io.smallrye.mutiny.Uni;
 import io.vertx.core.json.JsonObject;

@@ -1,6 +1,6 @@
 package com.github.kaivu.common.utils;
 
-import com.github.kaivu.adapter.in.rest.dto.response.PageResponse;
+import com.github.kaivu.adapter.in.rest.dto.vm.PageResponse;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;

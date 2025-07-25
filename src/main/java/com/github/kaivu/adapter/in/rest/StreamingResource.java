@@ -1,10 +1,10 @@
 package com.github.kaivu.adapter.in.rest;
 
-import com.github.kaivu.adapter.in.rest.dto.response.ErrorResponse;
-import com.github.kaivu.adapter.in.rest.handler.ErrorsEnum;
+import com.github.kaivu.configuration.handler.ErrorResponse;
 import com.github.kaivu.adapter.out.client.MinioService;
 import com.github.kaivu.common.exception.ServiceException;
 import com.github.kaivu.configuration.annotations.MinioProfile;
+import com.github.kaivu.configuration.handler.ErrorsEnum;
 import com.google.common.net.HttpHeaders;
 import io.minio.errors.MinioException;
 import io.smallrye.mutiny.Uni;
