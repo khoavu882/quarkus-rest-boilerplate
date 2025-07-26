@@ -73,9 +73,13 @@ spotless {
 tasks.withType(Test).configureEach {
     systemProperty 'java.util.logging.manager', 'org.jboss.logmanager.LogManager'
     useJUnitPlatform()
+    maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+    forkEvery = 100 // Prevent memory leaks in tests
 }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-    options.compilerArgs += ['-parameters']
+    options.compilerArgs += ['-parameters', '-Xlint:unchecked', '-Xlint:deprecation']
+    options.fork = true
+    options.forkOptions.jvmArgs = ['-Xmx1g']
 }
