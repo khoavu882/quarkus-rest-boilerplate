@@ -1,20 +1,22 @@
 package com.github.kaivu.adapter.in.rest;
 
-import com.github.kaivu.common.exception.ServiceException;
+import com.github.kaivu.adapter.in.rest.dto.vm.RangeInfo;
+import com.github.kaivu.adapter.in.rest.dto.vm.StreamingResponse;
+import com.github.kaivu.application.usecase.MediaStreamingService;
 import com.github.kaivu.configuration.handler.ErrorResponse;
-import com.github.kaivu.configuration.handler.ErrorsEnum;
-import com.github.kaivu.configuration.minio.MinioManager;
-import com.github.kaivu.configuration.minio.MinioProfile;
-import com.github.kaivu.configuration.minio.MinioProfileType;
 import com.google.common.net.HttpHeaders;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
 import io.smallrye.mutiny.Uni;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +25,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * REST controller for Streaming using MinioManager with annotation profile selection.
  * Uses @MinioProfile at injection point to specify which MinIO profile to use.
@@ -34,110 +32,51 @@ import java.util.regex.Pattern;
 @Slf4j
 @Path("/stream")
 @Tag(name = "Stream", description = "Streaming Resource")
+@RolesAllowed({"USER", "ADMIN"})
 public class StreamingResource {
 
-    private static final Pattern RANGE_PATTERN = Pattern.compile("bytes=(\\d+)-(\\d*)");
-    private static final Map<String, String> CONTENT_TYPES = Map.of(
-            "mp4", "video/mp4",
-            "webm", "video/webm",
-            "mov", "video/quicktime",
-            "avi", "video/x-msvideo",
-            "mkv", "video/x-matroska");
+    private final MediaStreamingService mediaStreamingService;
 
     @Inject
-    @MinioProfile(MinioProfileType.MEDIA)
-    MinioManager minioManager;
+    public StreamingResource(MediaStreamingService mediaStreamingService) {
+        this.mediaStreamingService = mediaStreamingService;
+    }
 
     @GET
     @Path("/{bucketName}/{objectName}")
-    @APIResponse(responseCode = "200", description = "Stream video content")
     @APIResponse(responseCode = "206", description = "Partial content")
+    @APIResponse(responseCode = "404", description = "Media file not found")
+    @APIResponse(responseCode = "416", description = "Range not satisfiable")
     @APIResponse(
             responseCode = "500",
-            description = "Internal server error",
             content =
                     @Content(
                             mediaType = MediaType.APPLICATION_JSON,
                             schema = @Schema(implementation = ErrorResponse.class)))
+    @Counted(value = "streaming_requests_total", description = "Total streaming requests")
+    @Timed(value = "streaming_request_duration", description = "Streaming request duration")
     public Uni<Response> streamVideo(
-            @Context ContainerRequestContext requestContext,
-            @PathParam("bucketName") String bucketName,
-            @PathParam("objectName") String objectName,
+            @PathParam("bucketName") @Pattern(regexp = "^[a-z0-9][a-z0-9.-]*[a-z0-9]$") String bucketName,
+            @PathParam("objectName") @NotBlank @Size(max = 255) String objectName,
             @HeaderParam(HttpHeaders.RANGE) String rangeHeader) {
 
-        return minioManager
-                .getObjectSize(bucketName, objectName)
-                .onItem()
-                .transformToUni(fileSize -> {
-                    // Parse range header
-                    RangeInfo rangeInfo = parseRangeHeader(rangeHeader, fileSize);
-                    long startByte = rangeInfo.startByte;
-                    long endByte = rangeInfo.endByte;
-
-                    String contentType = determineContentType(objectName);
-                    String contentRange = String.format("bytes %d-%d/%d", startByte, endByte, fileSize);
-                    long contentLength = endByte - startByte + 1;
-
-                    return minioManager
-                            .getObject(bucketName, objectName, startByte, contentLength)
-                            .onItem()
-                            .transform(inputStream -> {
-                                // Set the response status and headers
-                                return Response.status(Response.Status.PARTIAL_CONTENT)
-                                        .header("Content-Disposition", "inline; filename=\"" + objectName + "\"")
-                                        .header("Content-Type", contentType)
-                                        .header("Content-Range", contentRange)
-                                        .header("Accept-Ranges", "bytes")
-                                        .header("Content-Length", contentLength)
-                                        // Add caching headers
-                                        .header("Cache-Control", "public, max-age=86400")
-                                        .header("ETag", "\"" + objectName.hashCode() + "\"")
-                                        .entity(inputStream)
-                                        .build();
-                            });
-                })
-                .onFailure()
-                .transform(ex -> {
-                    log.error("Error while streaming: {}", ex.getMessage(), ex);
-                    return new ServiceException(
-                            ErrorsEnum.SYSTEM_INTERNAL_SERVER_ERROR.withLocale(requestContext.getLanguage()));
-                });
+        return mediaStreamingService
+                .prepareStreamingResponse(bucketName, objectName, rangeHeader)
+                .map(this::buildStreamingResponse);
     }
 
-    private RangeInfo parseRangeHeader(String rangeHeader, long fileSize) {
-        long startByte = 0;
-        long endByte = fileSize - 1;
+    private Response buildStreamingResponse(StreamingResponse streamingResponse) {
+        RangeInfo range = streamingResponse.rangeInfo();
+        long fileSize = streamingResponse.fileSize();
 
-        if (rangeHeader != null) {
-            Matcher matcher = RANGE_PATTERN.matcher(rangeHeader);
-            if (matcher.matches()) {
-                startByte = Long.parseLong(matcher.group(1));
-                String endByteStr = matcher.group(2);
-                if (endByteStr != null && !endByteStr.isEmpty()) {
-                    endByte = Long.parseLong(endByteStr);
-                }
-
-                // Validate range
-                if (startByte >= fileSize) {
-                    startByte = 0;
-                }
-                if (endByte >= fileSize) {
-                    endByte = fileSize - 1;
-                }
-            }
-        }
-
-        return new RangeInfo(startByte, endByte);
+        return Response.status(Response.Status.PARTIAL_CONTENT)
+                .header("Content-Type", streamingResponse.contentType())
+                .header("Content-Range", String.format("bytes %d-%d/%d", range.startByte(), range.endByte(), fileSize))
+                .header("Accept-Ranges", "bytes")
+                .header("Content-Length", range.endByte() - range.startByte() + 1)
+                .header("Cache-Control", "public, max-age=86400")
+                .header("ETag", "\"" + streamingResponse.etag() + "\"")
+                .entity(streamingResponse.inputStream())
+                .build();
     }
-
-    private String determineContentType(String fileName) {
-        int dotIndex = fileName.lastIndexOf('.');
-        if (dotIndex > 0 && dotIndex < fileName.length() - 1) {
-            String extension = fileName.substring(dotIndex + 1).toLowerCase();
-            return CONTENT_TYPES.getOrDefault(extension, MediaType.APPLICATION_OCTET_STREAM);
-        }
-        return MediaType.APPLICATION_OCTET_STREAM;
-    }
-
-    private record RangeInfo(long startByte, long endByte) {}
 }
