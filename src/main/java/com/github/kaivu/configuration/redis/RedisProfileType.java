@@ -15,17 +15,7 @@ public enum RedisProfileType {
     /**
      * Demo environment Redis connection
      */
-    DEMO("demo"),
-
-    /**
-     * Cache-specific Redis connection (for application caching)
-     */
-    CACHE("cache"),
-
-    /**
-     * Session storage Redis connection
-     */
-    SESSION("session");
+    DEMO("demo");
 
     private final String configKey;
 
