@@ -1,8 +1,8 @@
 package com.github.kaivu.application.service;
 
-import com.github.kaivu.configuration.minio.MinioManager;
-import com.github.kaivu.configuration.minio.MinioProfile;
-import com.github.kaivu.configuration.minio.MinioProfileType;
+import com.github.kaivu.config.minio.MinioManager;
+import com.github.kaivu.config.minio.MinioProfile;
+import com.github.kaivu.config.minio.MinioProfileType;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

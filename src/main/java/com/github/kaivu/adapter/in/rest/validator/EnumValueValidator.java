@@ -1,6 +1,6 @@
 package com.github.kaivu.adapter.in.rest.validator;
 
-import com.github.kaivu.configuration.annotations.ValidEnumValue;
+import com.github.kaivu.config.annotations.ValidEnumValue;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

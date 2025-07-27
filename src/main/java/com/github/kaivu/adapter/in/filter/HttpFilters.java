@@ -1,6 +1,6 @@
 package com.github.kaivu.adapter.in.filter;
 
-import com.github.kaivu.configuration.ConfigsProvider;
+import com.github.kaivu.config.ConfigsProvider;
 import com.github.kaivu.domain.audit.AuditListener;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.container.ContainerRequestContext;

@@ -3,7 +3,6 @@ package com.github.kaivu.adapter.out.persistence;
 import com.github.kaivu.application.port.IMediaFileRepository;
 import com.github.kaivu.application.service.CacheService;
 import com.github.kaivu.domain.MediaFile;
-import com.github.kaivu.domain.MediaFile_;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -23,8 +22,6 @@ import java.util.Optional;
 @ApplicationScoped
 public class MediaFileRepository implements IMediaFileRepository {
 
-    private static final String CACHE_PREFIX = MediaFile_.class_.getName();
-
     private final CacheService cacheService;
 
     @Inject
@@ -32,9 +29,13 @@ public class MediaFileRepository implements IMediaFileRepository {
         this.cacheService = cacheService;
     }
 
+    private String getCachePrefix() {
+        return "MediaFile";
+    }
+
     @Override
     public Uni<Optional<MediaFile>> findByBucketAndObject(String bucketName, String objectName) {
-        String cacheKey = cacheService.generateKey(CACHE_PREFIX, bucketName, objectName);
+        String cacheKey = cacheService.generateKey(getCachePrefix(), bucketName, objectName);
 
         // Use cache-first strategy with getOrCompute
         return cacheService
@@ -69,7 +70,7 @@ public class MediaFileRepository implements IMediaFileRepository {
                 .chain(savedMedia -> {
                     // Update cache after successful save
                     String cacheKey = cacheService.generateKey(
-                            CACHE_PREFIX, savedMedia.getBucketName(), savedMedia.getObjectName());
+                            getCachePrefix(), savedMedia.getBucketName(), savedMedia.getObjectName());
                     return cacheService
                             .set(cacheKey, savedMedia, Duration.ofHours(1))
                             .map(ignored -> savedMedia);
@@ -88,7 +89,7 @@ public class MediaFileRepository implements IMediaFileRepository {
                         .replaceWithVoid())
                 .chain(ignored -> {
                     // Remove from cache after successful deletion
-                    String cacheKey = cacheService.generateKey(CACHE_PREFIX, bucketName, objectName);
+                    String cacheKey = cacheService.generateKey(getCachePrefix(), bucketName, objectName);
                     return cacheService.delete(cacheKey).replaceWithVoid();
                 });
     }

@@ -1,3 +1,4 @@
+version: "3.8"
 services:
   # PostgreSQL Database
   postgresql:
@@ -17,6 +18,8 @@ services:
       retries: 5
     networks:
       - local_network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   # Redis Cache
   redis:
@@ -45,12 +48,14 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     command: server /data --console-address ":9001"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
       interval: 30s
       timeout: 20s
       retries: 3
     networks:
       - local_network
+    volumes:
+      - minio_data:/data
 
   # Jaeger
   jaeger:
@@ -68,3 +73,8 @@ services:
 networks:
   local_network:
     driver: bridge
+    name: local_network
+
+volumes:
+  pgdata:
+  minio_data:

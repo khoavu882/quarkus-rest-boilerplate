@@ -2,7 +2,7 @@ package com.github.kaivu.adapter.out.client.impl;
 
 import com.github.kaivu.adapter.out.client.MinioHelper;
 import com.github.kaivu.common.exception.ServiceException;
-import com.github.kaivu.configuration.handler.ErrorsEnum;
+import com.github.kaivu.config.handler.ErrorsEnum;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;

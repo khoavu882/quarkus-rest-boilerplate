@@ -1,7 +1,7 @@
 package com.github.kaivu.adapter.in.rest.dto.request;
 
 import com.github.kaivu.common.exception.ServiceException;
-import com.github.kaivu.configuration.handler.ErrorsEnum;
+import com.github.kaivu.config.handler.ErrorsEnum;
 import jakarta.validation.constraints.Size;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.QueryParam;

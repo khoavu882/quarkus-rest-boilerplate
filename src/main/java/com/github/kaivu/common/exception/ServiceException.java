@@ -1,6 +1,6 @@
 package com.github.kaivu.common.exception;
 
-import com.github.kaivu.configuration.handler.ErrorsEnum;
+import com.github.kaivu.config.handler.ErrorsEnum;
 import jakarta.enterprise.context.RequestScoped;
 import lombok.Getter;
 

@@ -3,7 +3,7 @@ package com.github.kaivu.application.service.impl;
 import com.github.kaivu.adapter.out.persistence.EntityDeviceRepository;
 import com.github.kaivu.application.exception.EntityNotFoundException;
 import com.github.kaivu.application.service.EntityDevicesService;
-import com.github.kaivu.configuration.handler.ErrorsEnum;
+import com.github.kaivu.config.handler.ErrorsEnum;
 import com.github.kaivu.domain.EntityDevice;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;

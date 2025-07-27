@@ -7,7 +7,7 @@ import com.github.kaivu.adapter.in.rest.dto.vm.EntityDeviceDetailsVM;
 import com.github.kaivu.adapter.in.rest.dto.vm.EntityDeviceVM;
 import com.github.kaivu.adapter.in.rest.dto.vm.PageResponse;
 import com.github.kaivu.application.usecase.EntityDeviceUseCase;
-import com.github.kaivu.configuration.handler.ErrorResponse;
+import com.github.kaivu.config.handler.ErrorResponse;
 import com.github.kaivu.domain.EntityDevice;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;

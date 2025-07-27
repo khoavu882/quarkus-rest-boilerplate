@@ -26,16 +26,16 @@ quarkus:
 
   datasource:
     db-kind: ${DEMO_DB_KIND:postgresql}
-    username: ${DEMO_USERNAME}
-    password: ${DEMO_PASSWORD}
+    username: ${DEMO_USERNAME:postgres}
+    password: ${DEMO_PASSWORD:postgres}
     reactive:
       url: vertx-reactive:${DEMO_DB_KIND:postgresql}://${DEMO_HOST:localhost}:${DEMO_PORT:5432}/${DEMO_DB:db_local}?currentSchema=${DEMO_SCHEMA:sch_local}&prepareThreshold=0
       max-size: 16
 
     demo:
       db-kind: ${DEMO_DB_KIND:postgresql}
-      username: ${DEMO_USERNAME}
-      password: ${DEMO_PASSWORD}
+      username: ${DEMO_USERNAME:postgres}
+      password: ${DEMO_PASSWORD:postgres}
       reactive:
         url: vertx-reactive:${DEMO_DB_KIND:postgresql}://${DEMO_HOST:localhost}:${DEMO_PORT:5432}/${DEMO_DB:db_local}?currentSchema=${DEMO_SCHEMA:sch_local}&prepareThreshold=0
         max-size: 16
