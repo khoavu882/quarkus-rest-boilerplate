@@ -3,7 +3,7 @@ package com.github.kaivu.adapter.in.rest;
 import com.github.kaivu.adapter.in.rest.dto.vm.RangeInfo;
 import com.github.kaivu.adapter.in.rest.dto.vm.StreamingResponse;
 import com.github.kaivu.application.usecase.MediaStreamingService;
-import com.github.kaivu.configuration.handler.ErrorResponse;
+import com.github.kaivu.config.handler.ErrorResponse;
 import com.google.common.net.HttpHeaders;
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;

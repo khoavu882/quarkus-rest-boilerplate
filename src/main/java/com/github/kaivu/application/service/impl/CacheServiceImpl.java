@@ -1,9 +1,9 @@
 package com.github.kaivu.application.service.impl;
 
 import com.github.kaivu.application.service.CacheService;
-import com.github.kaivu.configuration.redis.RedisManager;
-import com.github.kaivu.configuration.redis.RedisProfile;
-import com.github.kaivu.configuration.redis.RedisProfileType;
+import com.github.kaivu.config.redis.RedisManager;
+import com.github.kaivu.config.redis.RedisProfile;
+import com.github.kaivu.config.redis.RedisProfileType;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

@@ -1,0 +1,11 @@
+[
+  {
+    "resources": {
+      "includes": [
+        {
+          "pattern": ".env"
+        }
+      ]
+    }
+  }
+]

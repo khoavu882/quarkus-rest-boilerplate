@@ -2,7 +2,7 @@ package com.github.kaivu.adapter.in.rest;
 
 import com.github.kaivu.common.constant.AppConstant;
 import com.github.kaivu.common.utils.ResourceBundleUtil;
-import com.github.kaivu.configuration.handler.ErrorResponse;
+import com.github.kaivu.config.handler.ErrorResponse;
 import io.vertx.core.json.JsonObject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;

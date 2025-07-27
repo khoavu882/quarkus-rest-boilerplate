@@ -1,7 +1,7 @@
 package com.github.kaivu.adapter.in.filter;
 
 import com.github.kaivu.common.constant.AppHeaderConstant;
-import com.github.kaivu.configuration.security.AppSecurityContext;
+import com.github.kaivu.config.security.AppSecurityContext;
 import com.github.kaivu.domain.audit.AuditListener;
 import io.opentelemetry.api.trace.Span;
 import io.smallrye.mutiny.Uni;
