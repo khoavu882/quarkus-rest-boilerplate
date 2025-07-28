@@ -68,11 +68,14 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public Uni<Long> deleteByPattern(String pattern) {
-        // Note: Pattern deletion would need to be implemented in RedisHelper
-        // For now, using a simple approach - this can be enhanced later
-        return Uni.createFrom()
-                .item(0L)
-                .invoke(count -> log.debug("Pattern deletion not fully implemented for pattern: {}", pattern));
+        return redisManager
+                .deleteByPattern(pattern)
+                .invoke(count -> log.debug("Deleted {} keys matching pattern: {}", count, pattern))
+                .onFailure()
+                .recoverWithItem(throwable -> {
+                    log.error("Failed to delete keys by pattern: {}", pattern, throwable);
+                    return 0L;
+                });
     }
 
     @Override
@@ -89,12 +92,14 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public Uni<Long> increment(String key, long delta) {
-        // Note: Increment operation would need to be added to RedisManager
-        // For now, using a placeholder - this can be enhanced later
-        return Uni.createFrom()
-                .item(delta)
-                .invoke(newValue ->
-                        log.debug("Increment operation not fully implemented for key: {} by {}", key, delta));
+        return redisManager
+                .increment(key, delta)
+                .invoke(newValue -> log.debug("Incremented key: {} by {} to {}", key, delta, newValue))
+                .onFailure()
+                .recoverWithItem(throwable -> {
+                    log.error("Failed to increment key: {} by {}", key, delta, throwable);
+                    return delta;
+                });
     }
 
     @Override

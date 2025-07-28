@@ -23,6 +23,8 @@ public class EntityDeviceDetailsVM extends EntityDeviceVM implements Serializabl
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private String description;
+
     private JsonObject metadata = new JsonObject();
 
     private Instant createdDate;

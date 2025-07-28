@@ -125,6 +125,29 @@ public class RedisHelperImpl implements RedisHelper {
     }
 
     @Override
+    public Uni<Long> deleteByPattern(String pattern) {
+        ReactiveKeyCommands<String> keyCommands = reactiveDataSource.key();
+        return keyCommands
+                .keys(pattern)
+                .flatMap(keys -> {
+                    if (keys.isEmpty()) {
+                        log.debug("No keys found matching pattern: {}", pattern);
+                        return Uni.createFrom().item(0L);
+                    }
+                    return keyCommands
+                            .del(keys.toArray(new String[0]))
+                            .map(Integer::longValue)
+                            .invoke(deletedCount ->
+                                    log.debug("Deleted {} keys matching pattern: {}", deletedCount, pattern));
+                })
+                .onFailure()
+                .recoverWithItem(throwable -> {
+                    log.error("Failed to delete keys by pattern: {}", pattern, throwable);
+                    return 0L;
+                });
+    }
+
+    @Override
     public Uni<Boolean> exists(String key) {
         // Use get() to check if key exists - simpler and avoids type issues
         return reactiveDataSource

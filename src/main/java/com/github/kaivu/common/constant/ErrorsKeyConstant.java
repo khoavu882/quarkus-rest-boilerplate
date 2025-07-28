@@ -15,6 +15,7 @@ public final class ErrorsKeyConstant {
     public static final String INVALID_REDIRECT = "invalid_redirect";
 
     // User defined error key constants
+    public static final String ALREADY_EXISTS = "already_exists";
     public static final String DATABASE_CONNECTION_FAILED = "database_connection_failed";
     public static final String CLIENT_BAD_REQUEST = "client_bad_request";
     public static final String CONFLICT = "conflict";

@@ -1,5 +1,6 @@
 package com.github.kaivu.adapter.in.rest.dto.request;
 
+import com.github.kaivu.domain.enumeration.ActionStatus;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,4 +16,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public class EntityDeviceFilters extends PageableRequest implements Serializable {}
+public class EntityDeviceFilters extends PageableRequest implements Serializable {
+
+    private String name;
+    private ActionStatus status;
+}
