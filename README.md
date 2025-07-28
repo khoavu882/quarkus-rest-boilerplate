@@ -1,126 +1,165 @@
-# Quarkus Rest Boilerplate
+# Quarkus REST Application
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+A modern reactive REST API built with Quarkus framework following hexagonal/clean architecture principles.
 
-## Architecture (Hexagonal/Clean Architecture)
-- **Java 21** with **Quarkus 3+** (reactive JAX-RS, not Spring)
+## Tech Stack & Features
+
+### Core Technologies
+- **Java 21** with **Quarkus 3.23.4** (reactive JAX-RS)
 - **Database**: PostgreSQL with Hibernate Reactive + Panache
-- **Storage**: MinIO object storage, Redis caching
-- **Packages**: `adapter/in|out/` (REST controllers, adapters), `application/` (services, use cases, repositories), `domain/` (entities, enums), `common/` (utils, constants), `configuration/`
-- **REST endpoints**: `/api/entity-devices`, `/demo`, `/common`, `/stream`
+- **Caching**: Redis client for distributed caching
+- **Storage**: MinIO object storage integration
+- **Reactive**: Mutiny for non-blocking operations
+- **Validation**: Jakarta Bean Validation with custom validators
+- **Mapping**: MapStruct for entity-DTO conversions
+- **Scheduling**: Quartz scheduler integration
 
-## Code Style & Conventions
-- **Formatting**: Palantir Java Format via Spotless plugin (required)
-- **Imports**: Order: `blank,java|javax,#` with unused imports removed
-- **Annotations**: Lombok (`@Getter`, `@Slf4j`), Jakarta (`@Path`, `@GET`, `@Inject`), OpenAPI (`@Operation`, `@Tag`)
-- **Reactive**: Use `Uni<T>` return types for async operations, `@WithTransaction` for transactional methods
-- **DTOs**: Separate create/update DTOs, view models with `VM` suffix
-- **Entities**: Extend `AbstractAuditingEntity`, use UUIDs for IDs
-- **Exceptions**: Custom exceptions in `application/exception/` (EntityNotFoundException, EntityConflictException)
-- **Error handling**: Use ErrorsEnum for standardized error responses
+### Monitoring & Observability
+- **Metrics**: Micrometer with Prometheus registry
+- **Tracing**: OpenTelemetry distributed tracing
+- **Health**: SmallRye Health checks
+- **Logging**: JSON structured logging
+- **API Documentation**: OpenAPI/Swagger UI
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
-## Getting Started
-## Required Environment
+### Additional Features
+- **WebSockets**: Real-time communication support
+- **Templating**: Qute template engine
+- **File Processing**: Apache Tika for media file handling
+- **Code Quality**: Spotless with Palantir Java Format
 
-- **Java**: Ensure you have JDK 21 or later installed.
-- **Gradle**: Gradle 8.5 or later is required.
-- **GraalVM**: Required for building native executables (optional).
+## Architecture
 
-You can find environment variables of application in [.env-template](.env.template)
-
-## Infrastructure
-
-- **Database**: Specify the database used (e.g., PostgreSQL, MySQL) and any setup instructions.
-- **MinIO**: Used for video streaming. Ensure MinIO is set up and accessible.
-- **Redis**: Used for caching. Ensure Redis is set up and accessible.
-- **OpenTelemetry**: For distributed tracing, ensure OpenTelemetry is configured.
-
-## Dependencies
-
-This project uses the following key dependencies:
-- **Quarkus**: Core framework for building Java applications.
-- **Hibernate Reactive**: For persistence.
-- **Mapstruct**: For object mapping.
-- **RESTEasy Reactive**: For building RESTful web services.
-- **Swagger**: For API documentation.
-
-## Compiler
-
-The project is built using Gradle. Ensure Gradle is installed and configured correctly.
-After editing the source code, run the following command to compile the project if errors occur:
-
-- Format check: 
-```shell script
-./gradlew spotlessCheck
+### Hexagonal Architecture Structure
 ```
-- Format apply:
-```shell script
-./gradlew spotlessApply
+src/main/java/com/github/kaivu/
+├── Application.java                 # Main application entry point
+├── adapter/                         # External interfaces
+│   ├── in/                         # Inbound adapters
+│   │   ├── rest/                   # REST controllers
+│   │   │   ├── CommonResource.java
+│   │   │   ├── DemoResource.java
+│   │   │   ├── EntityDevicesResource.java
+│   │   │   ├── StreamingResource.java
+│   │   │   ├── dto/                # Request/Response DTOs
+│   │   │   └── validator/          # Custom validators
+│   │   └── filter/                 # Request filters
+│   └── out/                        # Outbound adapters
+│       ├── api/                    # External API clients
+│       ├── client/                 # HTTP clients
+│       ├── persistence/            # Database repositories
+│       ├── handler/                # Event handlers
+│       └── exception/              # Adapter exceptions
+├── application/                     # Application layer
+│   ├── service/                    # Application services
+│   ├── usecase/                    # Use case implementations
+│   ├── port/                       # Port interfaces
+│   └── exception/                  # Application exceptions
+├── domain/                         # Domain layer
+│   ├── EntityDevice.java           # Core entities
+│   ├── MediaFile.java
+│   ├── AbstractAuditingEntity.java # Base audit entity
+│   ├── enumeration/                # Domain enums
+│   ├── supplier/                   # Value suppliers
+│   ├── audit/                      # Audit components
+│   └── type/                       # Custom types
+├── common/                         # Shared utilities
+└── config/                         # Configuration classes
 ```
 
-## Running the application in dev mode
+### Key REST Endpoints
+- **`/api/entity-devices`** - CRUD operations for entity device management
+  - GET, POST, PUT, DELETE operations
+  - Filtering and pagination support
+  - File upload capabilities
+- **`/demo`** - Demo endpoints for testing
+- **`/common`** - Common utility endpoints
+- **`/stream`** - WebSocket streaming endpoints
 
-You can run your application in dev mode that enables live coding using:
-```shell script
+## Development Workflow
+
+### Build & Run Commands
+```bash
+# Development mode with hot reload
 ./gradlew quarkusDev
-```
 
-> **_NOTE:_**  
-> - Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev-ui/
-> - API Documents at: http://localhost:8080/q/swagger-ui/
-
-## Packaging and running the application
-
-The application can be packaged using:
-```shell script
+# Build application
 ./gradlew build
+
+# Run tests
+./gradlew test
+
+# Format code (required before commit)
+./gradlew spotlessApply
+
+# Check code formatting
+./gradlew spotlessCheck
+
+# Clean build
+./gradlew clean build
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+### Code Style & Conventions
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+#### Formatting & Structure
+- **Code Formatting**: Palantir Java Format enforced via Spotless plugin
+- **Import Order**: blank line, java/javax imports, then static imports (#-prefixed)
+- **Naming Conventions**: 
+  - REST resources end with `Resource`
+  - Services end with `Service`
+  - Use cases end with `UseCase`
+  - View models end with `VM` suffix
 
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./gradlew build -Dquarkus.package.type=uber-jar
-```
+#### Reactive Programming
+- Use `Uni<T>` return types for async operations
+- Apply `@WithTransaction` for transactional methods
+- Avoid blocking calls in reactive chains
+- Leverage Mutiny operators for composition
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+#### Data & Validation
+- **Entities**: Extend `AbstractAuditingEntity` for audit fields
+- **IDs**: Use UUIDs for entity identifiers
+- **DTOs**: Separate create/update DTOs with validation annotations
+- **Custom Validation**: Use `@ValidEnumValue` and similar custom validators
+- **Database**: Soft delete pattern with `@Filter` annotations
 
-## Creating a native executable
+#### Error Handling
+- Custom exceptions extend `ServiceException`
+- Use `ErrorResponse` DTOs for consistent error responses
+- Implement proper HTTP status codes
+- Include trace IDs for debugging
 
-You can create a native executable using: 
-```shell script
-./gradlew build -Dquarkus.package.native=true
-```
+## Configuration
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./gradlew build -Dquarkus.package.native=true -Dquarkus.native.container-build=true
-```
+### Environment Variables
+- **Database**: `DEMO_DB_KIND`, `DEMO_HOST`, `DEMO_PORT`, `DEMO_DB`, `DEMO_SCHEMA`
+- **Credentials**: `DEMO_USERNAME`, `DEMO_PASSWORD`
+- **Application**: `APP_NAME`, `ENABLE_QUARKUS_MANAGEMENT`
 
-You can then execute your native executable with: `./target/quarkus-rest-1.0.0-runner`
+### Database Schema
+- **Default Schema**: `sch_local` (configurable via `DEMO_SCHEMA`)
+- **Generation**: `create-drop` for development
+- **Connection Pool**: 16 max connections per datasource
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
+### Observability
+- **Management Port**: 9000 (when enabled)
+- **Trace Context**: Automatic traceId, spanId injection in logs
+- **Health Checks**: Available at `/q/health`
+- **Metrics**: Prometheus format at `/q/metrics`
+- **OpenAPI**: Documentation at `/q/swagger-ui`
 
-## Provided Code
+## Getting Started
 
-### RESTEasy Reactive
+1. **Prerequisites**: Java 21, Docker (for PostgreSQL/Redis)
+2. **Database Setup**: Configure PostgreSQL connection in `application.yml`
+3. **Development**: Run `./gradlew quarkusDev` for hot reload
+4. **Dev UI**: Access Dev UI at `http://localhost:8080/q/dev-ui`
+5. **API Testing**: Access Swagger UI at `http://localhost:8080/q/swagger-ui`
+6. **Code Quality**: Always run `./gradlew spotlessApply` before committing
 
-Easily start your Reactive RESTful Web Services
+## Testing Strategy
 
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
-
-
-## Service include:
-
-- RestAPI with Reactive
-- Middleware with Declaring Routes
-- LogFilters
-- Persistence with Hibernate Reactive
-- Define Audit Data
-- Mapper with Mapstruct
-- Errors Handler
-- Swagger Docs
+The application uses JUnit 5 with Quarkus testing extensions:
+- **Integration Tests**: REST endpoint testing with RESTAssured
+- **Mock Support**: Panache Mock for repository testing
+- **Health Checks**: Automated health endpoint validation
+- **Container Support**: Docker image building and testing
