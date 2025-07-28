@@ -12,6 +12,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -31,7 +32,9 @@ import java.util.UUID;
 @Setter
 @Cacheable
 @NoArgsConstructor
-@Table(name = "entity_device")
+@Table(
+        name = "entity_device",
+        indexes = {@Index(name = "idx_entity_device_name", columnList = "name", unique = true)})
 @FilterDef(
         name = "entitiesDeletedFilter",
         autoEnabled = true,

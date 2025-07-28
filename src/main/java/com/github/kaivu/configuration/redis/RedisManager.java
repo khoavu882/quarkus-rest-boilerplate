@@ -54,11 +54,23 @@ public class RedisManager {
         return redisHelper.delete(key);
     }
 
+    public Uni<Long> deleteByPattern(String pattern) {
+        return redisHelper.deleteByPattern(pattern);
+    }
+
     public Uni<Boolean> exists(String key) {
         return redisHelper.exists(key);
     }
 
     public <T> Uni<Void> setMultiple(Map<String, T> keyValueMap, Duration ttl) {
         return redisHelper.setMultiple(keyValueMap, ttl);
+    }
+
+    public Uni<Long> increment(String key, long delta) {
+        return redisHelper.increment(key, delta);
+    }
+
+    public Uni<Long> increment(String key) {
+        return increment(key, 1L);
     }
 }

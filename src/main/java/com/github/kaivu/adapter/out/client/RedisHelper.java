@@ -82,6 +82,14 @@ public interface RedisHelper {
     Uni<Long> delete(List<String> keys);
 
     /**
+     * Delete keys matching a pattern
+     *
+     * @param pattern Pattern to match keys (e.g., "prefix:*")
+     * @return Uni with number of keys deleted
+     */
+    Uni<Long> deleteByPattern(String pattern);
+
+    /**
      * Check if a key exists in cache
      *
      * @param key Cache key to check

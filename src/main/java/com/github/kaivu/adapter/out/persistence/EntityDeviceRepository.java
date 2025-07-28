@@ -38,6 +38,14 @@ public class EntityDeviceRepository implements IEntityDeviceRepository {
                 .getResultList());
     }
 
+    public Uni<Optional<EntityDevice>> findByName(String name) {
+        return sessionFactory.withTransaction((session, tx) -> session.createQuery(
+                        "FROM EntityDevice ed WHERE LOWER(ed.name) = LOWER(:name)", EntityDevice.class)
+                .setParameter("name", name)
+                .getSingleResultOrNull()
+                .map(Optional::ofNullable));
+    }
+
     @Override
     public Uni<EntityDevice> persist(EntityDevice entity) {
         return sessionFactory.withTransaction(

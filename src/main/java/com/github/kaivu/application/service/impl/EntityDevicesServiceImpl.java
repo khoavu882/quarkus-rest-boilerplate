@@ -1,6 +1,7 @@
 package com.github.kaivu.application.service.impl;
 
 import com.github.kaivu.adapter.out.persistence.EntityDeviceRepository;
+import com.github.kaivu.application.exception.EntityConflictException;
 import com.github.kaivu.application.exception.EntityNotFoundException;
 import com.github.kaivu.application.service.EntityDevicesService;
 import com.github.kaivu.configuration.handler.ErrorsEnum;
@@ -39,10 +40,22 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
     }
 
     @Override
+    public Uni<Optional<EntityDevice>> findByName(String name) {
+        return entityDeviceRepository.findByName(name);
+    }
+
+    @Override
     public Uni<EntityDevice> getById(UUID identify) throws EntityNotFoundException {
         return findById(identify)
                 .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityNotFoundException(
                         ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(requestContext.getLanguage(), identify))));
+    }
+
+    @Override
+    public Uni<EntityDevice> getByName(String name) throws EntityConflictException {
+        return findByName(name)
+                .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityConflictException(
+                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(requestContext.getLanguage(), name))));
     }
 
     @Override

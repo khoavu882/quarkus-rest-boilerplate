@@ -35,6 +35,7 @@ public enum ErrorsEnum {
 
     // Entity Device Errors
     ENTITY_DEVICE_NOT_FOUND(EntitiesConstant.ENTITY_DEVICE, ErrorsKeyConstant.NOT_FOUND, ""),
+    ENTITY_DEVICE_NAME_ALREADY_EXISTS(EntitiesConstant.ENTITY_DEVICE, ErrorsKeyConstant.ALREADY_EXISTS, ""),
 
     // User Errors
     USER_NOT_FOUND(EntitiesConstant.USER, ErrorsKeyConstant.NOT_FOUND, ""),
