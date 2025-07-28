@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quarkus REST API</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Quarkus REST API - Modern Enterprise Framework</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #bd93f9; /* Dracula purple */
@@ -27,10 +28,11 @@
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
             color: var(--text-color);
             background-color: var(--dark-color);
+            overflow-x: hidden;
         }
 
         .container {
@@ -184,6 +186,7 @@
             position: relative;
             overflow: hidden;
             border: 3px solid var(--primary-color);
+            box-shadow: 0 0 20px rgba(189, 147, 249, 0.3);
         }
 
         .animated-logo::before {
@@ -200,6 +203,113 @@
             100% { transform: scale(1); }
         }
 
+        .stats-section {
+            background: linear-gradient(135deg, var(--light-color), var(--dark-color));
+            padding: 60px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            text-align: center;
+        }
+
+        .stat-card {
+            padding: 30px;
+            border-radius: 12px;
+            background: rgba(68, 71, 90, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(189, 147, 249, 0.2);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-color);
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        .interactive-demo {
+            padding: 60px 0;
+            background: linear-gradient(180deg, var(--dark-color), var(--light-color));
+        }
+
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .demo-button {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--dark-color);
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(189, 147, 249, 0.3);
+        }
+
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(189, 147, 249, 0.4);
+        }
+
+        .response-display {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(40, 42, 54, 0.8);
+            border-radius: 12px;
+            border: 1px solid var(--comment-color);
+            min-height: 100px;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            display: none;
+        }
+
+        .tech-stack {
+            padding: 60px 0;
+            background-color: var(--dark-color);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .tech-item {
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(68, 71, 90, 0.3);
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .tech-item:hover {
+            background: rgba(68, 71, 90, 0.6);
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+        }
+
+        .tech-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--cyan-color);
+        }
+
         @media (max-width: 768px) {
             header h1 {
                 font-size: 2rem;
@@ -208,120 +318,266 @@
             .feature-grid {
                 grid-template-columns: 1fr;
             }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .api-links {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(189, 147, 249, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-<header>
-    <div class="container">
-        <div class="animated-logo"></div>
-        <h1>Quarkus REST API</h1>
-        <p>A modern, reactive REST API built with Quarkus - Supersonic Subatomic Java</p>
-    </div>
-</header>
+    <header>
+        <div class="container">
+            <div class="animated-logo"></div>
+            <h1>Quarkus REST API</h1>
+            <p>A Kubernetes Native Java stack tailored for OpenJDK HotSpot and GraalVM, crafted from the best of breed Java libraries and standards. Experience supersonic subatomic Java development!</p>
+        </div>
+    </header>
 
-<section class="features">
-    <div class="container">
-        <h2>Features</h2>
-        <div class="feature-grid">
-            <div class="feature-card">
-                <h3>Reactive REST API</h3>
-                <p>Built with RESTEasy Reactive for high performance and scalability.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Middleware with Routes</h3>
-                <p>Flexible middleware architecture with declarative routing.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Log Filters</h3>
-                <p>Comprehensive logging system with customizable filters.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Hibernate Reactive</h3>
-                <p>Persistence layer powered by Hibernate Reactive for efficient data management.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Audit Data</h3>
-                <p>Built-in audit trail for tracking data changes and user actions.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Mapstruct</h3>
-                <p>Efficient object mapping with Mapstruct for clean code architecture.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Error Handling</h3>
-                <p>Robust error handling system with detailed error responses.</p>
-            </div>
-            <div class="feature-card">
-                <h3>Swagger Docs</h3>
-                <p>Comprehensive API documentation with Swagger/OpenAPI.</p>
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">10x</span>
+                    <div class="stat-label">Faster Startup</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">75%</span>
+                    <div class="stat-label">Less Memory</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">300+</span>
+                    <div class="stat-label">Extensions</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">100%</span>
+                    <div class="stat-label">Cloud Native</div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="api-section">
-    <div class="container">
-        <h2>API Documentation</h2>
-        <div class="api-links">
-            <a href="/q/swagger-ui" class="api-button">Swagger UI</a>
-            <a href="/q/openapi" class="api-button">OpenAPI Spec</a>
-            <a href="/demo" class="api-button">Demo API</a>
+    <section class="features">
+        <div class="container">
+            <h2>Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3><i class="fas fa-rocket"></i> Supersonic Speed</h3>
+                    <p>Experience blazing fast startup times and incredibly low memory usage, perfect for containers and microservices.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-code"></i> Developer Joy</h3>
+                    <p>Live coding with instant reload, unified configuration, and zero config setup for maximum productivity.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-cloud"></i> Cloud Native</h3>
+                    <p>Built for Kubernetes with native compilation support and seamless integration with cloud platforms.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-puzzle-piece"></i> Rich Ecosystem</h3>
+                    <p>300+ extensions available covering databases, messaging, security, and more enterprise integrations.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-shield-alt"></i> Enterprise Ready</h3>
+                    <p>Production-grade features including security, monitoring, fault tolerance, and distributed tracing.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><i class="fas fa-sync-alt"></i> Reactive by Design</h3>
+                    <p>Built on reactive principles for handling high loads with non-blocking I/O and backpressure support.</p>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="code-section">
-    <div class="container">
-        <h2>Quick Start</h2>
-        <div class="code-block">
-                <pre>
-# Run the application in dev mode
-./mvnw compile quarkus:dev
-
-# Package the application
-./mvnw package
-
-# Run the packaged application
-java -jar target/quarkus-app/quarkus-run.jar
-
-# Create a native executable
-./mvnw package -Dnative
-                </pre>
+    <section class="interactive-demo">
+        <div class="container">
+            <div class="demo-container">
+                <h2>Try Our API</h2>
+                <p>Test the REST endpoints directly from your browser</p>
+                <div>
+                    <button class="demo-button" onclick="testEndpoint('/hello')">
+                        <i class="fas fa-play"></i> Test Hello Endpoint
+                    </button>
+                    <button class="demo-button" onclick="testEndpoint('/api/health')">
+                        <i class="fas fa-heartbeat"></i> Check Health
+                    </button>
+                    <button class="demo-button" onclick="testEndpoint('/q/metrics')">
+                        <i class="fas fa-chart-line"></i> View Metrics
+                    </button>
+                </div>
+                <div id="response-display" class="response-display">
+                    <pre id="response-content"></pre>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<footer>
-    <div class="container">
-        <p>Powered by Quarkus - Made with ❤️ by KaiVu</p>
-        <p><a href="https://github.com/khoavu882/quarkus-rest" style="color: var(--secondary-color);">GitHub Repository</a></p>
-    </div>
-</footer>
+    <section class="api-section">
+        <div class="container">
+            <h2>API Documentation & Tools</h2>
+            <div class="api-links">
+                <a href="/q/swagger-ui" class="api-button">
+                    <i class="fas fa-book"></i> Swagger UI
+                </a>
+                <a href="/q/openapi" class="api-button">
+                    <i class="fas fa-file-code"></i> OpenAPI Spec
+                </a>
+                <a href="/q/health" class="api-button">
+                    <i class="fas fa-heartbeat"></i> Health Check
+                </a>
+                <a href="/q/metrics" class="api-button">
+                    <i class="fas fa-chart-bar"></i> Metrics
+                </a>
+                <a href="/q/dev" class="api-button">
+                    <i class="fas fa-tools"></i> Dev Console
+                </a>
+            </div>
+        </div>
+    </section>
 
-<script>
-    // Add some interactivity
-    document.addEventListener('DOMContentLoaded', function() {
-        const featureCards = document.querySelectorAll('.feature-card');
+    <section class="tech-stack">
+        <div class="container">
+            <h2>Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <div class="tech-icon"><i class="fab fa-java"></i></div>
+                    <div>Java 17+</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon"><i class="fas fa-cube"></i></div>
+                    <div>Quarkus</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon"><i class="fas fa-database"></i></div>
+                    <div>Hibernate</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <div>RESTEasy</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon"><i class="fab fa-docker"></i></div>
+                    <div>Docker</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon"><i class="fas fa-dharmachakra"></i></div>
+                    <div>Kubernetes</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        featureCards.forEach(card => {
-            card.addEventListener('click', function() {
-                this.style.backgroundColor = getRandomColor();
-                this.style.color = var(--dark-color);
+    <section class="code-section">
+        <div class="container">
+            <h2>Quick Start Example</h2>
+            <div class="code-block">
+                <pre><code>@Path("/hello")
+@ApplicationScoped
+public class GreetingResource {
 
-                setTimeout(() => {
-                    this.style.backgroundColor = var(--light-color);
-                    this.style.color = var(--text-color);
-                    this.querySelector('h3').style.color = var(--cyan-color);
-                }, 500);
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String hello() {
+        return "Hello from Quarkus REST";
+    }
+
+    @GET
+    @Path("/json")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Greeting greetingJson() {
+        return new Greeting("Hello", "World");
+    }
+}</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Quarkus REST API. Built with ❤️ using Quarkus Framework.</p>
+            <p>
+                <a href="https://quarkus.io" style="color: var(--primary-color); text-decoration: none;">
+                    Learn more about Quarkus
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        async function testEndpoint(endpoint) {
+            const responseDisplay = document.getElementById('response-display');
+            const responseContent = document.getElementById('response-content');
+
+            responseDisplay.style.display = 'block';
+            responseContent.innerHTML = '<span class="loading"></span> Loading...';
+
+            try {
+                const response = await fetch(endpoint);
+                const contentType = response.headers.get('content-type');
+
+                let data;
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                    responseContent.innerHTML = `<span style="color: var(--green-color);">Status: ${response.status}</span>\n\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    data = await response.text();
+                    responseContent.innerHTML = `<span style="color: var(--green-color);">Status: ${response.status}</span>\n\n${data}`;
+                }
+            } catch (error) {
+                responseContent.innerHTML = `<span style="color: var(--red-color);">Error: ${error.message}</span>`;
+            }
+        }
+
+        // Add smooth scrolling to anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
             });
         });
 
-        function getRandomColor() {
-            const colors = ['#bd93f9', '#ff79c6', '#50fa7b', '#8be9fd', '#ffb86c', '#ff5555', '#f1fa8c'];
-            return colors[Math.floor(Math.random() * colors.length)];
-        }
-    });
-</script>
+        // Add subtle animations on scroll
+        const observerCallback = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.feature-card, .stat-card, .tech-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>
