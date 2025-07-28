@@ -1,15 +1,15 @@
 version: "3.8"
 services:
-  # Quarkus Application
+  # Quarkus Native Application
   quarkus-app:
     build:
       context: ../../../
-      dockerfile: src/main/docker/Dockerfile.jvm
-    image: quarkus-rest:latest
-    container_name: local_quarkus_app
+      dockerfile: src/main/docker/Dockerfile.native
+    image: quarkus-rest-native:latest
+    container_name: local_quarkus_native_app
     ports:
-      - "8080:8080"
-      - "9000:9000"   # Management port
+      - "8081:8080"   # Changed from 8080 to avoid conflict with JVM version
+      - "9001:9000"   # Changed from 9000 to avoid conflict with JVM version
     environment:
       DEMO_HOST: postgresql
       DEMO_PORT: 5432
@@ -34,18 +34,25 @@ services:
       minio:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/q/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/q/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s  # Native apps start much faster
     networks:
       - local_network
+    # Native apps use much less memory
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
 
   # PostgreSQL Database
   postgresql:
     image: postgres:15-alpine
-    container_name: local_postgres
+    container_name: local_postgres_native
     environment:
       POSTGRES_DB: db_local
       POSTGRES_USER: postgres
@@ -61,12 +68,12 @@ services:
     networks:
       - local_network
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata_native:/var/lib/postgresql/data
 
   # Redis Cache
   redis:
     image: redis:7-alpine
-    container_name: local_redis
+    container_name: local_redis_native
     ports:
       - "6379:6379"
     healthcheck:
@@ -81,9 +88,9 @@ services:
   # MinIO Object Storage
   minio:
     image: minio/minio:latest
-    container_name: local_minio
+    container_name: local_minio_native
     ports:
-      - "9090:9000"   # API (changed from 9000 to avoid conflict)
+      - "9090:9000"   # API
       - "9091:9001"   # Console
     environment:
       MINIO_ROOT_USER: minioadmin
@@ -97,12 +104,12 @@ services:
     networks:
       - local_network
     volumes:
-      - minio_data:/data
+      - minio_data_native:/data
 
   # Jaeger
   jaeger:
     image: jaegertracing/all-in-one:latest
-    container_name: local_jaeger
+    container_name: local_jaeger_native
     ports:
       - "16686:16686" # Jaeger UI
       - "4317:4317"   # OTLP gRPC receiver
@@ -115,8 +122,8 @@ services:
 networks:
   local_network:
     driver: bridge
-    name: local_network
+    name: local_network_native
 
 volumes:
-  pgdata:
-  minio_data:
+  pgdata_native:
+  minio_data_native:

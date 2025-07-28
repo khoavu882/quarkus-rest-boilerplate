@@ -1,6 +1,14 @@
 quarkus:
   application:
     name: ${APP_NAME:demo-service}
+
+  # Container image configuration - DISABLED for native builds
+  container-image:
+    build: ${ENABLE_CONTAINER_IMAGE_BUILD:false}
+    builder: docker
+    image: ${quarkus.application.name}:latest
+    registry: local
+
   management:
     enabled: ${ENABLE_QUARKUS_MANAGEMENT:false}
     port: 9000
@@ -44,6 +52,7 @@ quarkus:
     database:
       default-schema: ${DEMO_SCHEMA:sch_local}
       generation: create-drop
+      generation-create-schemas: true
     sql-load-script: no-file
 
   http:
@@ -55,14 +64,15 @@ quarkus:
       methods: GET, OPTIONS, POST, PUT, DELETE, PATCH
       headers: accept, authorization, content-type, x-requested-with, X-Current-Org-Id
     enable-compression: ${ENABLE_HTTP_COMPRESSION:false}
+    host: 0.0.0.0
+    port: 8080
 
   redis:
-    hosts: ${REDIS_KIND_CONNECT:redis}://${REDIS_HOST:localhost}:${REDIS_PORT:6379}
-    database: ${REDIS_DATABASE_INDEX:0}
+    hosts: ${QUARKUS_REDIS_HOSTS:redis://redis:6379}
     timeout: ${REDIS_CONNECTION_TIMEOUT:3s}
 
     demo:
-      hosts: ${REDIS_KIND_CONNECT:redis}://${REDIS_HOST:localhost}:${REDIS_PORT:6379}
+      hosts: ${QUARKUS_REDIS_HOSTS:redis://redis:6379}
       timeout: ${REDIS_CONNECTION_TIMEOUT:3s}
 
   rest-client:
@@ -105,6 +115,6 @@ quarkus:
     container-build: ${ENABLE_NATIVE_CONTAINER_BUILD:false}
 
 minio:
-  url: ${MINIO_URL:http://localhost:9000}
+  url: ${MINIO_URL:http://localhost:9001}
   access-key: ${MINIO_ACCESS_KEY:minioadmin}
   secret-key: ${MINIO_SECRET_KEY:minioadmin}
