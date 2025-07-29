@@ -121,7 +121,7 @@ src/main/java/com/github/kaivu/
 - **Complete containerization** - Application runs as a Docker container
 - **Health checks** for all services with automatic retry logic
 - **Service dependencies** - Application waits for infrastructure to be ready
-- **Named networks** (`local_network`) for secure service communication  
+- **Named networks** (`local_network`) for secure service communication
 - **Persistent volumes** for PostgreSQL data and MinIO storage
 - **Environment-specific** configuration with proper resource limits
 
@@ -221,7 +221,7 @@ Once the Docker setup completes, access these URLs:
 
 #### 📊 Application Endpoints
 - **Quarkus App**: http://localhost:8080
-- **Swagger UI**: http://localhost:8080/q/swagger-ui  
+- **Swagger UI**: http://localhost:8080/q/swagger-ui
 - **Health Checks**: http://localhost:8080/q/health
 - **Metrics**: http://localhost:8080/q/metrics
 - **Management**: http://localhost:9000/q/health
@@ -299,7 +299,7 @@ The setup resolves common port conflicts automatically. If you encounter issues,
 # Check specific ports
 lsof -i :8080  # Quarkus App
 lsof -i :5432  # PostgreSQL
-lsof -i :6379  # Redis  
+lsof -i :6379  # Redis
 lsof -i :9090  # MinIO API
 lsof -i :9001  # MinIO Console
 lsof -i :9000  # Quarkus Management

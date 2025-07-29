@@ -6,7 +6,6 @@ plugins {
 
 group = 'com.github.kaivu'
 version = '1.0.0'
-sourceCompatibility = JavaVersion.VERSION_21
 
 repositories {
     mavenCentral()
@@ -65,9 +64,16 @@ java {
 
 spotless {
     java {
-        palantirJavaFormat("${palantirVersion}")
+        palantirJavaFormat("${palantirVersion}").formatJavadoc(false)
         importOrder '', 'java', 'javax', '#'
         removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    format('misc') {
+        target '**/*.gradle', '**/*.md', '**/.gitignore'
+        trimTrailingWhitespace()
+        endWithNewline()
     }
 }
 
