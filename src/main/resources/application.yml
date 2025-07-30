@@ -1,16 +1,16 @@
 quarkus:
   application:
-    name: ${APP_NAME:demo-service}
+    name: ${QUARKUS_APPLICATION_NAME:demo-service}
 
   # Container image configuration - DISABLED for native builds
   container-image:
-    build: ${ENABLE_CONTAINER_IMAGE_BUILD:false}
+    build: ${QUARKUS_CONTAINER_IMAGE_BUILD:false}
     builder: docker
-    image: ${quarkus.application.name}:latest
+    image: ${QUARKUS_APPLICATION_NAME:demo-service}:latest
     registry: local
 
   management:
-    enabled: ${ENABLE_QUARKUS_MANAGEMENT:false}
+    enabled: ${QUARKUS_MANAGEMENT_ENABLED:false}
     port: 9000
     proxy:
       allow-forwarded: true
@@ -33,27 +33,26 @@ quarkus:
   #        level: DEBUG
 
   datasource:
-    db-kind: ${DEMO_DB_KIND:postgresql}
-    username: ${DEMO_USERNAME:postgres}
-    password: ${DEMO_PASSWORD:postgres}
+    db-kind: ${QUARKUS_DATASOURCE_DB_KIND:postgresql}
+    username: ${QUARKUS_DATASOURCE_USERNAME:postgres}
+    password: ${QUARKUS_DATASOURCE_PASSWORD:postgres}
     reactive:
-      url: vertx-reactive:${DEMO_DB_KIND:postgresql}://${DEMO_HOST:localhost}:${DEMO_PORT:5432}/${DEMO_DB:db_local}?currentSchema=${DEMO_SCHEMA:sch_local}&prepareThreshold=0
+      url: vertx-reactive:${QUARKUS_DATASOURCE_DB_KIND:postgresql}://${QUARKUS_DATASOURCE_HOST:localhost}:${QUARKUS_DATASOURCE_PORT:5432}/${QUARKUS_DATASOURCE_DB:db_local}?currentSchema=${QUARKUS_DATASOURCE_SCHEMA:sch_local}&prepareThreshold=0
       max-size: 16
 
     demo:
-      db-kind: ${DEMO_DB_KIND:postgresql}
-      username: ${DEMO_USERNAME:postgres}
-      password: ${DEMO_PASSWORD:postgres}
+      db-kind: ${QUARKUS_DATASOURCE_DB_KIND:postgresql}
+      username: ${QUARKUS_DATASOURCE_USERNAME:postgres}
+      password: ${QUARKUS_DATASOURCE_PASSWORD:postgres}
       reactive:
-        url: vertx-reactive:${DEMO_DB_KIND:postgresql}://${DEMO_HOST:localhost}:${DEMO_PORT:5432}/${DEMO_DB:db_local}?currentSchema=${DEMO_SCHEMA:sch_local}&prepareThreshold=0
+        url: vertx-reactive:${QUARKUS_DATASOURCE_DB_KIND:postgresql}://${QUARKUS_DATASOURCE_HOST:localhost}:${QUARKUS_DATASOURCE_PORT:5432}/${QUARKUS_DATASOURCE_DB:db_local}?currentSchema=${QUARKUS_DATASOURCE_SCHEMA:sch_local}&prepareThreshold=0
         max-size: 16
 
   hibernate-orm:
     database:
-      default-schema: ${DEMO_SCHEMA:sch_local}
-      generation: create-drop
-      generation-create-schemas: true
-    sql-load-script: no-file
+      default-schema: ${QUARKUS_HIBERNATE_ORM_DATABASE_DEFAULT_SCHEMA:sch_local}
+    schema-management:
+      strategy: drop-and-create
 
   http:
     access-log:
@@ -63,24 +62,24 @@ quarkus:
       origins: "*"
       methods: GET, OPTIONS, POST, PUT, DELETE, PATCH
       headers: accept, authorization, content-type, x-requested-with, X-Current-Org-Id
-    enable-compression: ${ENABLE_HTTP_COMPRESSION:false}
+    enable-compression: ${QUARKUS_HTTP_ENABLE_COMPRESSION:false}
     host: 0.0.0.0
     port: 8080
 
   redis:
     hosts: ${QUARKUS_REDIS_HOSTS:redis://redis:6379}
-    timeout: ${REDIS_CONNECTION_TIMEOUT:3s}
+    timeout: ${QUARKUS_REDIS_TIMEOUT:3s}
 
     demo:
       hosts: ${QUARKUS_REDIS_HOSTS:redis://redis:6379}
-      timeout: ${REDIS_CONNECTION_TIMEOUT:3s}
+      timeout: ${QUARKUS_REDIS_TIMEOUT:3s}
 
   rest-client:
     logging:
       scope: request-response
     "demo-client":
-      url: ${DEMO_CLIENT_URL}
-      scope: ${DEMO_CLIENT_SCOPE:jakarta.inject.Singleton}
+      url: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_URL}
+      scope: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_SCOPE:jakarta.inject.Singleton}
 
   tls:
     trust-all: true
@@ -111,8 +110,8 @@ quarkus:
 
   native:
     additional-build-args:
-      - ${ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.configuration.ConfigsProvider}
-    container-build: ${ENABLE_NATIVE_CONTAINER_BUILD:false}
+      - ${QUARKUS_NATIVE_ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.configuration.ConfigsProvider}
+    container-build: ${QUARKUS_NATIVE_CONTAINER_BUILD:false}
 
 minio:
   url: ${MINIO_URL:http://localhost:9001}
