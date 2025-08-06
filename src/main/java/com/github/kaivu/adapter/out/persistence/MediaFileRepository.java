@@ -3,11 +3,10 @@ package com.github.kaivu.adapter.out.persistence;
 import com.github.kaivu.application.port.IMediaFileRepository;
 import com.github.kaivu.application.service.CacheService;
 import com.github.kaivu.domain.MediaFile;
-import io.quarkus.hibernate.reactive.panache.Panache;
+import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.hibernate.reactive.mutiny.Mutiny;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -20,7 +19,7 @@ import java.util.Optional;
  * Time: 2:25 AM
  */
 @ApplicationScoped
-public class MediaFileRepository implements IMediaFileRepository {
+public class MediaFileRepository implements PanacheRepositoryBase<MediaFile, Long>, IMediaFileRepository {
 
     private final CacheService cacheService;
 
@@ -45,49 +44,31 @@ public class MediaFileRepository implements IMediaFileRepository {
     }
 
     private Uni<MediaFile> findFromDatabase(String bucketName, String objectName) {
-        return Panache.getSession().chain(session -> session.createQuery(
-                        "SELECT m FROM MediaFile m WHERE m.bucketName = :bucketName AND m.objectName = :objectName",
-                        MediaFile.class)
-                .setParameter("bucketName", bucketName)
-                .setParameter("objectName", objectName)
-                .getSingleResultOrNull());
+        return find("bucketName = ?1 and objectName = ?2", bucketName, objectName)
+                .firstResult();
     }
 
     @Override
     public Uni<MediaFile> save(MediaFile mediaFile) {
-        return Panache.withTransaction(() -> {
-                    if (mediaFile.getId() == null) {
-                        // New entity - persist
-                        return Panache.getSession().chain(session -> session.persist(mediaFile)
-                                .chain(ignored -> session.flush())
-                                .map(ignored -> mediaFile));
-                    } else {
-                        // Existing entity - merge
-                        return Panache.getSession().chain(session -> session.merge(mediaFile)
-                                .chain(merged -> session.flush().map(ignored -> merged)));
-                    }
-                })
-                .chain(savedMedia -> {
-                    // Update cache after successful save
-                    String cacheKey = cacheService.generateKey(
-                            getCachePrefix(), savedMedia.getBucketName(), savedMedia.getObjectName());
-                    return cacheService
-                            .set(cacheKey, savedMedia, Duration.ofHours(1))
-                            .map(ignored -> savedMedia);
-                });
+        Uni<MediaFile> saveOperation;
+
+        if (mediaFile.getId() == null) {
+            saveOperation = persistAndFlush(mediaFile);
+        } else {
+            saveOperation = persistAndFlush(mediaFile);
+        }
+
+        return saveOperation.chain(savedMedia -> {
+            String cacheKey =
+                    cacheService.generateKey(getCachePrefix(), savedMedia.getBucketName(), savedMedia.getObjectName());
+            return cacheService.set(cacheKey, savedMedia, Duration.ofHours(1)).map(ignored -> savedMedia);
+        });
     }
 
     @Override
     public Uni<Void> deleteByBucketAndObject(String bucketName, String objectName) {
-        return Panache.withTransaction(() -> Panache.getSession()
-                        .chain(session -> session.createMutationQuery(
-                                        "DELETE FROM MediaFile m WHERE m.bucketName = :bucketName AND m.objectName = :objectName")
-                                .setParameter("bucketName", bucketName)
-                                .setParameter("objectName", objectName)
-                                .executeUpdate())
-                        .chain(ignored -> Panache.getSession().chain(Mutiny.Session::flush))
-                        .replaceWithVoid())
-                .chain(ignored -> {
+        return delete("bucketName = ?1 and objectName = ?2", bucketName, objectName)
+                .chain(deletedCount -> {
                     // Remove from cache after successful deletion
                     String cacheKey = cacheService.generateKey(getCachePrefix(), bucketName, objectName);
                     return cacheService.delete(cacheKey).replaceWithVoid();

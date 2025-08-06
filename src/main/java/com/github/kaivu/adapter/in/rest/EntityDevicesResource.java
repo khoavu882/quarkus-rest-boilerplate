@@ -46,7 +46,7 @@ public class EntityDevicesResource {
                     @Content(
                             mediaType = MediaType.APPLICATION_JSON,
                             schema = @Schema(implementation = ErrorResponse.class)))
-    public Uni<RestResponse<EntityDevice>> create(
+    public Uni<RestResponse<Void>> create(
             @Context UriInfo uriInfo,
             @RequestBody(
                             description = "Entity Device to create",

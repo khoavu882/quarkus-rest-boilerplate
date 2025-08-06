@@ -1,6 +1,7 @@
 package com.github.kaivu.application.service.impl;
 
 import com.github.kaivu.application.service.CacheService;
+import com.github.kaivu.config.metrics.AppMetrics;
 import com.github.kaivu.config.redis.RedisManager;
 import com.github.kaivu.config.redis.RedisProfile;
 import com.github.kaivu.config.redis.RedisProfileType;
@@ -10,6 +11,7 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -26,24 +28,53 @@ public class CacheServiceImpl implements CacheService {
     private static final Duration DEFAULT_TTL = Duration.ofHours(1);
 
     private final RedisManager redisManager;
+    private final AppMetrics simpleMetrics;
 
     @Inject
-    public CacheServiceImpl(@RedisProfile(RedisProfileType.DEFAULT) RedisManager redisManager) {
+    public CacheServiceImpl(
+            @RedisProfile(RedisProfileType.DEFAULT) RedisManager redisManager, AppMetrics simpleMetrics) {
         this.redisManager = redisManager;
+        this.simpleMetrics = simpleMetrics;
     }
 
     @Override
     public <T> Uni<Optional<T>> get(String key, Class<T> type) {
+        Instant start = Instant.now();
         return redisManager
                 .get(key, type)
-                .invoke(result -> log.debug("Cache {} for key: {}", result.isPresent() ? "hit" : "miss", key));
+                .invoke(result -> {
+                    Duration duration = Duration.between(start, Instant.now());
+                    if (result.isPresent()) {
+                        simpleMetrics.recordRedisHit(duration);
+                        log.debug("Cache hit for key: {}", key);
+                    } else {
+                        simpleMetrics.recordRedisMiss(duration);
+                        log.debug("Cache miss for key: {}", key);
+                    }
+                })
+                .onFailure()
+                .invoke(throwable -> {
+                    simpleMetrics.recordRedisError();
+                    log.error("Cache error for key: {}", key, throwable);
+                });
     }
 
     @Override
     public <T> Uni<Void> set(String key, T value, Duration ttl) {
+        Instant start = Instant.now();
         return redisManager
                 .set(key, value, ttl)
-                .invoke(() -> log.debug("Cached value for key: {} with TTL: {}", key, ttl));
+                .invoke(() -> {
+                    Duration duration = Duration.between(start, Instant.now());
+                    // Recording set operation (no method in SimpleMetrics yet)
+                    log.debug("Redis SET operation took {}ms", duration.toMillis());
+                    log.debug("Cached value for key: {} with TTL: {}", key, ttl);
+                })
+                .onFailure()
+                .invoke(throwable -> {
+                    simpleMetrics.recordRedisError();
+                    log.error("Failed to cache value for key: {}", key, throwable);
+                });
     }
 
     @Override
