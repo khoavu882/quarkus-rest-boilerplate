@@ -53,6 +53,7 @@ quarkus:
       default-schema: ${QUARKUS_HIBERNATE_ORM_DATABASE_DEFAULT_SCHEMA:sch_local}
     schema-management:
       strategy: drop-and-create
+      create-schemas: true
 
   http:
     access-log:
