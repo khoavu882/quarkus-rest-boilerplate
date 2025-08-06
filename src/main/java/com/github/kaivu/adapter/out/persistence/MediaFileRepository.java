@@ -3,10 +3,10 @@ package com.github.kaivu.adapter.out.persistence;
 import com.github.kaivu.application.port.IMediaFileRepository;
 import com.github.kaivu.application.service.CacheService;
 import com.github.kaivu.domain.MediaFile;
-import io.quarkus.hibernate.reactive.panache.PanacheRepositoryBase;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.hibernate.reactive.mutiny.Mutiny;
 
 import java.time.Duration;
 import java.util.Optional;
@@ -19,14 +19,13 @@ import java.util.Optional;
  * Time: 2:25 AM
  */
 @ApplicationScoped
-public class MediaFileRepository implements PanacheRepositoryBase<MediaFile, Long>, IMediaFileRepository {
-
-    private final CacheService cacheService;
+public class MediaFileRepository implements IMediaFileRepository {
 
     @Inject
-    public MediaFileRepository(CacheService cacheService) {
-        this.cacheService = cacheService;
-    }
+    Mutiny.SessionFactory sessionFactory;
+
+    @Inject
+    CacheService cacheService;
 
     private String getCachePrefix() {
         return "MediaFile";
@@ -44,8 +43,12 @@ public class MediaFileRepository implements PanacheRepositoryBase<MediaFile, Lon
     }
 
     private Uni<MediaFile> findFromDatabase(String bucketName, String objectName) {
-        return find("bucketName = ?1 and objectName = ?2", bucketName, objectName)
-                .firstResult();
+        return sessionFactory.withSession(session -> session.createQuery(
+                        "FROM MediaFile mf WHERE mf.bucketName = :bucketName AND mf.objectName = :objectName",
+                        MediaFile.class)
+                .setParameter("bucketName", bucketName)
+                .setParameter("objectName", objectName)
+                .getSingleResultOrNull());
     }
 
     @Override
@@ -53,21 +56,30 @@ public class MediaFileRepository implements PanacheRepositoryBase<MediaFile, Lon
         Uni<MediaFile> saveOperation;
 
         if (mediaFile.getId() == null) {
-            saveOperation = persistAndFlush(mediaFile);
+            // Create new entity
+            saveOperation = sessionFactory.withTransaction(
+                    (session, tx) -> session.persist(mediaFile).replaceWith(mediaFile));
         } else {
-            saveOperation = persistAndFlush(mediaFile);
+            // Update existing entity
+            saveOperation = sessionFactory.withTransaction(
+                    (session, tx) -> session.merge(mediaFile).replaceWith(mediaFile));
         }
 
         return saveOperation.chain(savedMedia -> {
             String cacheKey =
                     cacheService.generateKey(getCachePrefix(), savedMedia.getBucketName(), savedMedia.getObjectName());
-            return cacheService.set(cacheKey, savedMedia, Duration.ofHours(1)).map(ignored -> savedMedia);
+            return cacheService.set(cacheKey, savedMedia, Duration.ofHours(1)).replaceWith(savedMedia);
         });
     }
 
     @Override
     public Uni<Void> deleteByBucketAndObject(String bucketName, String objectName) {
-        return delete("bucketName = ?1 and objectName = ?2", bucketName, objectName)
+        return sessionFactory
+                .withTransaction((session, tx) -> session.createMutationQuery(
+                                "DELETE FROM MediaFile mf WHERE mf.bucketName = :bucketName AND mf.objectName = :objectName")
+                        .setParameter("bucketName", bucketName)
+                        .setParameter("objectName", objectName)
+                        .executeUpdate())
                 .chain(deletedCount -> {
                     // Remove from cache after successful deletion
                     String cacheKey = cacheService.generateKey(getCachePrefix(), bucketName, objectName);

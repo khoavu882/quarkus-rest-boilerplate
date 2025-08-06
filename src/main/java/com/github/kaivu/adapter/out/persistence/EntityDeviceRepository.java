@@ -26,20 +26,21 @@ public class EntityDeviceRepository implements IEntityDeviceRepository {
 
     @Override
     public Uni<Optional<EntityDevice>> findById(UUID identity) {
-        return sessionFactory.withTransaction(
-                (session, tx) -> session.find(EntityDevice.class, identity).map(Optional::ofNullable));
+        return sessionFactory.withSession(
+                session -> session.find(EntityDevice.class, identity).map(Optional::ofNullable));
     }
 
     @Override
     public Uni<List<EntityDevice>> findByIds(List<UUID> identities) {
-        return sessionFactory.withTransaction((session, tx) -> session.createQuery(
-                        "FROM EntityDevice ed WHERE ed.id IN :identities", EntityDevice.class)
-                .setParameter("identities", identities)
-                .getResultList());
+        return sessionFactory.withSession(
+                session -> session.createQuery("FROM EntityDevice ed WHERE ed.id IN :identities", EntityDevice.class)
+                        .setParameter("identities", identities)
+                        .getResultList());
     }
 
+    @Override
     public Uni<Optional<EntityDevice>> findByName(String name) {
-        return sessionFactory.withTransaction((session, tx) -> session.createQuery(
+        return sessionFactory.withSession(session -> session.createQuery(
                         "FROM EntityDevice ed WHERE LOWER(ed.name) = LOWER(:name)", EntityDevice.class)
                 .setParameter("name", name)
                 .getSingleResultOrNull()
@@ -84,7 +85,7 @@ public class EntityDeviceRepository implements IEntityDeviceRepository {
         StringBuilder filtersQuery = new StringBuilder();
         Optional.ofNullable(pageable.getKeyword())
                 .ifPresent(keyword -> filtersQuery.append("AND ed.name LIKE :keyword "));
-        return sessionFactory.withTransaction((session, tx) -> {
+        return sessionFactory.withSession(session -> {
             Mutiny.SelectionQuery<EntityDevice> sessionQuery =
                     session.createQuery(selectQuery + filtersQuery, EntityDevice.class);
             Optional.ofNullable(pageable.getKeyword())
@@ -104,7 +105,7 @@ public class EntityDeviceRepository implements IEntityDeviceRepository {
         Optional.ofNullable(pageable.getKeyword())
                 .ifPresent(keyword -> filtersQuery.append("AND ed.name LIKE :keyword "));
 
-        return sessionFactory.withTransaction((session, tx) -> {
+        return sessionFactory.withSession(session -> {
             Mutiny.SelectionQuery<Long> sessionCount = session.createQuery(countQuery + filtersQuery, Long.class);
             Optional.ofNullable(pageable.getKeyword())
                     .ifPresent(keyword -> sessionCount.setParameter("keyword", "%" + keyword.toLowerCase() + "%"));
