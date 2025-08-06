@@ -7,6 +7,7 @@ import com.github.kaivu.domain.EntityDevice;
 import io.smallrye.mutiny.Uni;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface IEntityDeviceRepository
@@ -15,4 +16,6 @@ public interface IEntityDeviceRepository
     Uni<List<EntityDevice>> findAll(PageableRequest pageable);
 
     Uni<Long> countAll(PageableRequest pageable);
+
+    Uni<Optional<EntityDevice>> findByName(String name);
 }

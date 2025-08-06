@@ -17,7 +17,6 @@ import io.smallrye.mutiny.Uni;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 
 /**
  * Created by Khoa Vu.
@@ -25,7 +24,6 @@ import jakarta.transaction.Transactional;
  * Date: 7/27/25
  * Time: 2:28 AM
  */
-@Transactional
 @ApplicationScoped
 public class MediaStreamingService {
 
