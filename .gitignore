@@ -1,5 +1,20 @@
 # AI Generate
 AGENT.md
+CLAUDE.md
+
+# AI Agent
+.ai/
+.agent/
+ai-cache/
+agent-cache/
+*.ai-session
+*.agent-session
+.ai-history
+.agent-history
+ai-logs/
+agent-logs/
+.ai-config
+.agent-config
 
 # Maven
 target/
