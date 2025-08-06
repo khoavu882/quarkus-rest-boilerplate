@@ -3,6 +3,7 @@ package com.github.kaivu.config.handler;
 import com.github.kaivu.common.constant.AppConstant;
 import com.github.kaivu.common.constant.EntitiesConstant;
 import com.github.kaivu.common.constant.ErrorsKeyConstant;
+import com.github.kaivu.common.exception.AppErrorEnum;
 import com.github.kaivu.common.utils.ResourceBundleUtil;
 import lombok.Getter;
 
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Time: 10:10 AM
  */
 @Getter
-public enum ErrorsEnum {
+public enum ErrorsEnum implements AppErrorEnum {
 
     // Auth Errors
     AUTH_UNAUTHORIZED(EntitiesConstant.AUTH, ErrorsKeyConstant.UNAUTHORIZED, ""),
@@ -86,7 +87,8 @@ public enum ErrorsEnum {
         return ENUM_MAP.get(name);
     }
 
-    public ErrorsEnum withLocale(Locale locale, Object... args) {
+    @Override
+    public AppErrorEnum withLocale(Locale locale, Object... args) {
         this.setMessageWithExtendMessage(locale, args);
         return this;
     }

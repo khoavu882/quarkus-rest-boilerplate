@@ -1,6 +1,5 @@
 package com.github.kaivu.common.exception;
 
-import com.github.kaivu.config.handler.ErrorsEnum;
 import jakarta.enterprise.context.RequestScoped;
 import lombok.Getter;
 
@@ -20,16 +19,16 @@ public class ServiceException extends RuntimeException {
 
     private final transient String entityName;
     private final transient String errorKey;
-    private final transient ErrorsEnum errorsEnum;
+    private final transient AppErrorEnum errorsEnum;
 
-    public ServiceException(String entityName, String errorKey, String message, ErrorsEnum errorsEnum) {
+    public ServiceException(String entityName, String errorKey, String message, AppErrorEnum errorsEnum) {
         super(message);
         this.entityName = entityName;
         this.errorKey = errorKey;
         this.errorsEnum = errorsEnum;
     }
 
-    public ServiceException(ErrorsEnum errorsEnum) {
+    public ServiceException(AppErrorEnum errorsEnum) {
         super(errorsEnum.getMessage());
         this.entityName = errorsEnum.getEntityName();
         this.errorKey = errorsEnum.getErrorKey();

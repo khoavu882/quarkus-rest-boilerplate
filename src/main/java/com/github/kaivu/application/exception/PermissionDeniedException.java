@@ -1,7 +1,7 @@
 package com.github.kaivu.application.exception;
 
+import com.github.kaivu.common.exception.AppErrorEnum;
 import com.github.kaivu.common.exception.ServiceException;
-import com.github.kaivu.config.handler.ErrorsEnum;
 
 /**
  * Created by Khoa Vu.
@@ -11,7 +11,7 @@ import com.github.kaivu.config.handler.ErrorsEnum;
  */
 public class PermissionDeniedException extends ServiceException {
 
-    public PermissionDeniedException(ErrorsEnum error) {
+    public PermissionDeniedException(AppErrorEnum error) {
         super(error.getEntityName(), error.getErrorKey(), error.getMessage(), error);
     }
 }
