@@ -1,0 +1,102 @@
+quarkus:
+  # Development services disabled (Docker setup used instead)
+  devservices:
+    enabled: false
+
+  # Container image configuration - disabled for development
+  container-image:
+    build: false
+    builder: docker
+    image: ${QUARKUS_APPLICATION_NAME:demo-service}:latest
+    registry: local
+
+  # Management interface disabled for development
+  management:
+    enabled: false
+    port: 9000
+    proxy:
+      allow-forwarded: true
+      allow-x-forwarded: true
+      enable-forwarded-host: true
+      enable-forwarded-prefix: true
+
+  # Development logging
+  log:
+    category:
+      "org.jboss.resteasy.reactive.client.logging":
+        level: INFO
+      # Uncomment for database debugging
+      # "org.hibernate":
+      #   level: DEBUG
+      # "org.hibernate.SQL":
+      #   level: DEBUG
+
+  # Development database configuration
+  datasource:
+    db-kind: postgresql
+    username: ${QUARKUS_DATASOURCE_USERNAME:postgres}
+    password: ${QUARKUS_DATASOURCE_PASSWORD:postgres}
+    reactive:
+      url: vertx-reactive:postgresql://${QUARKUS_DATASOURCE_HOST:localhost}:${QUARKUS_DATASOURCE_PORT:5432}/${QUARKUS_DATASOURCE_DB:db_local}?currentSchema=${QUARKUS_DATASOURCE_SCHEMA:sch_local}&prepareThreshold=0
+      max-size: 16
+
+    # Demo datasource for development
+    demo:
+      db-kind: postgresql
+      username: ${QUARKUS_DATASOURCE_USERNAME:postgres}
+      password: ${QUARKUS_DATASOURCE_PASSWORD:postgres}
+      reactive:
+        url: vertx-reactive:postgresql://${QUARKUS_DATASOURCE_HOST:localhost}:${QUARKUS_DATASOURCE_PORT:5432}/${QUARKUS_DATASOURCE_DB:db_local}?currentSchema=${QUARKUS_DATASOURCE_SCHEMA:sch_local}&prepareThreshold=0
+        max-size: 16
+
+  # Hibernate ORM for development
+  hibernate-orm:
+    database:
+      default-schema: ${QUARKUS_HIBERNATE_ORM_DATABASE_DEFAULT_SCHEMA:sch_local}
+    schema-management:
+      strategy: drop-and-create
+      create-schemas: true
+
+  # HTTP development settings
+  http:
+    enable-compression: false
+
+  # Development Redis configuration
+  redis:
+    hosts: ${QUARKUS_REDIS_HOSTS:redis://localhost:6379}
+    timeout: ${QUARKUS_REDIS_TIMEOUT:3s}
+
+    demo:
+      hosts: ${QUARKUS_REDIS_HOSTS:redis://localhost:6379}
+      timeout: ${QUARKUS_REDIS_TIMEOUT:3s}
+
+  # REST client configuration for development
+  rest-client:
+    "demo-client":
+      url: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_URL:http://localhost:8080}
+      scope: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_SCOPE:jakarta.inject.Singleton}
+
+  # Native build configuration for development
+  native:
+    additional-build-args:
+      - ${QUARKUS_NATIVE_ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.config.ConfigsProvider}
+    container-build: false
+
+# Development MinIO configuration
+minio:
+  url: ${MINIO_URL:http://localhost:9001}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  # Development-specific MinIO profiles
+  web:
+    url: ${MINIO_WEB_URL:http://localhost:9001}
+    access-key: ${MINIO_WEB_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_WEB_SECRET_KEY:minioadmin}
+  media:
+    url: ${MINIO_MEDIA_URL:http://localhost:9001}
+    access-key: ${MINIO_MEDIA_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_MEDIA_SECRET_KEY:minioadmin}
+  backup:
+    url: ${MINIO_BACKUP_URL:http://localhost:9001}
+    access-key: ${MINIO_BACKUP_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_BACKUP_SECRET_KEY:minioadmin}

@@ -3,6 +3,7 @@ package com.github.kaivu.adapter.in.filter;
 import com.github.kaivu.config.ConfigsProvider;
 import com.github.kaivu.domain.audit.AuditListener;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
@@ -24,6 +25,9 @@ import java.util.zip.GZIPOutputStream;
 @ApplicationScoped
 public class HttpFilters implements ContainerRequestFilter, ContainerResponseFilter {
 
+    @Inject
+    ConfigsProvider configsProvider;
+
     private static final String MANAGEMENT_PREFIX_PATH = "/q/";
     private static final String GZIP_ENCODING = "gzip";
     private static final String REQUEST_START_TIME = "X-StartTime";
@@ -32,7 +36,7 @@ public class HttpFilters implements ContainerRequestFilter, ContainerResponseFil
     public void filter(ContainerRequestContext requestContext) {
         // Store the request start time in the request property
         requestContext.setProperty(REQUEST_START_TIME, Instant.now());
-        if (Boolean.TRUE.equals(ConfigsProvider.ENABLE_AUTH_LOGGING)) {
+        if (configsProvider.isAuthLoggingEnabled()) {
             // Add authentication logging if needed
         }
     }
@@ -66,7 +70,7 @@ public class HttpFilters implements ContainerRequestFilter, ContainerResponseFil
 
     private void handleCompression(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
             throws IOException {
-        if (Boolean.FALSE.equals(ConfigsProvider.ENABLE_COMPRESSION)) {
+        if (!configsProvider.isCompressionEnabled()) {
             return;
         }
 

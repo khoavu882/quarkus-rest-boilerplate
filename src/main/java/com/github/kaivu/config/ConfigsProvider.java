@@ -1,38 +1,153 @@
 package com.github.kaivu.config;
 
-import org.eclipse.microprofile.config.ConfigProvider;
+import io.smallrye.config.ConfigMapping;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
+/**
+ * Configuration provider using ConfigMapping pattern for type-safe configuration
+ * Follows Quarkus 3.x best practices for configuration management
+ */
+@ApplicationScoped
 public class ConfigsProvider {
 
-    private ConfigsProvider() {
-        // Private constructor to hide the implicit public one
+    @Inject
+    AppConfig appConfig;
+
+    @Inject
+    HttpConfig httpConfig;
+
+    @Inject
+    DatabaseConfig databaseConfig;
+
+    @Inject
+    MinioConfig minioConfig;
+
+    // Deprecated static methods - kept for backward compatibility
+    // TODO: Remove in next major version and use injected configs instead
+    @Deprecated(forRemoval = true)
+    public static String getAppNameStatic() {
+        return System.getProperty("quarkus.application.name", "demo-service");
     }
 
-    public static final String APP_NAME = ConfigProvider.getConfig().getValue("quarkus.application.name", String.class);
+    @Deprecated(forRemoval = true)
+    public static Boolean isCompressionEnabledStatic() {
+        return Boolean.valueOf(System.getProperty("quarkus.http.enable-compression", "true"));
+    }
 
-    /*
-     * *****************************************************************************
-     * Http Filters configurations
-     */
-    public static final Boolean ENABLE_COMPRESSION = ConfigProvider.getConfig()
-            .getOptionalValue("quarkus.http.enable-compression", Boolean.class)
-            .orElse(Boolean.TRUE);
-    public static final Boolean ENABLE_AUTH_LOGGING = ConfigProvider.getConfig()
-            .getOptionalValue("quarkus.http.auth-logging", Boolean.class)
-            .orElse(Boolean.TRUE);
+    // Type-safe configuration mappings
+    @ConfigMapping(prefix = "quarkus.application")
+    public interface AppConfig {
+        @WithDefault("demo-service")
+        String name();
+    }
 
-    /*
-     * *****************************************************************************
-     * Database configurations
-     */
-    public static final String DATABASE_SCHEMA =
-            ConfigProvider.getConfig().getValue("quarkus.hibernate-orm.database.default-schema", String.class);
+    @ConfigMapping(prefix = "quarkus.http")
+    public interface HttpConfig {
+        @WithName("enable-compression")
+        @WithDefault("true")
+        boolean enableCompression();
 
-    /*
-     * *****************************************************************************
-     * MinIO storage configurations
-     */
-    public static final String MINIO_URL = ConfigProvider.getConfig().getValue("minio.url", String.class);
-    public static final String MINIO_ACCESS_KEY = ConfigProvider.getConfig().getValue("minio.access-key", String.class);
-    public static final String MINIO_SECRET_KEY = ConfigProvider.getConfig().getValue("minio.secret-key", String.class);
+        @WithName("auth-logging")
+        @WithDefault("true")
+        boolean enableAuthLogging();
+    }
+
+    @ConfigMapping(prefix = "quarkus.hibernate-orm.database")
+    public interface DatabaseConfig {
+        @WithName("default-schema")
+        @WithDefault("sch_local")
+        String defaultSchema();
+    }
+
+    @ConfigMapping(prefix = "minio")
+    public interface MinioConfig {
+        @WithDefault("http://localhost:9001")
+        String url();
+
+        @WithName("access-key")
+        @WithDefault("minioadmin")
+        String accessKey();
+
+        @WithName("secret-key")
+        @WithDefault("minioadmin")
+        String secretKey();
+
+        // Profile-specific configurations
+        WebConfig web();
+
+        MediaConfig media();
+
+        BackupConfig backup();
+
+        interface WebConfig {
+            @WithDefault("${minio.url}")
+            String url();
+
+            @WithName("access-key")
+            @WithDefault("${minio.access-key}")
+            String accessKey();
+
+            @WithName("secret-key")
+            @WithDefault("${minio.secret-key}")
+            String secretKey();
+        }
+
+        interface MediaConfig {
+            @WithDefault("${minio.url}")
+            String url();
+
+            @WithName("access-key")
+            @WithDefault("${minio.access-key}")
+            String accessKey();
+
+            @WithName("secret-key")
+            @WithDefault("${minio.secret-key}")
+            String secretKey();
+        }
+
+        interface BackupConfig {
+            @WithDefault("${minio.url}")
+            String url();
+
+            @WithName("access-key")
+            @WithDefault("${minio.access-key}")
+            String accessKey();
+
+            @WithName("secret-key")
+            @WithDefault("${minio.secret-key}")
+            String secretKey();
+        }
+    }
+
+    // Getters for type-safe access
+    public String getAppName() {
+        return appConfig.name();
+    }
+
+    public boolean isCompressionEnabled() {
+        return httpConfig.enableCompression();
+    }
+
+    public boolean isAuthLoggingEnabled() {
+        return httpConfig.enableAuthLogging();
+    }
+
+    public String getDatabaseSchema() {
+        return databaseConfig.defaultSchema();
+    }
+
+    public String getMinioUrl() {
+        return minioConfig.url();
+    }
+
+    public String getMinioAccessKey() {
+        return minioConfig.accessKey();
+    }
+
+    public String getMinioSecretKey() {
+        return minioConfig.secretKey();
+    }
 }

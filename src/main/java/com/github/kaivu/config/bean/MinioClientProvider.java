@@ -6,24 +6,28 @@ import com.github.kaivu.config.minio.MinioProfileType;
 import io.minio.MinioClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
- * MinIO client producer for different profiles
+ * MinIO client producer for different profiles using type-safe configuration
+ * Follows Quarkus 3.x best practices with ConfigMapping
  */
 @Slf4j
 @ApplicationScoped
 public class MinioClientProvider {
 
+    @Inject
+    ConfigsProvider.MinioConfig minioConfig;
+
     @Produces
     @MinioProfile(MinioProfileType.CORE)
     @ApplicationScoped
     public MinioClient coreMinioClient() {
-        log.info("Creating CORE MinIO client");
+        log.info("Creating CORE MinIO client with endpoint: {}", minioConfig.url());
         return MinioClient.builder()
-                .endpoint(ConfigsProvider.MINIO_URL)
-                .credentials(ConfigsProvider.MINIO_ACCESS_KEY, ConfigsProvider.MINIO_SECRET_KEY)
+                .endpoint(minioConfig.url())
+                .credentials(minioConfig.accessKey(), minioConfig.secretKey())
                 .build();
     }
 
@@ -31,20 +35,11 @@ public class MinioClientProvider {
     @MinioProfile(MinioProfileType.WEB)
     @ApplicationScoped
     public MinioClient webMinioClient() {
-        log.info("Creating WEB MinIO client");
-        String webUrl = ConfigProvider.getConfig()
-                .getOptionalValue("minio.web.url", String.class)
-                .orElse(ConfigsProvider.MINIO_URL);
-        String webAccessKey = ConfigProvider.getConfig()
-                .getOptionalValue("minio.web.access-key", String.class)
-                .orElse(ConfigsProvider.MINIO_ACCESS_KEY);
-        String webSecretKey = ConfigProvider.getConfig()
-                .getOptionalValue("minio.web.secret-key", String.class)
-                .orElse(ConfigsProvider.MINIO_SECRET_KEY);
-
+        log.info(
+                "Creating WEB MinIO client with endpoint: {}", minioConfig.web().url());
         return MinioClient.builder()
-                .endpoint(webUrl)
-                .credentials(webAccessKey, webSecretKey)
+                .endpoint(minioConfig.web().url())
+                .credentials(minioConfig.web().accessKey(), minioConfig.web().secretKey())
                 .build();
     }
 
@@ -52,20 +47,13 @@ public class MinioClientProvider {
     @MinioProfile(MinioProfileType.MEDIA)
     @ApplicationScoped
     public MinioClient mediaMinioClient() {
-        log.info("Creating MEDIA MinIO client");
-        String mediaUrl = ConfigProvider.getConfig()
-                .getOptionalValue("minio.media.url", String.class)
-                .orElse(ConfigsProvider.MINIO_URL);
-        String mediaAccessKey = ConfigProvider.getConfig()
-                .getOptionalValue("minio.media.access-key", String.class)
-                .orElse(ConfigsProvider.MINIO_ACCESS_KEY);
-        String mediaSecretKey = ConfigProvider.getConfig()
-                .getOptionalValue("minio.media.secret-key", String.class)
-                .orElse(ConfigsProvider.MINIO_SECRET_KEY);
-
+        log.info(
+                "Creating MEDIA MinIO client with endpoint: {}",
+                minioConfig.media().url());
         return MinioClient.builder()
-                .endpoint(mediaUrl)
-                .credentials(mediaAccessKey, mediaSecretKey)
+                .endpoint(minioConfig.media().url())
+                .credentials(
+                        minioConfig.media().accessKey(), minioConfig.media().secretKey())
                 .build();
     }
 
@@ -73,20 +61,13 @@ public class MinioClientProvider {
     @MinioProfile(MinioProfileType.BACKUP)
     @ApplicationScoped
     public MinioClient backupMinioClient() {
-        log.info("Creating BACKUP MinIO client");
-        String backupUrl = ConfigProvider.getConfig()
-                .getOptionalValue("minio.backup.url", String.class)
-                .orElse(ConfigsProvider.MINIO_URL);
-        String backupAccessKey = ConfigProvider.getConfig()
-                .getOptionalValue("minio.backup.access-key", String.class)
-                .orElse(ConfigsProvider.MINIO_ACCESS_KEY);
-        String backupSecretKey = ConfigProvider.getConfig()
-                .getOptionalValue("minio.backup.secret-key", String.class)
-                .orElse(ConfigsProvider.MINIO_SECRET_KEY);
-
+        log.info(
+                "Creating BACKUP MinIO client with endpoint: {}",
+                minioConfig.backup().url());
         return MinioClient.builder()
-                .endpoint(backupUrl)
-                .credentials(backupAccessKey, backupSecretKey)
+                .endpoint(minioConfig.backup().url())
+                .credentials(
+                        minioConfig.backup().accessKey(), minioConfig.backup().secretKey())
                 .build();
     }
 }

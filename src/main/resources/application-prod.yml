@@ -1,0 +1,108 @@
+quarkus:
+  # Production services configuration
+  devservices:
+    enabled: false
+
+  # Container image configuration for production
+  container-image:
+    build: ${QUARKUS_CONTAINER_IMAGE_BUILD:true}
+    builder: docker
+    image: ${QUARKUS_APPLICATION_NAME:demo-service}:${APP_VERSION:latest}
+    registry: ${CONTAINER_REGISTRY:docker.io}
+
+  # Management interface enabled for production monitoring
+  management:
+    enabled: ${QUARKUS_MANAGEMENT_ENABLED:true}
+    port: 9000
+    proxy:
+      allow-forwarded: true
+      allow-x-forwarded: true
+      enable-forwarded-host: true
+      enable-forwarded-prefix: true
+
+  # Production logging - reduced verbosity
+  log:
+    level: ${LOG_LEVEL:INFO}
+    category:
+      "org.jboss.resteasy.reactive.client.logging":
+        level: WARN
+      "ROOT":
+        level: ${ROOT_LOG_LEVEL:WARN}
+
+  # Production database configuration
+  datasource:
+    db-kind: postgresql
+    username: ${QUARKUS_DATASOURCE_USERNAME}
+    password: ${QUARKUS_DATASOURCE_PASSWORD}
+    reactive:
+      url: vertx-reactive:postgresql://${QUARKUS_DATASOURCE_HOST}:${QUARKUS_DATASOURCE_PORT:5432}/${QUARKUS_DATASOURCE_DB}?currentSchema=${QUARKUS_DATASOURCE_SCHEMA}&prepareThreshold=0&ssl=true&sslmode=require
+      max-size: ${QUARKUS_DATASOURCE_MAX_SIZE:20}
+      idle-timeout: ${QUARKUS_DATASOURCE_IDLE_TIMEOUT:10m}
+
+    # Demo datasource for production
+    demo:
+      db-kind: postgresql
+      username: ${QUARKUS_DATASOURCE_DEMO_USERNAME:${QUARKUS_DATASOURCE_USERNAME}}
+      password: ${QUARKUS_DATASOURCE_DEMO_PASSWORD:${QUARKUS_DATASOURCE_PASSWORD}}
+      reactive:
+        url: vertx-reactive:postgresql://${QUARKUS_DATASOURCE_DEMO_HOST:${QUARKUS_DATASOURCE_HOST}}:${QUARKUS_DATASOURCE_DEMO_PORT:5432}/${QUARKUS_DATASOURCE_DEMO_DB:${QUARKUS_DATASOURCE_DB}}?currentSchema=${QUARKUS_DATASOURCE_DEMO_SCHEMA:${QUARKUS_DATASOURCE_SCHEMA}}&prepareThreshold=0&ssl=true&sslmode=require
+        max-size: ${QUARKUS_DATASOURCE_DEMO_MAX_SIZE:20}
+        idle-timeout: ${QUARKUS_DATASOURCE_DEMO_IDLE_TIMEOUT:10m}
+
+  # Hibernate ORM for production
+  hibernate-orm:
+    database:
+      default-schema: ${QUARKUS_HIBERNATE_ORM_DATABASE_DEFAULT_SCHEMA}
+    schema-management:
+      strategy: ${HIBERNATE_SCHEMA_STRATEGY:validate}
+      create-schemas: false
+
+  # HTTP production settings
+  http:
+    enable-compression: ${QUARKUS_HTTP_ENABLE_COMPRESSION:true}
+
+  # Production Redis configuration
+  redis:
+    hosts: ${QUARKUS_REDIS_HOSTS}
+    timeout: ${QUARKUS_REDIS_TIMEOUT:5s}
+    password: ${QUARKUS_REDIS_PASSWORD:}
+    client-name: ${QUARKUS_APPLICATION_NAME:demo-service}
+
+    demo:
+      hosts: ${QUARKUS_REDIS_DEMO_HOSTS:${QUARKUS_REDIS_HOSTS}}
+      timeout: ${QUARKUS_REDIS_DEMO_TIMEOUT:5s}
+      password: ${QUARKUS_REDIS_DEMO_PASSWORD:${QUARKUS_REDIS_PASSWORD}}
+      client-name: ${QUARKUS_APPLICATION_NAME:demo-service}-demo
+
+  # REST client configuration for production
+  rest-client:
+    "demo-client":
+      url: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_URL}
+      scope: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_SCOPE:jakarta.inject.Singleton}
+      connect-timeout: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_CONNECT_TIMEOUT:5s}
+      read-timeout: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_READ_TIMEOUT:30s}
+
+  # Native build configuration for production
+  native:
+    additional-build-args:
+      - ${QUARKUS_NATIVE_ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.config.ConfigsProvider}
+    container-build: ${QUARKUS_NATIVE_CONTAINER_BUILD:true}
+
+# Production MinIO configuration
+minio:
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  # Production-specific MinIO profiles
+  web:
+    url: ${MINIO_WEB_URL:${MINIO_URL}}
+    access-key: ${MINIO_WEB_ACCESS_KEY:${MINIO_ACCESS_KEY}}
+    secret-key: ${MINIO_WEB_SECRET_KEY:${MINIO_SECRET_KEY}}
+  media:
+    url: ${MINIO_MEDIA_URL:${MINIO_URL}}
+    access-key: ${MINIO_MEDIA_ACCESS_KEY:${MINIO_ACCESS_KEY}}
+    secret-key: ${MINIO_MEDIA_SECRET_KEY:${MINIO_SECRET_KEY}}
+  backup:
+    url: ${MINIO_BACKUP_URL:${MINIO_URL}}
+    access-key: ${MINIO_BACKUP_ACCESS_KEY:${MINIO_ACCESS_KEY}}
+    secret-key: ${MINIO_BACKUP_SECRET_KEY:${MINIO_SECRET_KEY}}

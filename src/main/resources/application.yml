@@ -2,59 +2,13 @@ quarkus:
   application:
     name: ${QUARKUS_APPLICATION_NAME:demo-service}
 
-  # Container image configuration - DISABLED for native builds
-  container-image:
-    build: ${QUARKUS_CONTAINER_IMAGE_BUILD:false}
-    builder: docker
-    image: ${QUARKUS_APPLICATION_NAME:demo-service}:latest
-    registry: local
-
-  management:
-    enabled: ${QUARKUS_MANAGEMENT_ENABLED:false}
-    port: 9000
-    proxy:
-      allow-forwarded: true
-      allow-x-forwarded: true
-      enable-forwarded-host: true
-      enable-forwarded-prefix: true
-  devservices:
-    enabled: false
+  # Logging configuration  
   log:
     level: INFO
     console:
       format: "%d{HH:mm:ss} %-5p traceId=%X{traceId}, parentId=%X{parentId}, spanId=%X{spanId}, sampled=%X{sampled} [%c{2.}] (%t) %s%e%n"
 
-    category:
-      "org.jboss.resteasy.reactive.client.logging":
-        level: INFO
-  #      "org.hibernate":
-  #        level: DEBUG
-  #      "org.hibernate.SQL":
-  #        level: DEBUG
-
-  datasource:
-    db-kind: ${QUARKUS_DATASOURCE_DB_KIND:postgresql}
-    username: ${QUARKUS_DATASOURCE_USERNAME:postgres}
-    password: ${QUARKUS_DATASOURCE_PASSWORD:postgres}
-    reactive:
-      url: vertx-reactive:${QUARKUS_DATASOURCE_DB_KIND:postgresql}://${QUARKUS_DATASOURCE_HOST:localhost}:${QUARKUS_DATASOURCE_PORT:5432}/${QUARKUS_DATASOURCE_DB:db_local}?currentSchema=${QUARKUS_DATASOURCE_SCHEMA:sch_local}&prepareThreshold=0
-      max-size: 16
-
-    demo:
-      db-kind: ${QUARKUS_DATASOURCE_DB_KIND:postgresql}
-      username: ${QUARKUS_DATASOURCE_USERNAME:postgres}
-      password: ${QUARKUS_DATASOURCE_PASSWORD:postgres}
-      reactive:
-        url: vertx-reactive:${QUARKUS_DATASOURCE_DB_KIND:postgresql}://${QUARKUS_DATASOURCE_HOST:localhost}:${QUARKUS_DATASOURCE_PORT:5432}/${QUARKUS_DATASOURCE_DB:db_local}?currentSchema=${QUARKUS_DATASOURCE_SCHEMA:sch_local}&prepareThreshold=0
-        max-size: 16
-
-  hibernate-orm:
-    database:
-      default-schema: ${QUARKUS_HIBERNATE_ORM_DATABASE_DEFAULT_SCHEMA:sch_local}
-    schema-management:
-      strategy: drop-and-create
-      create-schemas: true
-
+  # HTTP configuration
   http:
     access-log:
       pattern: "...traceId=%{X,traceId} spanId=%{X,spanId}"
@@ -63,28 +17,14 @@ quarkus:
       origins: "*"
       methods: GET, OPTIONS, POST, PUT, DELETE, PATCH
       headers: accept, authorization, content-type, x-requested-with, X-Current-Org-Id
-    enable-compression: ${QUARKUS_HTTP_ENABLE_COMPRESSION:false}
     host: 0.0.0.0
     port: 8080
 
-  redis:
-    hosts: ${QUARKUS_REDIS_HOSTS:redis://redis:6379}
-    timeout: ${QUARKUS_REDIS_TIMEOUT:3s}
-
-    demo:
-      hosts: ${QUARKUS_REDIS_HOSTS:redis://redis:6379}
-      timeout: ${QUARKUS_REDIS_TIMEOUT:3s}
-
-  rest-client:
-    logging:
-      scope: request-response
-    "demo-client":
-      url: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_URL}
-      scope: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_SCOPE:jakarta.inject.Singleton}
-
+  # TLS configuration
   tls:
     trust-all: true
 
+  # OpenAPI/Swagger configuration
   smallrye-openapi:
     info-title: Demo Service
     info-version: 1.0.0
@@ -100,20 +40,24 @@ quarkus:
     api-key-parameter-in: header
     api-key-parameter-name: authorization
 
+  # Health checks configuration
   smallrye-health:
     ui:
       enable: true
+
+  # Metrics configuration
   micrometer:
     enabled: true
     export:
       prometheus:
         enabled: true
 
-  native:
-    additional-build-args:
-      - ${QUARKUS_NATIVE_ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.configuration.ConfigsProvider}
-    container-build: ${QUARKUS_NATIVE_CONTAINER_BUILD:false}
+  # REST client configuration
+  rest-client:
+    logging:
+      scope: request-response
 
+# MinIO configuration (common)
 minio:
   url: ${MINIO_URL:http://localhost:9001}
   access-key: ${MINIO_ACCESS_KEY:minioadmin}

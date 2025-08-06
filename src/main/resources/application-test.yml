@@ -1,0 +1,100 @@
+quarkus:
+  # Test services configuration
+  devservices:
+    enabled: false
+
+  # Container image configuration - disabled for tests
+  container-image:
+    build: false
+
+  # Management interface disabled for tests
+  management:
+    enabled: false
+
+  # Test logging configuration
+  log:
+    level: ${TEST_LOG_LEVEL:INFO}
+    category:
+      "org.jboss.resteasy.reactive.client.logging":
+        level: WARN
+      "org.testcontainers":
+        level: INFO
+      "com.github.dockerjava":
+        level: WARN
+      "org.apache.http":
+        level: WARN
+
+  # Test database configuration - uses TestContainers
+  datasource:
+    db-kind: postgresql
+    username: test
+    password: test
+    reactive:
+      url: vertx-reactive:postgresql://localhost:5432/test?currentSchema=test_schema&prepareThreshold=0
+      max-size: 4
+      idle-timeout: 1m
+
+    # Demo datasource for tests
+    demo:
+      db-kind: postgresql
+      username: test
+      password: test
+      reactive:
+        url: vertx-reactive:postgresql://localhost:5432/test?currentSchema=test_schema&prepareThreshold=0
+        max-size: 4
+        idle-timeout: 1m
+
+  # Hibernate ORM for tests
+  hibernate-orm:
+    database:
+      default-schema: test_schema
+    schema-management:
+      strategy: drop-and-create
+      create-schemas: true
+
+  # HTTP test settings
+  http:
+    enable-compression: false
+    test-port: 0  # Use random port for tests
+
+  # Test Redis configuration - uses TestContainers
+  redis:
+    hosts: redis://localhost:6379
+    timeout: 1s
+
+    demo:
+      hosts: redis://localhost:6379
+      timeout: 1s
+
+  # REST client configuration for tests
+  rest-client:
+    "demo-client":
+      url: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_URL:http://localhost:8081}
+      scope: jakarta.inject.Singleton
+      connect-timeout: 1s
+      read-timeout: 5s
+
+  # Native build configuration for tests
+  native:
+    additional-build-args:
+      - --initialize-at-run-time=com.github.kaivu.config.ConfigsProvider
+    container-build: false
+
+# Test MinIO configuration - uses TestContainers
+minio:
+  url: http://localhost:9000
+  access-key: testuser
+  secret-key: testpass123
+  # Test-specific MinIO profiles
+  web:
+    url: http://localhost:9000
+    access-key: testuser
+    secret-key: testpass123
+  media:
+    url: http://localhost:9000
+    access-key: testuser
+    secret-key: testpass123
+  backup:
+    url: http://localhost:9000
+    access-key: testuser
+    secret-key: testpass123
