@@ -9,7 +9,14 @@ import com.github.kaivu.adapter.in.rest.dto.vm.PageResponse;
 import com.github.kaivu.application.service.CacheService;
 import com.github.kaivu.application.service.EntityDevicesService;
 import com.github.kaivu.application.usecase.EntityDeviceUseCase;
+import com.github.kaivu.common.constant.ObservabilityConstant;
+import com.github.kaivu.common.context.AsyncObservabilityContext;
+import com.github.kaivu.common.context.ObservabilityContext;
+import com.github.kaivu.common.context.TenantObservabilityContext;
 import com.github.kaivu.common.mapper.EntityDeviceMapper;
+import com.github.kaivu.common.service.ObservabilityService;
+import com.github.kaivu.config.annotations.LogExecutionTime;
+import com.github.kaivu.config.annotations.Observability;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -26,6 +33,7 @@ import java.util.UUID;
  */
 @Slf4j
 @ApplicationScoped
+@Observability(layer = ObservabilityConstant.LAYER_USECASE)
 public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
 
     private static final String CACHE_PREFIX_DETAILS = "entity_device_details";
@@ -38,13 +46,34 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
     @Inject
     CacheService cacheService;
 
+    @Inject
+    ObservabilityService observabilityService;
+
+    @Inject
+    ObservabilityContext observabilityContext;
+
+    @Inject
+    TenantObservabilityContext tenantContext;
+
+    @Inject
+    AsyncObservabilityContext asyncContext;
+
     @Override
+    @Observability("create_entity_device")
+    @LogExecutionTime
     public Uni<EntityDeviceVM> create(CreateEntityDTO dto) {
-        return entityDevicesService
-                .createWithValidation(dto)
-                .map(EntityDeviceMapper.map::toEntityDeviceVM)
-                .invoke(ignored -> invalidatePageCache())
-                .invoke(vm -> log.debug("UseCase: Created entity with ID: {}", vm.getId()));
+        return observabilityService
+                .operation("create_entity_device")
+                .layer(ObservabilityConstant.LAYER_USECASE)
+                .executeUni(entityDevicesService
+                        .createWithValidation(dto)
+                        .map(EntityDeviceMapper.map::toEntityDeviceVM)
+                        .call(ignored -> invalidatePageCacheAsync())
+                        .invoke(vm -> log.info(
+                                "{}UseCase: Created entity device [id={}, context={}]",
+                                tenantContext.getTenantLogPrefix(),
+                                vm.getId(),
+                                observabilityContext.getContextSummary())));
     }
 
     @Override
@@ -52,7 +81,7 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
         return entityDevicesService
                 .updateWithValidation(id, dto)
                 .map(EntityDeviceMapper.map::toEntityDeviceVM)
-                .invoke(ignored -> invalidatePageCache())
+                .call(ignored -> invalidatePageCacheAsync())
                 .invoke(vm -> log.debug("UseCase: Updated entity with ID: {}", id));
     }
 
@@ -81,7 +110,7 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
             if (cachedResult.isPresent()) {
                 log.debug("UseCase: Retrieved page data from cache with key: {}", cacheKey);
                 @SuppressWarnings("unchecked")
-                PageResponse<EntityDeviceVM> typedResult = (PageResponse<EntityDeviceVM>) cachedResult.get();
+                PageResponse<EntityDeviceVM> typedResult = cachedResult.get();
                 return Uni.createFrom().item(typedResult);
             } else {
                 return Uni.combine()
@@ -114,7 +143,7 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
                 .flatMap(ignored -> cacheService.delete(detailsCacheKey).replaceWithVoid())
                 .invoke(() -> {
                     log.debug("UseCase: Deleted entity and cleared caches: {}", id);
-                    invalidatePageCache();
+                    invalidatePageCacheAsync();
                 });
     }
 
@@ -131,15 +160,25 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
     }
 
     /**
-     * Invalidate all page cache entries when entities are modified
+     * Async invalidate all page cache entries when entities are modified
      */
-    private void invalidatePageCache() {
-        String pattern = cacheService.generateKey(CACHE_PREFIX_PAGE, "*");
-        cacheService
+    private Uni<Void> invalidatePageCacheAsync() {
+        String pattern = tenantContext.getTenantCacheKeyPrefix(cacheService.generateKey(CACHE_PREFIX_PAGE, "*"));
+
+        return cacheService
                 .deleteByPattern(pattern)
-                .subscribe()
-                .with(
-                        count -> log.debug("Invalidated {} page cache entries", count),
-                        failure -> log.warn("Failed to invalidate page cache", failure));
+                .invoke(count -> log.debug(
+                        "{}Invalidated {} page cache entries [context={}]",
+                        tenantContext.getTenantLogPrefix(),
+                        count,
+                        observabilityContext.getContextSummary()))
+                .onFailure()
+                .invoke(failure -> log.warn(
+                        "{}Failed to invalidate page cache [context={}, error={}]",
+                        tenantContext.getTenantLogPrefix(),
+                        observabilityContext.getContextSummary(),
+                        failure.getMessage(),
+                        failure))
+                .replaceWithVoid();
     }
 }

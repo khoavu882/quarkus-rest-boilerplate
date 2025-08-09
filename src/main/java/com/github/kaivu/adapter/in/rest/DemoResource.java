@@ -5,7 +5,8 @@ import com.github.kaivu.application.exception.EntityNotFoundException;
 import com.github.kaivu.application.exception.NotAcceptableException;
 import com.github.kaivu.application.exception.PermissionDeniedException;
 import com.github.kaivu.application.exception.UnauthorizedException;
-import com.github.kaivu.common.exception.ServiceException;
+import com.github.kaivu.common.context.ObservabilityContext;
+import com.github.kaivu.common.exception.ObservableServiceException;
 import com.github.kaivu.config.annotations.ValidEnumValue;
 import com.github.kaivu.config.handler.ErrorResponse;
 import com.github.kaivu.config.handler.ErrorsEnum;
@@ -60,6 +61,9 @@ public class DemoResource {
 
     @RestClient
     DemoClientService demoClient;
+
+    @jakarta.inject.Inject
+    ObservabilityContext observabilityContext;
 
     @GET
     @Path("/rest/client")
@@ -126,7 +130,9 @@ public class DemoResource {
         } else if (code.equals(Response.Status.FORBIDDEN.getStatusCode())) {
             throw new PermissionDeniedException(ErrorsEnum.AUTH_NO_ACCESS);
         } else if (code.equals(Response.Status.BAD_REQUEST.getStatusCode())) {
-            throw new ServiceException(ErrorsEnum.SYSTEM_INVALID_TIME_RANGE.withLocale(requestContext.getLanguage()));
+            throw new ObservableServiceException(
+                    ErrorsEnum.SYSTEM_INVALID_TIME_RANGE.withLocale(requestContext.getLanguage()),
+                    observabilityContext);
         } else if (code.equals(Response.Status.NOT_FOUND.getStatusCode())) {
             throw new EntityNotFoundException(
                     ErrorsEnum.USER_NOT_FOUND.withLocale(requestContext.getLanguage(), "khoavu882@gmail.com"));

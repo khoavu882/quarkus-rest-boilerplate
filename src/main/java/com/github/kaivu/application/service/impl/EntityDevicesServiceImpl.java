@@ -3,11 +3,12 @@ package com.github.kaivu.application.service.impl;
 import com.github.kaivu.adapter.in.rest.dto.request.CreateEntityDTO;
 import com.github.kaivu.adapter.in.rest.dto.request.EntityDeviceFilters;
 import com.github.kaivu.adapter.in.rest.dto.request.UpdateEntityDTO;
-import com.github.kaivu.application.exception.EntityConflictException;
 import com.github.kaivu.application.exception.EntityNotFoundException;
 import com.github.kaivu.application.port.IEntityDeviceRepository;
 import com.github.kaivu.application.service.CacheService;
 import com.github.kaivu.application.service.EntityDevicesService;
+import com.github.kaivu.common.context.ObservabilityContext;
+import com.github.kaivu.common.exception.ObservableServiceException;
 import com.github.kaivu.common.mapper.EntityDeviceMapper;
 import com.github.kaivu.config.handler.ErrorsEnum;
 import com.github.kaivu.domain.EntityDevice;
@@ -48,6 +49,9 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
     @Inject
     CacheService cacheService;
 
+    @Inject
+    ObservabilityContext observabilityContext;
+
     @Override
     public Uni<Optional<EntityDevice>> findById(UUID id) {
         return entityDeviceRepository.findById(id);
@@ -66,9 +70,9 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
     }
 
     @Override
-    public Uni<EntityDevice> getByName(String name) throws EntityConflictException {
+    public Uni<EntityDevice> getByName(String name) throws EntityNotFoundException {
         return findByName(name)
-                .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityConflictException(
+                .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityNotFoundException(
                         ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(requestContext.getLanguage(), name))));
     }
 
@@ -181,8 +185,10 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
         return findByName(name).flatMap(existingEntity -> {
             if (existingEntity.isPresent()) {
                 return Uni.createFrom()
-                        .failure(new EntityConflictException(ErrorsEnum.ENTITY_DEVICE_NAME_ALREADY_EXISTS.withLocale(
-                                requestContext.getLanguage(), name)));
+                        .failure(new ObservableServiceException(
+                                ErrorsEnum.ENTITY_DEVICE_NAME_ALREADY_EXISTS.withLocale(
+                                        requestContext.getLanguage(), name),
+                                observabilityContext));
             }
             return Uni.createFrom().voidItem();
         });
