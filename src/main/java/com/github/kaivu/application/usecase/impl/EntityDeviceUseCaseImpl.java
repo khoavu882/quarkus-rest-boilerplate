@@ -41,27 +41,27 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
     private final EntityDevicesService entityDevicesService;
     private final CacheService cacheService;
     private final ObservabilityService observabilityService;
+    private final ObservabilityContext observabilityContext;
+    private final TenantObservabilityContext tenantContext;
+    private final AsyncObservabilityContext asyncContext;
 
     @Inject
     public EntityDeviceUseCaseImpl(
             ApplicationConfiguration config,
             EntityDevicesService entityDevicesService,
             CacheService cacheService,
-            ObservabilityService observabilityService) {
+            ObservabilityService observabilityService,
+            ObservabilityContext observabilityContext,
+            TenantObservabilityContext tenantContext,
+            AsyncObservabilityContext asyncContext) {
         this.config = config;
         this.entityDevicesService = entityDevicesService;
         this.cacheService = cacheService;
         this.observabilityService = observabilityService;
+        this.observabilityContext = observabilityContext;
+        this.tenantContext = tenantContext;
+        this.asyncContext = asyncContext;
     }
-
-    @Inject
-    ObservabilityContext observabilityContext;
-
-    @Inject
-    TenantObservabilityContext tenantContext;
-
-    @Inject
-    AsyncObservabilityContext asyncContext;
 
     @Override
     @Observability("create_entity_device")

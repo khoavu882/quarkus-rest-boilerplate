@@ -7,6 +7,7 @@ import com.github.kaivu.application.exception.EntityNotFoundException;
 import com.github.kaivu.application.port.IEntityDeviceRepository;
 import com.github.kaivu.application.service.CacheService;
 import com.github.kaivu.application.service.EntityDevicesService;
+import com.github.kaivu.common.context.LanguageContext;
 import com.github.kaivu.common.context.ObservabilityContext;
 import com.github.kaivu.common.exception.ObservableServiceException;
 import com.github.kaivu.common.mapper.EntityDeviceMapper;
@@ -17,8 +18,6 @@ import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.core.Context;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
@@ -40,20 +39,20 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
     private final IEntityDeviceRepository entityDeviceRepository;
     private final CacheService cacheService;
     private final ObservabilityContext observabilityContext;
-
-    @Context
-    ContainerRequestContext requestContext;
+    private final LanguageContext languageContext;
 
     @Inject
     public EntityDevicesServiceImpl(
             ApplicationConfiguration config,
             IEntityDeviceRepository entityDeviceRepository,
             CacheService cacheService,
-            ObservabilityContext observabilityContext) {
+            ObservabilityContext observabilityContext,
+            LanguageContext languageContext) {
         this.config = config;
         this.entityDeviceRepository = entityDeviceRepository;
         this.cacheService = cacheService;
         this.observabilityContext = observabilityContext;
+        this.languageContext = languageContext;
     }
 
     @Override
@@ -70,14 +69,14 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
     public Uni<EntityDevice> getById(UUID identify) throws EntityNotFoundException {
         return findById(identify)
                 .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityNotFoundException(
-                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(requestContext.getLanguage(), identify))));
+                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(languageContext.getCurrentLocale(), identify))));
     }
 
     @Override
     public Uni<EntityDevice> getByName(String name) throws EntityNotFoundException {
         return findByName(name)
                 .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityNotFoundException(
-                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(requestContext.getLanguage(), name))));
+                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(languageContext.getCurrentLocale(), name))));
     }
 
     @Override
@@ -196,7 +195,7 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
                 return Uni.createFrom()
                         .failure(new ObservableServiceException(
                                 ErrorsEnum.ENTITY_DEVICE_NAME_ALREADY_EXISTS.withLocale(
-                                        requestContext.getLanguage(), name),
+                                        languageContext.getCurrentLocale(), name),
                                 observabilityContext));
             }
             return Uni.createFrom().voidItem();

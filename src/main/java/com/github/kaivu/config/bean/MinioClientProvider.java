@@ -23,7 +23,18 @@ public class MinioClientProvider {
     @MinioProfile(MinioProfileType.CORE)
     @ApplicationScoped
     public MinioClient coreMinioClient() {
-        log.info("Creating CORE MinIO client");
+        log.info("Creating CORE MinIO client with endpoint: {}", config.minio.url);
+
+        if (config.minio.url == null || config.minio.url.isBlank()) {
+            throw new IllegalStateException("MinIO URL is required for CORE profile");
+        }
+        if (config.minio.accessKey == null || config.minio.accessKey.isBlank()) {
+            throw new IllegalStateException("MinIO access key is required for CORE profile");
+        }
+        if (config.minio.secretKey == null || config.minio.secretKey.isBlank()) {
+            throw new IllegalStateException("MinIO secret key is required for CORE profile");
+        }
+
         return MinioClient.builder()
                 .endpoint(config.minio.url)
                 .credentials(config.minio.accessKey, config.minio.secretKey)
