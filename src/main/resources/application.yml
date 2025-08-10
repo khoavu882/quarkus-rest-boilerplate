@@ -40,13 +40,6 @@ quarkus:
       url: vertx-reactive:${QUARKUS_DATASOURCE_DB_KIND:postgresql}://${QUARKUS_DATASOURCE_HOST:localhost}:${QUARKUS_DATASOURCE_PORT:5432}/${QUARKUS_DATASOURCE_DB:db_local}?currentSchema=${QUARKUS_DATASOURCE_SCHEMA:sch_local}&prepareThreshold=0
       max-size: 16
 
-    demo:
-      db-kind: ${QUARKUS_DATASOURCE_DB_KIND:postgresql}
-      username: ${QUARKUS_DATASOURCE_USERNAME:postgres}
-      password: ${QUARKUS_DATASOURCE_PASSWORD:postgres}
-      reactive:
-        url: vertx-reactive:${QUARKUS_DATASOURCE_DB_KIND:postgresql}://${QUARKUS_DATASOURCE_HOST:localhost}:${QUARKUS_DATASOURCE_PORT:5432}/${QUARKUS_DATASOURCE_DB:db_local}?currentSchema=${QUARKUS_DATASOURCE_SCHEMA:sch_local}&prepareThreshold=0
-        max-size: 16
 
   hibernate-orm:
     database:
@@ -78,9 +71,6 @@ quarkus:
   rest-client:
     logging:
       scope: request-response
-    "demo-client":
-      url: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_URL}
-      scope: ${QUARKUS_REST_CLIENT_DEMO_CLIENT_SCOPE:jakarta.inject.Singleton}
 
   tls:
     trust-all: true
@@ -118,22 +108,6 @@ minio:
   url: ${MINIO_URL:http://localhost:9001}
   access-key: ${MINIO_ACCESS_KEY:minioadmin}
   secret-key: ${MINIO_SECRET_KEY:minioadmin}
-  
-  # Optional MinIO configurations for different profiles
-  web:
-    url: ${MINIO_WEB_URL:${minio.url}}
-    access-key: ${MINIO_WEB_ACCESS_KEY:${minio.access-key}}
-    secret-key: ${MINIO_WEB_SECRET_KEY:${minio.secret-key}}
-  
-  media:
-    url: ${MINIO_MEDIA_URL:${minio.url}}
-    access-key: ${MINIO_MEDIA_ACCESS_KEY:${minio.access-key}}
-    secret-key: ${MINIO_MEDIA_SECRET_KEY:${minio.secret-key}}
-  
-  backup:
-    url: ${MINIO_BACKUP_URL:${minio.url}}
-    access-key: ${MINIO_BACKUP_ACCESS_KEY:${minio.access-key}}
-    secret-key: ${MINIO_BACKUP_SECRET_KEY:${minio.secret-key}}
 
 # Application-specific configuration
 app:

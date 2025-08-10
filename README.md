@@ -42,7 +42,6 @@ The enhanced Docker setup script provides:
 - **Reactive**: Mutiny for non-blocking operations
 - **Validation**: Jakarta Bean Validation with custom validators
 - **Mapping**: MapStruct for entity-DTO conversions
-- **Scheduling**: Quartz scheduler integration
 
 ### Monitoring & Observability
 - **Metrics**: Micrometer with Prometheus registry
@@ -53,8 +52,7 @@ The enhanced Docker setup script provides:
 
 ### Additional Features
 - **WebSockets**: Real-time communication support
-- **Templating**: Qute template engine
-- **File Processing**: Apache Tika for media file handling
+- **Templating**: Qute template engine for message interpolation
 - **Code Quality**: Spotless with Palantir Java Format
 - **Docker**: Complete containerization with optimized multi-layer builds
 
@@ -68,7 +66,6 @@ src/main/java/com/github/kaivu/
 │   ├── in/                         # Inbound adapters
 │   │   ├── rest/                   # REST controllers
 │   │   │   ├── CommonResource.java
-│   │   │   ├── DemoResource.java
 │   │   │   ├── EntityDevicesResource.java
 │   │   │   ├── StreamingResource.java
 │   │   │   ├── dto/                # Request/Response DTOs
@@ -81,9 +78,9 @@ src/main/java/com/github/kaivu/
 │       ├── handler/                # Event handlers
 │       └── exception/              # Adapter exceptions
 ├── application/                     # Application layer
-│   ├── service/                    # Application services
-│   ├── usecase/                    # Use case implementations
-│   ├── port/                       # Port interfaces
+│   ├── usecase/                    # Use case implementations (business logic)
+│   ├── service/                    # Infrastructure services (caching, storage)
+│   ├── port/                       # Port interfaces (repository contracts)
 │   └── exception/                  # Application exceptions
 ├── domain/                         # Domain layer
 │   ├── EntityDevice.java           # Core entities
@@ -102,9 +99,9 @@ src/main/java/com/github/kaivu/
   - GET, POST, PUT, DELETE operations
   - Filtering and pagination support
   - File upload capabilities
-- **`/demo`** - Demo endpoints for testing
 - **`/common`** - Common utility endpoints
 - **`/stream`** - WebSocket streaming endpoints
+- **`/observability`** - Health and metrics endpoints
 
 ## Docker Infrastructure
 

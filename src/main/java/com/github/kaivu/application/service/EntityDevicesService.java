@@ -1,10 +1,6 @@
 package com.github.kaivu.application.service;
 
-import com.github.kaivu.adapter.in.rest.dto.request.CreateEntityDTO;
-import com.github.kaivu.adapter.in.rest.dto.request.EntityDeviceFilters;
-import com.github.kaivu.adapter.in.rest.dto.request.UpdateEntityDTO;
-import com.github.kaivu.common.service.BaseReadService;
-import com.github.kaivu.common.service.BaseWriteService;
+import com.github.kaivu.application.exception.EntityNotFoundException;
 import com.github.kaivu.domain.EntityDevice;
 import io.smallrye.mutiny.Uni;
 
@@ -15,47 +11,25 @@ import java.util.UUID;
 /**
  * Service Interface for managing {@link EntityDevicesService}.
  */
-public interface EntityDevicesService
-        extends BaseReadService<EntityDevice, UUID>, BaseWriteService<EntityDevice, UUID> {
+public interface EntityDevicesService {
+
+    // Read operations
+    Uni<Optional<EntityDevice>> findById(UUID id);
+
+    Uni<EntityDevice> getById(UUID identify) throws EntityNotFoundException;
 
     Uni<Optional<EntityDevice>> findByName(String name);
 
-    /**
-     * Check exist an Entity Device by Name.
-     *
-     * @param name of object.
-     */
     Uni<EntityDevice> getByName(String name);
 
-    // Business logic methods
+    // Write operations
+    Uni<EntityDevice> persist(EntityDevice entity);
 
-    /**
-     * Create entity with validation and caching
-     */
-    Uni<EntityDevice> createWithValidation(CreateEntityDTO dto);
+    Uni<List<EntityDevice>> persist(List<EntityDevice> entities);
 
-    /**
-     * Update entity with validation and cache management
-     */
-    Uni<EntityDevice> updateWithValidation(UUID id, UpdateEntityDTO dto);
+    Uni<EntityDevice> update(EntityDevice entity) throws EntityNotFoundException;
 
-    /**
-     * Delete entity with cache cleanup
-     */
-    Uni<Void> deleteWithCacheCleanup(UUID id);
+    Uni<List<EntityDevice>> update(List<EntityDevice> entities) throws EntityNotFoundException;
 
-    /**
-     * Get entity by ID with caching
-     */
-    Uni<EntityDevice> getByIdWithCaching(UUID id);
-
-    /**
-     * Find entities with filters and caching
-     */
-    Uni<List<EntityDevice>> findWithFilters(EntityDeviceFilters filters);
-
-    /**
-     * Count entities with filters
-     */
-    Uni<Long> countWithFilters(EntityDeviceFilters filters);
+    Uni<Void> delete(UUID identify) throws EntityNotFoundException;
 }
