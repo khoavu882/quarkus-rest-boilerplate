@@ -1,7 +1,6 @@
 package com.github.kaivu.adapter.out.handler.mapper;
 
 import com.github.kaivu.adapter.out.exception.ClientException;
-import com.github.kaivu.adapter.out.exception.DemoClientException;
 import com.github.kaivu.common.constant.AppConstant;
 import com.github.kaivu.common.constant.AppHeaderConstant;
 import com.github.kaivu.common.utils.ResourceBundleUtil;
@@ -51,12 +50,7 @@ public class ClientExceptionMapper implements ExceptionMapper<ClientException> {
     }
 
     private static @NotNull ErrorResponse getErrorResponse(ClientException ex, String message, String errorId) {
-        String formattedMessage = ex instanceof DemoClientException demoClientException
-                ? String.format(
-                        message,
-                        ex.getEntityName(),
-                        demoClientException.getResponse().getStatus())
-                : message;
+        String formattedMessage = message;
 
         ErrorMessage errorMessage = new ErrorMessage();
         errorMessage.setErrorKey(ex.getErrorsEnum().getFullKey());

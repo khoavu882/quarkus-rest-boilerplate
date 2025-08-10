@@ -4,7 +4,7 @@ import com.github.kaivu.common.constant.ObservabilityConstant;
 import com.github.kaivu.common.context.ObservabilityContext;
 import com.github.kaivu.common.context.TenantObservabilityContext;
 import com.github.kaivu.common.utils.ObservabilityUtil;
-import com.github.kaivu.config.ApplicationConfiguration;
+import com.github.kaivu.config.AppConfiguration;
 import com.github.kaivu.config.metrics.AppMetrics;
 import com.github.kaivu.domain.audit.AuditListener;
 import io.micrometer.core.instrument.Counter;
@@ -49,7 +49,7 @@ public class HttpFilters implements ContainerRequestFilter, ContainerResponseFil
     AppMetrics appMetrics;
 
     @Inject
-    ApplicationConfiguration config;
+    AppConfiguration config;
 
     @Override
     public void filter(ContainerRequestContext requestContext) {
@@ -74,7 +74,7 @@ public class HttpFilters implements ContainerRequestFilter, ContainerResponseFil
         // Record request metrics
         recordRequestMetrics(requestContext);
 
-        if (Boolean.TRUE.equals(config.http.authLogging)) {
+        if (config.http().authLogging()) {
             log.debug("Authentication logging enabled for request: {} {}", requestContext.getMethod(), path);
         }
     }
@@ -339,7 +339,8 @@ public class HttpFilters implements ContainerRequestFilter, ContainerResponseFil
 
     private void handleCompression(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
             throws IOException {
-        if (Boolean.FALSE.equals(config.http.enableCompression)) {
+        // Check if compression is enabled
+        if (!config.http().enableCompression()) {
             return;
         }
 

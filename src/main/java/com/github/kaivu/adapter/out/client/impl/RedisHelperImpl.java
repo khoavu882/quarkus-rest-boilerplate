@@ -1,7 +1,7 @@
 package com.github.kaivu.adapter.out.client.impl;
 
 import com.github.kaivu.adapter.out.client.RedisHelper;
-import com.github.kaivu.config.ApplicationConfiguration;
+import com.github.kaivu.config.AppConfiguration;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.redis.datasource.keys.ReactiveKeyCommands;
 import io.quarkus.redis.datasource.value.ReactiveValueCommands;
@@ -25,10 +25,10 @@ import java.util.Optional;
 public class RedisHelperImpl implements RedisHelper {
 
     private final ReactiveRedisDataSource reactiveDataSource;
-    private final ApplicationConfiguration config;
+    private final AppConfiguration config;
 
     @Inject
-    public RedisHelperImpl(ReactiveRedisDataSource reactiveDataSource, ApplicationConfiguration config) {
+    public RedisHelperImpl(ReactiveRedisDataSource reactiveDataSource, AppConfiguration config) {
         this.reactiveDataSource = reactiveDataSource;
         this.config = config;
     }
@@ -68,7 +68,7 @@ public class RedisHelperImpl implements RedisHelper {
 
     @Override
     public <T> Uni<Void> set(String key, T value) {
-        return set(key, value, Duration.ofMillis(config.cache.defaultExpireDurationMs));
+        return set(key, value, Duration.ofMillis(config.cache().defaultExpireDurationMs()));
     }
 
     @Override

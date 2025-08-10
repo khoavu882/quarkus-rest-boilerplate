@@ -1,7 +1,7 @@
 package com.github.kaivu.application.service;
 
 import com.github.kaivu.application.exception.EntityNotFoundException;
-import com.github.kaivu.config.ApplicationConfiguration;
+import com.github.kaivu.config.AppConfiguration;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -12,10 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 @ApplicationScoped
 public class RetryService {
 
-    private final ApplicationConfiguration config;
+    private final AppConfiguration config;
 
     @Inject
-    public RetryService(ApplicationConfiguration config) {
+    public RetryService(AppConfiguration config) {
         this.config = config;
     }
 
@@ -24,9 +24,11 @@ public class RetryService {
                 .onFailure(this::isRetryable)
                 .retry()
                 .withBackOff(
-                        java.time.Duration.ofMillis(config.retry.defaultRetry.backoffMinMs),
-                        java.time.Duration.ofMillis(config.retry.defaultRetry.backoffMaxMs))
-                .atMost(config.retry.defaultRetry.maxAttempts)
+                        java.time.Duration.ofMillis(
+                                config.retry().defaultRetry().backoffMinMs()),
+                        java.time.Duration.ofMillis(
+                                config.retry().defaultRetry().backoffMaxMs()))
+                .atMost(config.retry().defaultRetry().maxAttempts())
                 .onFailure()
                 .invoke(ex -> log.error("Operation {} failed after retries: {}", operationName, ex.getMessage()));
     }

@@ -1,7 +1,7 @@
 package com.github.kaivu.application.service.impl;
 
 import com.github.kaivu.application.service.CacheService;
-import com.github.kaivu.config.ApplicationConfiguration;
+import com.github.kaivu.config.AppConfiguration;
 import com.github.kaivu.config.metrics.AppMetrics;
 import com.github.kaivu.config.redis.RedisManager;
 import com.github.kaivu.config.redis.RedisProfile;
@@ -26,13 +26,13 @@ import java.util.function.Supplier;
 @ApplicationScoped
 public class CacheServiceImpl implements CacheService {
 
-    private final ApplicationConfiguration config;
+    private final AppConfiguration config;
     private final RedisManager redisManager;
     private final AppMetrics simpleMetrics;
 
     @Inject
     public CacheServiceImpl(
-            ApplicationConfiguration config,
+            AppConfiguration config,
             @RedisProfile(RedisProfileType.DEFAULT) RedisManager redisManager,
             AppMetrics simpleMetrics) {
         this.config = config;
@@ -82,7 +82,7 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public <T> Uni<Void> set(String key, T value) {
-        return set(key, value, Duration.ofMillis(config.cache.defaultExpireDurationMs));
+        return set(key, value, Duration.ofMillis(config.cache().defaultExpireDurationMs()));
     }
 
     @Override
@@ -92,7 +92,8 @@ public class CacheServiceImpl implements CacheService {
 
     @Override
     public <T> Uni<T> getOrCompute(String key, Class<T> type, Supplier<Uni<T>> supplier) {
-        return getOrCompute(key, type, supplier, Duration.ofMillis(config.cache.defaultExpireDurationMs));
+        return getOrCompute(
+                key, type, supplier, Duration.ofMillis(config.cache().defaultExpireDurationMs()));
     }
 
     @Override
@@ -170,7 +171,7 @@ public class CacheServiceImpl implements CacheService {
         return get(key, type)
                 .onFailure()
                 .retry()
-                .withBackOff(java.time.Duration.ofMillis(config.retry.cache.backoffMs))
+                .withBackOff(java.time.Duration.ofMillis(config.retry().cache().backoffMs()))
                 .atMost(maxRetries)
                 .onFailure()
                 .recoverWithItem(throwable -> {

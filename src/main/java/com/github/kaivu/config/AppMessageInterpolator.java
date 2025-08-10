@@ -23,19 +23,20 @@ public class AppMessageInterpolator implements MessageInterpolator {
 
     private static final Set<String> ALLOWED_ATTRIBUTES = Set.of("max", "min", "regexp", "value");
 
-    private final ApplicationConfiguration config;
+    private final AppConfiguration config;
     private final Cache<String, String> messageCache;
 
     @jakarta.ws.rs.core.Context
     ContainerRequestContext requestContext;
 
     @Inject
-    public AppMessageInterpolator(ApplicationConfiguration config) {
+    public AppMessageInterpolator(AppConfiguration config) {
         this.config = config;
         // Initialize cache with configuration-driven values
         this.messageCache = Caffeine.newBuilder()
-                .maximumSize(config.cache.messageInterpolator.maxSize) // Prevent unlimited growth
-                .expireAfterWrite(Duration.ofHours(config.cache.messageInterpolator.expireHours))
+                .maximumSize(config.cache().messageInterpolator().maxSize()) // Prevent unlimited growth
+                .expireAfterWrite(
+                        Duration.ofHours(config.cache().messageInterpolator().expireHours()))
                 .recordStats() // Enable monitoring
                 .build();
     }
