@@ -5,6 +5,7 @@ import com.github.kaivu.common.context.AsyncObservabilityContext;
 import com.github.kaivu.common.context.ObservabilityContext;
 import com.github.kaivu.common.context.TenantObservabilityContext;
 import com.github.kaivu.common.utils.ObservabilityUtil;
+import com.github.kaivu.config.ApplicationConfiguration;
 import com.github.kaivu.config.metrics.AppMetrics;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -52,6 +53,9 @@ public class ObservableCacheService {
 
     @Inject
     MeterRegistry meterRegistry;
+
+    @Inject
+    ApplicationConfiguration config;
 
     // Cache performance tracking
     private final java.util.concurrent.atomic.AtomicLong totalCacheOperations =
@@ -218,7 +222,7 @@ public class ObservableCacheService {
         String testKey = tenantContext.getTenantCacheKeyPrefix("health_check");
         String testValue = "health_" + System.currentTimeMillis();
 
-        return put(testKey, testValue, Duration.ofMinutes(1), cacheType)
+        return put(testKey, testValue, Duration.ofMillis(config.health.cacheTestTtlMs), cacheType)
                 .flatMap(ignored -> get(testKey, String.class, cacheType))
                 .flatMap(result -> remove(testKey, cacheType).replaceWith(result))
                 .map(result -> {

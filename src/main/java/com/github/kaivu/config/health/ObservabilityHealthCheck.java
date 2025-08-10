@@ -4,6 +4,7 @@ import com.github.kaivu.common.context.ObservabilityContext;
 import com.github.kaivu.common.context.TenantObservabilityContext;
 import com.github.kaivu.common.service.ObservableCacheService;
 import com.github.kaivu.common.utils.ObservabilityUtil;
+import com.github.kaivu.config.ApplicationConfiguration;
 import com.github.kaivu.config.metrics.AppMetrics;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -35,21 +36,25 @@ import java.util.concurrent.TimeUnit;
 @Readiness
 public class ObservabilityHealthCheck implements HealthCheck {
 
-    private static final Duration HEALTH_CHECK_TIMEOUT = Duration.ofSeconds(10);
-    private static final double MAX_ERROR_RATE_THRESHOLD = 5.0; // 5% error rate threshold
-    private static final long MAX_RESPONSE_TIME_THRESHOLD = 1000; // 1 second threshold
+    private final ApplicationConfiguration config;
+    private final ObservabilityContext observabilityContext;
+    private final TenantObservabilityContext tenantContext;
+    private final AppMetrics appMetrics;
+    private final ObservableCacheService cacheService;
 
     @Inject
-    ObservabilityContext observabilityContext;
-
-    @Inject
-    TenantObservabilityContext tenantContext;
-
-    @Inject
-    AppMetrics appMetrics;
-
-    @Inject
-    ObservableCacheService cacheService;
+    public ObservabilityHealthCheck(
+            ApplicationConfiguration config,
+            ObservabilityContext observabilityContext,
+            TenantObservabilityContext tenantContext,
+            AppMetrics appMetrics,
+            ObservableCacheService cacheService) {
+        this.config = config;
+        this.observabilityContext = observabilityContext;
+        this.tenantContext = tenantContext;
+        this.appMetrics = appMetrics;
+        this.cacheService = cacheService;
+    }
 
     @Override
     public HealthCheckResponse call() {
@@ -72,7 +77,7 @@ public class ObservabilityHealthCheck implements HealthCheck {
             CompletableFuture<Void> allChecks =
                     CompletableFuture.allOf(metricsHealth, cacheHealth, tracingHealth, tenantHealth);
 
-            allChecks.get(HEALTH_CHECK_TIMEOUT.toSeconds(), TimeUnit.SECONDS);
+            allChecks.get(config.timeout.healthCheckMs / 1000, TimeUnit.SECONDS);
 
             // Collect results
             HealthResult metrics = metricsHealth.get();
@@ -154,7 +159,7 @@ public class ObservabilityHealthCheck implements HealthCheck {
                 AppMetrics.AppStats stats = appMetrics.getAppStats();
                 AppMetrics.HealthSummary health = appMetrics.getHealthSummary();
 
-                boolean healthy = health.healthy() && health.errorRate() < MAX_ERROR_RATE_THRESHOLD;
+                boolean healthy = health.healthy() && health.errorRate() < config.health.errorRateThreshold;
 
                 String details = String.format(
                         "requests=%d, errors=%d, errorRate=%.2f%%, uptime=%.0fs",
@@ -175,11 +180,11 @@ public class ObservabilityHealthCheck implements HealthCheck {
                 return cacheService
                         .healthCheck("redis")
                         .map(status -> new HealthResult(
-                                status.healthy() && status.responseTimeMs() < MAX_RESPONSE_TIME_THRESHOLD,
+                                status.healthy() && status.responseTimeMs() < config.health.responseTimeThreshold,
                                 String.format(
                                         "responseTime=%dms, message=%s", status.responseTimeMs(), status.message())))
                         .await()
-                        .atMost(Duration.ofSeconds(5));
+                        .atMost(java.time.Duration.ofMillis(config.health.cacheTestTimeoutMs));
 
             } catch (Exception e) {
                 return new HealthResult(false, "Cache system error: " + e.getMessage());
@@ -313,7 +318,7 @@ public class ObservabilityHealthCheck implements HealthCheck {
     private String generateHealthCheckId() {
         return String.format(
                 "hc-%d-%s",
-                System.currentTimeMillis() % 1000000,
+                System.currentTimeMillis() % config.observability.healthCheckId.timestampMod,
                 java.util.UUID.randomUUID().toString().substring(0, 8));
     }
 

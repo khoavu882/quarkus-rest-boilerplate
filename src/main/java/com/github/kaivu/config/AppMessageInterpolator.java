@@ -6,6 +6,7 @@ import com.github.kaivu.common.constant.AppConstant;
 import com.github.kaivu.common.utils.ResourceBundleUtil;
 import io.quarkus.qute.Qute;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.validation.MessageInterpolator;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import lombok.extern.slf4j.Slf4j;
@@ -22,15 +23,22 @@ public class AppMessageInterpolator implements MessageInterpolator {
 
     private static final Set<String> ALLOWED_ATTRIBUTES = Set.of("max", "min", "regexp", "value");
 
-    // Fixed: Replace unsafe ConcurrentHashMap with Caffeine cache to prevent memory leaks
-    private static final Cache<String, String> MESSAGE_CACHE = Caffeine.newBuilder()
-            .maximumSize(1000) // Prevent unlimited growth
-            .expireAfterWrite(Duration.ofHours(1)) // Auto-expire entries
-            .recordStats() // Enable monitoring
-            .build();
+    private final ApplicationConfiguration config;
+    private final Cache<String, String> messageCache;
 
     @jakarta.ws.rs.core.Context
     ContainerRequestContext requestContext;
+
+    @Inject
+    public AppMessageInterpolator(ApplicationConfiguration config) {
+        this.config = config;
+        // Initialize cache with configuration-driven values
+        this.messageCache = Caffeine.newBuilder()
+                .maximumSize(config.cache.messageInterpolator.maxSize) // Prevent unlimited growth
+                .expireAfterWrite(Duration.ofHours(config.cache.messageInterpolator.expireHours))
+                .recordStats() // Enable monitoring
+                .build();
+    }
 
     @Override
     public String interpolate(String messageTemplate, Context context) {
@@ -39,7 +47,7 @@ public class AppMessageInterpolator implements MessageInterpolator {
 
     @Override
     public String interpolate(String messageTemplate, Context context, Locale locale) {
-        return MESSAGE_CACHE.get(
+        return messageCache.get(
                 messageTemplate + AppConstant.DOT + locale.toString(),
                 key -> processMessage(messageTemplate, context, locale));
     }

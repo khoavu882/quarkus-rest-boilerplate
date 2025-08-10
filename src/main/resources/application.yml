@@ -63,7 +63,7 @@ quarkus:
       origins: "*"
       methods: GET, OPTIONS, POST, PUT, DELETE, PATCH
       headers: accept, authorization, content-type, x-requested-with, X-Current-Org-Id
-    enable-compression: ${QUARKUS_HTTP_ENABLE_COMPRESSION:false}
+    enable-compression: ${QUARKUS_HTTP_ENABLE_COMPRESSION:true}
     host: 0.0.0.0
     port: 8080
 
@@ -111,10 +111,125 @@ quarkus:
 
   native:
     additional-build-args:
-      - ${QUARKUS_NATIVE_ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.configuration.ConfigsProvider}
+      - ${QUARKUS_NATIVE_ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.config.ApplicationConfiguration}
     container-build: ${QUARKUS_NATIVE_CONTAINER_BUILD:false}
 
 minio:
   url: ${MINIO_URL:http://localhost:9001}
   access-key: ${MINIO_ACCESS_KEY:minioadmin}
   secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  
+  # Optional MinIO configurations for different profiles
+  web:
+    url: ${MINIO_WEB_URL:${minio.url}}
+    access-key: ${MINIO_WEB_ACCESS_KEY:${minio.access-key}}
+    secret-key: ${MINIO_WEB_SECRET_KEY:${minio.secret-key}}
+  
+  media:
+    url: ${MINIO_MEDIA_URL:${minio.url}}
+    access-key: ${MINIO_MEDIA_ACCESS_KEY:${minio.access-key}}
+    secret-key: ${MINIO_MEDIA_SECRET_KEY:${minio.secret-key}}
+  
+  backup:
+    url: ${MINIO_BACKUP_URL:${minio.url}}
+    access-key: ${MINIO_BACKUP_ACCESS_KEY:${minio.access-key}}
+    secret-key: ${MINIO_BACKUP_SECRET_KEY:${minio.secret-key}}
+
+# Application-specific configuration
+app:
+  # Cache Configuration - Type-safe nested configuration
+  cache:
+    # Default cache settings (in milliseconds for better precision)
+    default-ttl-ms: ${APP_CACHE_DEFAULT_TTL_MS:3600000}  # 1 hour
+    default-expire-duration-ms: ${APP_CACHE_DEFAULT_EXPIRE_DURATION_MS:3600000}  # 1 hour
+    
+    # Entity Device Cache Configuration
+    entity-device:
+      ttl-ms: ${APP_CACHE_ENTITY_DEVICE_TTL_MS:1800000}  # 30 minutes
+    
+    # Entity Device Details Cache Configuration
+    entity-device-details:
+      ttl-ms: ${APP_CACHE_ENTITY_DEVICE_DETAILS_TTL_MS:3600000}  # 1 hour
+    
+    # Entity Device Page Cache Configuration
+    entity-device-page:
+      ttl-ms: ${APP_CACHE_ENTITY_DEVICE_PAGE_TTL_MS:900000}  # 15 minutes
+    
+    # Media File Cache Configuration
+    media-file:
+      ttl-ms: ${APP_CACHE_MEDIA_FILE_TTL_MS:3600000}  # 1 hour
+    
+    # Message Interpolator Cache Configuration
+    message-interpolator:
+      ttl-ms: ${APP_CACHE_MESSAGE_INTERPOLATOR_TTL_MS:3600000}  # 1 hour
+      expire-hours: ${APP_CACHE_MESSAGE_INTERPOLATOR_EXPIRE_HOURS:1}
+      max-size: ${APP_CACHE_MESSAGE_INTERPOLATOR_MAX_SIZE:1000}
+    
+    # Cache Key Prefixes Configuration
+    prefix:
+      entity-device: ${APP_CACHE_PREFIX_ENTITY_DEVICE:entity_device}
+      entity-device-details: ${APP_CACHE_PREFIX_ENTITY_DEVICE_DETAILS:entity_device_details}
+      entity-device-page: ${APP_CACHE_PREFIX_ENTITY_DEVICE_PAGE:entity_device_page}
+      media-file: ${APP_CACHE_PREFIX_MEDIA_FILE:MediaFile}
+  
+  # Retry Configuration - Type-safe nested configuration
+  retry:
+    max-attempts: ${APP_RETRY_MAX_ATTEMPTS:3}
+    initial-backoff-ms: ${APP_RETRY_INITIAL_BACKOFF_MS:100}
+    max-backoff-ms: ${APP_RETRY_MAX_BACKOFF_MS:2000}
+    
+    # Cache-specific retry settings
+    cache:
+      max-attempts: ${APP_RETRY_CACHE_MAX_ATTEMPTS:3}
+      backoff-ms: ${APP_RETRY_CACHE_BACKOFF_MS:100}
+    
+    # Default retry settings (for backward compatibility)
+    default-retry:
+      max-attempts: ${APP_RETRY_DEFAULT_MAX_ATTEMPTS:3}
+      backoff-min-ms: ${APP_RETRY_DEFAULT_BACKOFF_MIN_MS:100}
+      backoff-max-ms: ${APP_RETRY_DEFAULT_BACKOFF_MAX_MS:2000}
+  
+  # Timeout Configuration - Type-safe configuration in milliseconds
+  timeout:
+    health-check-ms: ${APP_TIMEOUT_HEALTH_CHECK_MS:10000}  # 10 seconds
+    cache-operation-ms: ${APP_TIMEOUT_CACHE_OPERATION_MS:5000}  # 5 seconds
+  
+  # Health Check Configuration - Type-safe configuration
+  health:
+    error-rate-threshold: ${APP_HEALTH_ERROR_RATE_THRESHOLD:5.0}
+    response-time-threshold: ${APP_HEALTH_RESPONSE_TIME_THRESHOLD:1000}
+    cache-test-timeout-ms: ${APP_HEALTH_CACHE_TEST_TIMEOUT_MS:5000}  # 5 seconds
+    cache-test-ttl-ms: ${APP_HEALTH_CACHE_TEST_TTL_MS:60000}  # 1 minute
+  
+  # Database Configuration - Type-safe nested configuration
+  database:
+    entity:
+      name-max-length: ${APP_DATABASE_ENTITY_NAME_MAX_LENGTH:500}
+      description-max-length: ${APP_DATABASE_ENTITY_DESCRIPTION_MAX_LENGTH:2000}
+    audit:
+      user-field-length: ${APP_DATABASE_AUDIT_USER_FIELD_LENGTH:50}
+      default-user: ${APP_DATABASE_AUDIT_DEFAULT_USER:anonymous}
+  
+  # Observability Configuration - Type-safe nested configuration
+  observability:
+    metrics:
+      histogram-percentiles: ${APP_OBSERVABILITY_METRICS_HISTOGRAM_PERCENTILES:0.5,0.95,0.99,0.999}
+    health-check-id:
+      timestamp-mod: ${APP_OBSERVABILITY_HEALTH_CHECK_ID_TIMESTAMP_MOD:1000000}
+  
+  # Pagination Configuration - Type-safe nested configuration
+  pagination:
+    header:
+      total-count: ${APP_PAGINATION_HEADER_TOTAL_COUNT:X-Total-Count}
+      link-format: ${APP_PAGINATION_HEADER_LINK_FORMAT:<{0}>; rel="{1}"}
+  
+  # I18N Configuration - Type-safe nested configuration
+  i18n:
+    path: ${APP_I18N_PATH:i18n}
+    error-messages: ${APP_I18N_ERROR_MESSAGES:i18n/error_messages}
+    validation-messages: ${APP_I18N_VALIDATION_MESSAGES:i18n/validation_messages}
+  
+  # HTTP Configuration - Custom application HTTP settings
+  http:
+    enable-compression: ${APP_HTTP_ENABLE_COMPRESSION:true}
+    auth-logging: ${APP_HTTP_AUTH_LOGGING:true}

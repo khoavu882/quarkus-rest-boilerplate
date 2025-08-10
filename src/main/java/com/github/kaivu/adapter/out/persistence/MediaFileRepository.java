@@ -2,6 +2,7 @@ package com.github.kaivu.adapter.out.persistence;
 
 import com.github.kaivu.application.port.IMediaFileRepository;
 import com.github.kaivu.application.service.CacheService;
+import com.github.kaivu.config.ApplicationConfiguration;
 import com.github.kaivu.domain.MediaFile;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,14 +22,20 @@ import java.util.Optional;
 @ApplicationScoped
 public class MediaFileRepository implements IMediaFileRepository {
 
-    @Inject
-    Mutiny.SessionFactory sessionFactory;
+    private final Mutiny.SessionFactory sessionFactory;
+    private final CacheService cacheService;
+    private final ApplicationConfiguration config;
 
     @Inject
-    CacheService cacheService;
+    public MediaFileRepository(
+            Mutiny.SessionFactory sessionFactory, CacheService cacheService, ApplicationConfiguration config) {
+        this.sessionFactory = sessionFactory;
+        this.cacheService = cacheService;
+        this.config = config;
+    }
 
     private String getCachePrefix() {
-        return "MediaFile";
+        return config.cache.prefix.mediaFile;
     }
 
     @Override
@@ -38,7 +45,10 @@ public class MediaFileRepository implements IMediaFileRepository {
         // Use cache-first strategy with getOrCompute
         return cacheService
                 .getOrCompute(
-                        cacheKey, MediaFile.class, () -> findFromDatabase(bucketName, objectName), Duration.ofHours(1))
+                        cacheKey,
+                        MediaFile.class,
+                        () -> findFromDatabase(bucketName, objectName),
+                        Duration.ofMillis(config.cache.mediaFile.ttlMs))
                 .map(Optional::ofNullable);
     }
 
@@ -68,7 +78,9 @@ public class MediaFileRepository implements IMediaFileRepository {
         return saveOperation.chain(savedMedia -> {
             String cacheKey =
                     cacheService.generateKey(getCachePrefix(), savedMedia.getBucketName(), savedMedia.getObjectName());
-            return cacheService.set(cacheKey, savedMedia, Duration.ofHours(1)).replaceWith(savedMedia);
+            return cacheService
+                    .set(cacheKey, savedMedia, Duration.ofMillis(config.cache.mediaFile.ttlMs))
+                    .replaceWith(savedMedia);
         });
     }
 

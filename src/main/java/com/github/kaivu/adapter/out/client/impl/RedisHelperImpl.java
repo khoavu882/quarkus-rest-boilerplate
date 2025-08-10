@@ -1,6 +1,7 @@
 package com.github.kaivu.adapter.out.client.impl;
 
 import com.github.kaivu.adapter.out.client.RedisHelper;
+import com.github.kaivu.config.ApplicationConfiguration;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
 import io.quarkus.redis.datasource.keys.ReactiveKeyCommands;
 import io.quarkus.redis.datasource.value.ReactiveValueCommands;
@@ -24,12 +25,12 @@ import java.util.Optional;
 public class RedisHelperImpl implements RedisHelper {
 
     private final ReactiveRedisDataSource reactiveDataSource;
-    private final Duration defaultTtl;
+    private final ApplicationConfiguration config;
 
     @Inject
-    public RedisHelperImpl(ReactiveRedisDataSource reactiveDataSource) {
+    public RedisHelperImpl(ReactiveRedisDataSource reactiveDataSource, ApplicationConfiguration config) {
         this.reactiveDataSource = reactiveDataSource;
-        this.defaultTtl = Duration.ofHours(1); // Default 1 hour TTL
+        this.config = config;
     }
 
     @Override
@@ -67,7 +68,7 @@ public class RedisHelperImpl implements RedisHelper {
 
     @Override
     public <T> Uni<Void> set(String key, T value) {
-        return set(key, value, defaultTtl);
+        return set(key, value, Duration.ofMillis(config.cache.defaultExpireDurationMs));
     }
 
     @Override

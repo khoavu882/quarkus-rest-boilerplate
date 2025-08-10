@@ -1,6 +1,9 @@
 package com.github.kaivu.common.utils;
 
 import com.github.kaivu.adapter.in.rest.dto.vm.PageResponse;
+import com.github.kaivu.config.ApplicationConfiguration;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
@@ -14,18 +17,20 @@ import java.text.MessageFormat;
  * Date: 4/9/24
  * Time: 11:22 PM
  */
-public final class PaginationUtil {
-    private static final String HEADER_X_TOTAL_COUNT = "X-Total-Count";
-    private static final String HEADER_LINK_FORMAT = "<{0}>; rel=\"{1}\"";
+@ApplicationScoped
+public class PaginationUtil {
 
-    private PaginationUtil() {
-        throw new IllegalStateException("Utility class");
+    private final ApplicationConfiguration config;
+
+    @Inject
+    public PaginationUtil(ApplicationConfiguration config) {
+        this.config = config;
     }
 
-    public static <T> Response.ResponseBuilder generatePaginationResponse(UriBuilder uriBuilder, PageResponse<T> page) {
+    public <T> Response.ResponseBuilder generatePaginationResponse(UriBuilder uriBuilder, PageResponse<T> page) {
         MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
 
-        headers.add(HEADER_X_TOTAL_COUNT, Long.toString(page.getTotalElements()));
+        headers.add(config.pagination.header.totalCount, Long.toString(page.getTotalElements()));
         int pageNumber = page.getPage();
         int pageSize = page.getSize();
         StringBuilder link = new StringBuilder();
@@ -51,8 +56,9 @@ public final class PaginationUtil {
         return responseBuilder;
     }
 
-    private static String prepareLink(UriBuilder uriBuilder, int pageNumber, int pageSize, String relType) {
-        return MessageFormat.format(HEADER_LINK_FORMAT, preparePageUri(uriBuilder, pageNumber, pageSize), relType);
+    private String prepareLink(UriBuilder uriBuilder, int pageNumber, int pageSize, String relType) {
+        return MessageFormat.format(
+                config.pagination.header.linkFormat, preparePageUri(uriBuilder, pageNumber, pageSize), relType);
     }
 
     private static String preparePageUri(UriBuilder uriBuilder, int pageNumber, int pageSize) {
