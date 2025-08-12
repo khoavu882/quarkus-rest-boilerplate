@@ -1,6 +1,6 @@
 package com.github.kaivu.config.bean;
 
-import com.github.kaivu.config.ApplicationConfiguration;
+import com.github.kaivu.config.MinioConfiguration;
 import com.github.kaivu.config.minio.MinioProfile;
 import com.github.kaivu.config.minio.MinioProfileType;
 import io.minio.MinioClient;
@@ -17,27 +17,27 @@ import lombok.extern.slf4j.Slf4j;
 public class MinioClientProvider {
 
     @Inject
-    ApplicationConfiguration config;
+    MinioConfiguration config;
 
     @Produces
     @MinioProfile(MinioProfileType.CORE)
     @ApplicationScoped
     public MinioClient coreMinioClient() {
-        log.info("Creating CORE MinIO client with endpoint: {}", config.minio.url);
+        log.info("Creating CORE MinIO client with endpoint: {}", config.url());
 
-        if (config.minio.url == null || config.minio.url.isBlank()) {
+        if (config.url() == null || config.url().isBlank()) {
             throw new IllegalStateException("MinIO URL is required for CORE profile");
         }
-        if (config.minio.accessKey == null || config.minio.accessKey.isBlank()) {
+        if (config.accessKey() == null || config.accessKey().isBlank()) {
             throw new IllegalStateException("MinIO access key is required for CORE profile");
         }
-        if (config.minio.secretKey == null || config.minio.secretKey.isBlank()) {
+        if (config.secretKey() == null || config.secretKey().isBlank()) {
             throw new IllegalStateException("MinIO secret key is required for CORE profile");
         }
 
         return MinioClient.builder()
-                .endpoint(config.minio.url)
-                .credentials(config.minio.accessKey, config.minio.secretKey)
+                .endpoint(config.url())
+                .credentials(config.accessKey(), config.secretKey())
                 .build();
     }
 
@@ -47,8 +47,8 @@ public class MinioClientProvider {
     public MinioClient webMinioClient() {
         log.info("Creating WEB MinIO client");
         return MinioClient.builder()
-                .endpoint(config.minio.web.url)
-                .credentials(config.minio.web.accessKey, config.minio.web.secretKey)
+                .endpoint(config.web().url())
+                .credentials(config.web().accessKey(), config.web().secretKey())
                 .build();
     }
 
@@ -58,8 +58,8 @@ public class MinioClientProvider {
     public MinioClient mediaMinioClient() {
         log.info("Creating MEDIA MinIO client");
         return MinioClient.builder()
-                .endpoint(config.minio.media.url)
-                .credentials(config.minio.media.accessKey, config.minio.media.secretKey)
+                .endpoint(config.media().url())
+                .credentials(config.media().accessKey(), config.media().secretKey())
                 .build();
     }
 
@@ -69,8 +69,8 @@ public class MinioClientProvider {
     public MinioClient backupMinioClient() {
         log.info("Creating BACKUP MinIO client");
         return MinioClient.builder()
-                .endpoint(config.minio.backup.url)
-                .credentials(config.minio.backup.accessKey, config.minio.backup.secretKey)
+                .endpoint(config.backup().url())
+                .credentials(config.backup().accessKey(), config.backup().secretKey())
                 .build();
     }
 }

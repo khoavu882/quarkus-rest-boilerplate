@@ -18,7 +18,7 @@ import com.github.kaivu.common.context.TenantObservabilityContext;
 import com.github.kaivu.common.exception.ObservableServiceException;
 import com.github.kaivu.common.mapper.EntityDeviceMapper;
 import com.github.kaivu.common.service.ObservabilityService;
-import com.github.kaivu.config.ApplicationConfiguration;
+import com.github.kaivu.config.AppConfiguration;
 import com.github.kaivu.config.annotations.LogExecutionTime;
 import com.github.kaivu.config.annotations.Observability;
 import com.github.kaivu.config.handler.ErrorsEnum;
@@ -45,7 +45,7 @@ import java.util.UUID;
 @Observability(layer = ObservabilityConstant.LAYER_USECASE)
 public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
 
-    private final ApplicationConfiguration config;
+    private final AppConfiguration config;
     private final IEntityDeviceRepository entityDeviceRepository;
     private final CacheService cacheService;
     private final ObservabilityService observabilityService;
@@ -56,7 +56,7 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
 
     @Inject
     public EntityDeviceUseCaseImpl(
-            ApplicationConfiguration config,
+            AppConfiguration config,
             IEntityDeviceRepository entityDeviceRepository,
             CacheService cacheService,
             ObservabilityService observabilityService,
@@ -107,7 +107,7 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
 
     @Override
     public Uni<EntityDeviceDetailsVM> details(UUID id) {
-        String cacheKey = cacheService.generateKey(config.cache.prefix.entityDeviceDetails, id.toString());
+        String cacheKey = cacheService.generateKey(config.cache().prefix().entityDeviceDetails(), id.toString());
 
         return cacheService
                 .getOrCompute(
@@ -117,7 +117,7 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
                                 .map(EntityDeviceMapper.map::toEntityDeviceDetailVM)
                                 .invoke(() ->
                                         log.debug("UseCase: Loaded entity details from repository for ID: {}", id)),
-                        Duration.ofMillis(config.cache.entityDeviceDetails.ttlMs))
+                        Duration.ofMillis(config.cache().entityDeviceDetails().ttlMs()))
                 .invoke(() -> log.debug("UseCase: Retrieved entity details for ID: {} from cache", id));
     }
 
@@ -145,7 +145,12 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
                                 .size(filters.getSize())
                                 .build())
                         .flatMap(pageResponse -> cacheService
-                                .set(cacheKey, pageResponse, Duration.ofMillis(config.cache.entityDevicePage.ttlMs))
+                                .set(
+                                        cacheKey,
+                                        pageResponse,
+                                        Duration.ofMillis(config.cache()
+                                                .entityDevicePage()
+                                                .ttlMs()))
                                 .replaceWith(pageResponse))
                         .invoke(() -> log.debug("UseCase: Loaded page data from service for filters: {}", filters));
             }
@@ -158,9 +163,10 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
         return getById(id)
                 .flatMap(entity -> {
                     // Remove from cache before deletion
-                    String cacheKey = cacheService.generateKey(config.cache.prefix.entityDevice, id.toString());
+                    String cacheKey =
+                            cacheService.generateKey(config.cache().prefix().entityDevice(), id.toString());
                     String detailsCacheKey =
-                            cacheService.generateKey(config.cache.prefix.entityDeviceDetails, id.toString());
+                            cacheService.generateKey(config.cache().prefix().entityDeviceDetails(), id.toString());
 
                     return Uni.combine()
                             .all()
@@ -181,7 +187,7 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
      */
     private String generatePageCacheKey(EntityDeviceFilters filters) {
         return cacheService.generateKey(
-                config.cache.prefix.entityDevicePage,
+                config.cache().prefix().entityDevicePage(),
                 String.valueOf(filters.getPage()),
                 String.valueOf(filters.getSize()),
                 filters.getName() != null ? filters.getName() : "null",
@@ -193,7 +199,7 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
      */
     private Uni<Void> invalidatePageCacheAsync() {
         String pattern = tenantContext.getTenantCacheKeyPrefix(
-                cacheService.generateKey(config.cache.prefix.entityDevicePage, "*"));
+                cacheService.generateKey(config.cache().prefix().entityDevicePage(), "*"));
 
         return cacheService
                 .deleteByPattern(pattern)
@@ -261,37 +267,46 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
 
     private Uni<EntityDevice> cacheEntity(EntityDevice entity) {
         String cacheKey = cacheService.generateKey(
-                config.cache.prefix.entityDevice, entity.getId().toString());
+                config.cache().prefix().entityDevice(), entity.getId().toString());
         return cacheService
-                .set(cacheKey, entity, Duration.ofMillis(config.cache.entityDevice.ttlMs))
+                .set(
+                        cacheKey,
+                        entity,
+                        Duration.ofMillis(config.cache().entityDevice().ttlMs()))
                 .replaceWith(entity);
     }
 
     private Uni<EntityDevice> updateCacheAfterModification(EntityDevice entity) {
         String cacheKey = cacheService.generateKey(
-                config.cache.prefix.entityDevice, entity.getId().toString());
+                config.cache().prefix().entityDevice(), entity.getId().toString());
         String detailsCacheKey = cacheService.generateKey(
-                config.cache.prefix.entityDeviceDetails, entity.getId().toString());
+                config.cache().prefix().entityDeviceDetails(), entity.getId().toString());
 
         return Uni.combine()
                 .all()
                 .unis(
-                        cacheService.set(cacheKey, entity, Duration.ofMillis(config.cache.entityDevice.ttlMs)),
                         cacheService.set(
-                                detailsCacheKey, entity, Duration.ofMillis(config.cache.entityDeviceDetails.ttlMs)))
+                                cacheKey,
+                                entity,
+                                Duration.ofMillis(config.cache().entityDevice().ttlMs())),
+                        cacheService.set(
+                                detailsCacheKey,
+                                entity,
+                                Duration.ofMillis(
+                                        config.cache().entityDeviceDetails().ttlMs())))
                 .discardItems()
                 .replaceWith(entity);
     }
 
     private Uni<EntityDevice> getByIdWithCaching(UUID id) {
-        String cacheKey = cacheService.generateKey(config.cache.prefix.entityDevice, id.toString());
+        String cacheKey = cacheService.generateKey(config.cache().prefix().entityDevice(), id.toString());
 
         return cacheService
                 .getOrCompute(
                         cacheKey,
                         EntityDevice.class,
                         () -> getById(id),
-                        Duration.ofMillis(config.cache.entityDevice.ttlMs))
+                        Duration.ofMillis(config.cache().entityDevice().ttlMs()))
                 .invoke(entity -> log.debug("Retrieved entity with ID: {} from cache", id));
     }
 
