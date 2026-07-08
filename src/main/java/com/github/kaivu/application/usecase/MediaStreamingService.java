@@ -20,7 +20,7 @@ import jakarta.inject.Inject;
 
 /**
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 7/27/25
  * Time: 2:28 AM
  */
@@ -65,10 +65,8 @@ public class MediaStreamingService {
                 .findByBucketAndObject(bucketName, objectName)
                 .chain(optionalMediaFile -> {
                     if (optionalMediaFile.isEmpty()) {
-                        // Use current language for localized error messages
-                        ServiceException exception = new ServiceException(
-                                ErrorsEnum.SYSTEM_CLIENT_BAD_REQUEST.withLocale(languageContext.getCurrentLocale()));
-                        // You can now use currentLanguage for localization if your ServiceException supports it
+                        ServiceException exception = new ServiceException(ErrorsEnum.SYSTEM_CLIENT_BAD_REQUEST)
+                                .withLocale(languageContext.getCurrentLocale());
                         return Uni.createFrom().failure(exception);
                     }
 

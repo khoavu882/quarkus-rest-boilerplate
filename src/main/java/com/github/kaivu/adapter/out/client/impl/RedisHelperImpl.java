@@ -3,6 +3,7 @@ package com.github.kaivu.adapter.out.client.impl;
 import com.github.kaivu.adapter.out.client.RedisHelper;
 import com.github.kaivu.config.AppConfiguration;
 import io.quarkus.redis.datasource.ReactiveRedisDataSource;
+import io.quarkus.redis.datasource.keys.KeyScanArgs;
 import io.quarkus.redis.datasource.keys.ReactiveKeyCommands;
 import io.quarkus.redis.datasource.value.ReactiveValueCommands;
 import io.smallrye.mutiny.Uni;
@@ -128,8 +129,13 @@ public class RedisHelperImpl implements RedisHelper {
     @Override
     public Uni<Long> deleteByPattern(String pattern) {
         ReactiveKeyCommands<String> keyCommands = reactiveDataSource.key();
+        // SCAN instead of KEYS: KEYS walks the whole keyspace in one blocking pass and stalls
+        // every other client on the Redis instance; SCAN paginates via a cursor without blocking.
         return keyCommands
-                .keys(pattern)
+                .scan(new KeyScanArgs().match(pattern))
+                .toMulti()
+                .collect()
+                .asList()
                 .flatMap(keys -> {
                     if (keys.isEmpty()) {
                         log.debug("No keys found matching pattern: {}", pattern);
@@ -191,10 +197,14 @@ public class RedisHelperImpl implements RedisHelper {
     @Override
     public Uni<Void> clear() {
         // Note: Redis FLUSHALL is not available in reactive commands
-        // This is a simplified implementation that removes keys by pattern
+        // This is a simplified implementation that removes keys by pattern, via SCAN rather
+        // than KEYS so it doesn't block the Redis instance while iterating the whole keyspace.
         ReactiveKeyCommands<String> keyCommands = reactiveDataSource.key();
         return keyCommands
-                .keys("*")
+                .scan()
+                .toMulti()
+                .collect()
+                .asList()
                 .flatMap(keys -> {
                     if (keys.isEmpty()) {
                         return Uni.createFrom().voidItem();

@@ -48,15 +48,19 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
     @Override
     public Uni<EntityDevice> getById(UUID identify) throws EntityNotFoundException {
         return findById(identify)
-                .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityNotFoundException(
-                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(languageContext.getCurrentLocale(), identify))));
+                .map(entityOpt ->
+                        entityOpt.orElseThrow(() -> new EntityNotFoundException(ErrorsEnum.ENTITY_DEVICE_NOT_FOUND)
+                                .withLocale(languageContext.getCurrentLocale())
+                                .withArgs(identify)));
     }
 
     @Override
     public Uni<EntityDevice> getByName(String name) throws EntityNotFoundException {
         return findByName(name)
-                .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityNotFoundException(
-                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(languageContext.getCurrentLocale(), name))));
+                .map(entityOpt ->
+                        entityOpt.orElseThrow(() -> new EntityNotFoundException(ErrorsEnum.ENTITY_DEVICE_NOT_FOUND)
+                                .withLocale(languageContext.getCurrentLocale())
+                                .withArgs(name)));
     }
 
     @Override

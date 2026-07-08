@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * and other observability metadata throughout the request lifecycle.
  *
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  */
 @Getter
 @Setter

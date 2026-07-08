@@ -14,7 +14,7 @@ import java.util.UUID;
 
 /**
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 12/13/24
  * Time: 1:07 PM
  */

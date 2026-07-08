@@ -30,7 +30,7 @@ public class RetryService {
                                 config.retry().defaultRetry().backoffMaxMs()))
                 .atMost(config.retry().defaultRetry().maxAttempts())
                 .onFailure()
-                .invoke(ex -> log.error("Operation {} failed after retries: {}", operationName, ex.getMessage()));
+                .invoke(ex -> log.error("Operation {} failed after retries", operationName, ex));
     }
 
     private boolean isRetryable(Throwable throwable) {

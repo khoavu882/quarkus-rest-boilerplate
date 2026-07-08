@@ -36,7 +36,7 @@ import java.util.UUID;
 
 /**
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 3/13/25
  * Time: 11:49 AM
  */
@@ -226,8 +226,10 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
 
     private Uni<EntityDevice> getById(UUID id) throws EntityNotFoundException {
         return findById(id)
-                .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityNotFoundException(
-                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(languageContext.getCurrentLocale(), id))));
+                .map(entityOpt ->
+                        entityOpt.orElseThrow(() -> new EntityNotFoundException(ErrorsEnum.ENTITY_DEVICE_NOT_FOUND)
+                                .withLocale(languageContext.getCurrentLocale())
+                                .withArgs(id)));
     }
 
     private Uni<Optional<EntityDevice>> findByName(String name) {
@@ -239,9 +241,9 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
             if (existingEntity.isPresent()) {
                 return Uni.createFrom()
                         .failure(new ObservableServiceException(
-                                ErrorsEnum.ENTITY_DEVICE_NAME_ALREADY_EXISTS.withLocale(
-                                        languageContext.getCurrentLocale(), name),
-                                observabilityContext));
+                                        ErrorsEnum.ENTITY_DEVICE_NAME_ALREADY_EXISTS, observabilityContext)
+                                .withLocale(languageContext.getCurrentLocale())
+                                .withArgs(name));
             }
             return Uni.createFrom().voidItem();
         });

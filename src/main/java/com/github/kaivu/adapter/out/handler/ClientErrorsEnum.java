@@ -6,19 +6,22 @@ import com.github.kaivu.common.constant.ErrorsKeyConstant;
 import com.github.kaivu.common.exception.AppErrorEnum;
 import com.github.kaivu.common.utils.ResourceBundleUtil;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 3/15/25
- * Time: 12:53 AM
+ * Time: 12:53 AM
  */
 @Getter
+@Slf4j
 public enum ClientErrorsEnum implements AppErrorEnum {
     DEMO_REST_CLIENT_BAD_REQUEST(EntitiesConstant.DEMO_REST, ErrorsKeyConstant.CLIENT_BAD_REQUEST),
     DEMO_REST_CLIENT_INTERNAL_SERVER_ERROR(EntitiesConstant.DEMO_REST, ErrorsKeyConstant.INTERNAL_SERVER_ERROR),
@@ -31,42 +34,33 @@ public enum ClientErrorsEnum implements AppErrorEnum {
     private static final Map<String, ClientErrorsEnum> ENUM_MAP = new HashMap<>();
     private final String entityName;
     private final String errorKey;
-    private String message;
 
     ClientErrorsEnum(String entityName, String errorKey) {
         this.entityName = entityName;
         this.errorKey = errorKey;
-        this.message = "";
     }
 
     @Override
-    public String getFullKey() {
-        return this.entityName + "." + this.errorKey;
+    public String getMessage() {
+        return getMessage(Locale.ENGLISH);
     }
 
     @Override
-    public String getMessage(Locale locale, String extentMessage) {
-        String bundleMessage =
-                ResourceBundleUtil.getKeyWithResourceBundle(AppConstant.I18N_ERROR, locale, getFullKey());
-        return extentMessage != null ? bundleMessage + extentMessage : bundleMessage;
-    }
-
-    @Override
-    public void setMessageWithExtendMessage(Locale locale, Object... args) {
-        String messageTemplate = MESSAGE_CACHE.computeIfAbsent(
-                getFullKey() + AppConstant.DOT + locale.toString(),
-                key -> ResourceBundleUtil.getKeyWithResourceBundle(AppConstant.I18N_ERROR, locale, getFullKey()));
-        if (args.length > 0) {
-            this.message = String.format(messageTemplate, args);
-        } else {
-            this.message = messageTemplate;
-        }
-    }
-
-    @Override
-    public AppErrorEnum withLocale(Locale locale, Object... args) {
-        this.setMessageWithExtendMessage(locale, args);
-        return this;
+    public String getMessage(Locale locale, Object... args) {
+        String messageTemplate =
+                MESSAGE_CACHE.computeIfAbsent(getFullKey() + AppConstant.DOT + locale.toString(), key -> {
+                    try {
+                        return ResourceBundleUtil.getKeyWithResourceBundle(
+                                AppConstant.I18N_ERROR, locale, getFullKey());
+                    } catch (MissingResourceException ex) {
+                        log.error(
+                                "Missing i18n key '{}' for locale '{}' — add it to error_messages*.properties",
+                                getFullKey(),
+                                locale);
+                        return getFullKey();
+                    }
+                });
+        return args.length > 0 ? String.format(messageTemplate, args) : messageTemplate;
     }
 
     // Static block to initialize the enum map

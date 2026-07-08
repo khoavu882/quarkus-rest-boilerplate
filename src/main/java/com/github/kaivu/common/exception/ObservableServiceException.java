@@ -43,7 +43,7 @@ public class ObservableServiceException extends ServiceException {
 
     public ObservableServiceException(
             String entityName, String errorKey, String message, AppErrorEnum errorsEnum, ObservabilityContext context) {
-        super(entityName, errorKey, message, errorsEnum);
+        super(errorsEnum);
         this.observabilityContext = context != null ? context.getErrorContext() : Map.of();
         this.errorClassification = classifyError(errorsEnum);
         this.tenantContext = extractTenantContext(context);

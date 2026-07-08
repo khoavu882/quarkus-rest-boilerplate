@@ -12,6 +12,6 @@ import com.github.kaivu.common.exception.ServiceException;
 public class UnauthorizedException extends ServiceException {
 
     public UnauthorizedException(AppErrorEnum error) {
-        super(error.getEntityName(), error.getErrorKey(), error.getMessage(), error);
+        super(error);
     }
 }

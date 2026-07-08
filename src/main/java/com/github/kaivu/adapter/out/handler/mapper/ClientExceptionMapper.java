@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 2/12/24
  * Time: 9:04 AM
  */
@@ -53,7 +53,7 @@ public class ClientExceptionMapper implements ExceptionMapper<ClientException> {
         String formattedMessage = message;
 
         ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setErrorKey(ex.getErrorsEnum().getFullKey());
+        errorMessage.setKey(ex.getErrorsEnum().getFullKey());
         errorMessage.setMessage(formattedMessage);
 
         return new ErrorResponse(errorId, errorMessage);

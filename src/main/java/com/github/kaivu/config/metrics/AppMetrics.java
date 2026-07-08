@@ -67,6 +67,15 @@ public class AppMetrics {
 
         // Waiting connections gauge
         meterRegistry.gauge("database_waiting_connections", waitingConnections);
+
+        // Cache hit/miss/error gauges — previously tracked only in-process via LongAdder and
+        // surfaced solely through the custom stats endpoint, invisible to the Prometheus
+        // exporter that every other metric here already reaches.
+        meterRegistry.gauge("cache_redis_hits_total", redisHits, LongAdder::sum);
+        meterRegistry.gauge("cache_redis_misses_total", redisMisses, LongAdder::sum);
+        meterRegistry.gauge("cache_redis_errors_total", redisErrors, LongAdder::sum);
+        meterRegistry.gauge("cache_caffeine_hits_total", caffeineHits, LongAdder::sum);
+        meterRegistry.gauge("cache_caffeine_misses_total", caffeineMisses, LongAdder::sum);
     }
 
     // Redis metrics recording methods

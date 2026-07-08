@@ -42,7 +42,7 @@ public class MissingResourceExceptionMapper implements ExceptionMapper<MissingRe
                 AppConstant.I18N_ERROR, requestContext.getLanguage(), errorKey);
 
         ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setErrorKey(errorKey);
+        errorMessage.setKey(errorKey);
         errorMessage.setMessage(message);
 
         ErrorResponse errorResponse = new ErrorResponse(errorId, errorMessage);

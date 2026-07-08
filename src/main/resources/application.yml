@@ -4,13 +4,13 @@ quarkus:
 
   # Container image configuration - DISABLED for native builds
   container-image:
-    build: ${QUARKUS_CONTAINER_IMAGE_BUILD:false}
+    build: false
     builder: docker
     image: ${QUARKUS_APPLICATION_NAME:demo-service}:latest
     registry: local
 
   management:
-    enabled: ${QUARKUS_MANAGEMENT_ENABLED:false}
+    enabled: false
     port: 9000
     proxy:
       allow-forwarded: true
@@ -43,7 +43,7 @@ quarkus:
 
   hibernate-orm:
     database:
-      default-schema: ${QUARKUS_HIBERNATE_ORM_DATABASE_DEFAULT_SCHEMA:sch_local}
+      default-schema: sch_local
     schema-management:
       strategy: drop-and-create
       create-schemas: true
@@ -56,7 +56,7 @@ quarkus:
       origins: "*"
       methods: GET, OPTIONS, POST, PUT, DELETE, PATCH
       headers: accept, authorization, content-type, x-requested-with, X-Current-Org-Id
-    enable-compression: ${QUARKUS_HTTP_ENABLE_COMPRESSION:true}
+    enable-compression: true
     host: 0.0.0.0
     port: 8080
 

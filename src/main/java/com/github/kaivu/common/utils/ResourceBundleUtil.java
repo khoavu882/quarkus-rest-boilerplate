@@ -32,17 +32,17 @@ public class ResourceBundleUtil {
         try {
             return getKeyWithResourceBundle(bundleName, locale, key);
         } catch (Exception ex) {
-            log.error("Resource bundle error: {}", ex.getMessage(), ex);
+            log.error("Resource bundle error: bundle='{}', key='{}'", bundleName, key, ex);
             try {
                 ObservabilityContext context =
                         CDI.current().select(ObservabilityContext.class).get();
-                throw new ObservableServiceException(
-                        ErrorsEnum.SYSTEM_BUNDLE_DOES_NOT_EXIST.withLocale(locale), context, ex);
+                throw new ObservableServiceException(ErrorsEnum.SYSTEM_BUNDLE_DOES_NOT_EXIST, context, ex)
+                        .withLocale(locale);
             } catch (Exception cdiEx) {
                 log.warn(
                         "Could not get observability context, falling back to ServiceException: {}",
                         cdiEx.getMessage());
-                throw new ServiceException(ErrorsEnum.SYSTEM_BUNDLE_DOES_NOT_EXIST.withLocale(locale));
+                throw new ServiceException(ErrorsEnum.SYSTEM_BUNDLE_DOES_NOT_EXIST).withLocale(locale);
             }
         }
     }
