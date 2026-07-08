@@ -47,7 +47,8 @@ public class DeclaringRoutes {
             // Add your authentication logic here
             // Example:
             String authHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-            if (requestContext.getUriInfo().getPath().startsWith("/common")) return null;
+            if (requestContext.getUriInfo().getPath().startsWith("/common")
+                    || requestContext.getUriInfo().getPath().startsWith("/q/")) return null;
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }

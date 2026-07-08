@@ -12,6 +12,6 @@ import com.github.kaivu.common.exception.ServiceException;
 public class EntityConflictException extends ServiceException {
 
     public EntityConflictException(AppErrorEnum error) {
-        super(error.getEntityName(), error.getErrorKey(), error.getMessage(), error);
+        super(error);
     }
 }

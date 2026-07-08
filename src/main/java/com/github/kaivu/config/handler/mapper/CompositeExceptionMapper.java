@@ -24,6 +24,7 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -36,14 +37,23 @@ public class CompositeExceptionMapper implements ExceptionMapper<CompositeExcept
     @Context
     ContainerRequestContext requestContext;
 
-    private final Map<Class<? extends Throwable>, Function<Throwable, Response>> exceptionHandlers = Map.of(
-            UnauthorizedException.class, ex -> handleUnauthorized(),
-            PermissionDeniedException.class,
-                    ex -> Response.status(Response.Status.FORBIDDEN).build(),
-            EntityNotFoundException.class, this::handleNotFound,
-            EntityConflictException.class, this::handleConflict,
-            NotAcceptableException.class, this::handleNotAcceptable,
-            ServiceException.class, this::handleServiceException);
+    // LinkedHashMap: iteration order must stay most-specific-subclass-first, since every entry
+    // here also isInstance-matches the ServiceException fallback at the end. Map.of() gives no
+    // ordering guarantee and would let the fallback branch nondeterministically shadow the
+    // specific ones.
+    private final Map<Class<? extends Throwable>, Function<Throwable, Response>> exceptionHandlers = buildHandlers();
+
+    private Map<Class<? extends Throwable>, Function<Throwable, Response>> buildHandlers() {
+        Map<Class<? extends Throwable>, Function<Throwable, Response>> handlers = new LinkedHashMap<>();
+        handlers.put(UnauthorizedException.class, ex -> handleUnauthorized());
+        handlers.put(PermissionDeniedException.class, ex -> Response.status(Response.Status.FORBIDDEN)
+                .build());
+        handlers.put(EntityNotFoundException.class, this::handleNotFound);
+        handlers.put(EntityConflictException.class, this::handleConflict);
+        handlers.put(NotAcceptableException.class, this::handleNotAcceptable);
+        handlers.put(ServiceException.class, this::handleServiceException);
+        return handlers;
+    }
 
     @Override
     public Response toResponse(CompositeException exs) {

@@ -12,6 +12,6 @@ import com.github.kaivu.common.exception.ServiceException;
 public class PermissionDeniedException extends ServiceException {
 
     public PermissionDeniedException(AppErrorEnum error) {
-        super(error.getEntityName(), error.getErrorKey(), error.getMessage(), error);
+        super(error);
     }
 }

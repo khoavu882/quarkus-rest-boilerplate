@@ -26,22 +26,13 @@ public interface AppErrorEnum {
     }
 
     /**
-     * Returns the error message
+     * Returns the default (English) error message
      */
     String getMessage();
 
     /**
-     * Returns localized error message with optional extension message
+     * Returns the localized error message, interpolated with the given arguments.
+     * Stateless: resolves and formats fresh on every call, never mutates the enum constant.
      */
-    String getMessage(Locale locale, String extentMessage);
-
-    /**
-     * Sets message with locale and arguments
-     */
-    void setMessageWithExtendMessage(Locale locale, Object... args);
-
-    /**
-     * Returns this enum instance with locale and arguments set
-     */
-    AppErrorEnum withLocale(Locale locale, Object... args);
+    String getMessage(Locale locale, Object... args);
 }

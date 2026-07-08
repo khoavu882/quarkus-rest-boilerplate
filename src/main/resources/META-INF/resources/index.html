@@ -521,53 +521,75 @@ java -jar build/quarkus-app/quarkus-run.jar
 ./gradlew build -Dquarkus.package.type=native</code></pre>
 
                 <h3 style="color: var(--primary-color); margin: 30px 0 20px 0;">Docker Support</h3>
-                <pre><code># Build Docker image
-docker build -f src/main/docker/Dockerfile.jvm -t quarkus-rest .
+                <pre><code># One-Command Docker Setup (Recommended)
+./src/main/docker/scripts/local-setup.sh
 
-# Run with Docker
-docker run -i --rm -p 8080:8080 quarkus-rest</code></pre>
+# This script will:
+# • Build the application with Gradle
+# • Start PostgreSQL, Redis, MinIO, and Jaeger
+# • Build and deploy the application container
+# • Display all service URLs when ready
 
-                <h3 style="color: var(--primary-color); margin: 30px 0 20px 0;">Infrastructure Dependencies</h3>
+# Manual Docker operations
+docker compose -f src/main/docker/docker-compose.yml up -d --build
+docker compose -f src/main/docker/docker-compose.yml logs -f quarkus-app
+docker compose -f src/main/docker/docker-compose.yml down</code></pre>
+
+                <h3 style="color: var(--primary-color); margin: 30px 0 20px 0;">Technology Stack</h3>
                 <pre><code># Core Framework
+• Java 21 - Modern JVM platform
 • Quarkus 3.23.4 - Supersonic Subatomic Java Framework
-• Eclipse Vert.x 4.5.14 - Reactive toolkit for JVM
-• SmallRye Reactive 2.9.0 - Reactive Streams implementation
+• Eclipse Vert.x - Reactive toolkit for JVM
+• Mutiny - Reactive programming library
 
 # Database & ORM
-• Hibernate ORM 6.6.17 - Object-relational mapping
-• Hibernate Reactive 2.4.8 - Reactive ORM
-• PostgreSQL Client (Reactive) - Database connectivity
-• Redis Client - In-memory data store
+• PostgreSQL - Primary database with reactive connectivity
+• Hibernate Reactive + Panache - Reactive ORM
+• Redis - In-memory caching and session storage
+
+# Storage & Messaging
+• MinIO 8.5.11 - Object storage integration
+• WebSockets - Real-time communication support
 
 # Monitoring & Observability
-• Micrometer 1.14.7 - Application metrics
-• OpenTelemetry 1.44.1 - Distributed tracing
-• Prometheus 0.16.0 - Metrics collection
-• SmallRye Health 4.2.0 - Health checks
+• Micrometer + Prometheus - Application metrics
+• OpenTelemetry + Jaeger - Distributed tracing
+• SmallRye Health - Comprehensive health checks
+• JSON structured logging with trace context
 
-# Web & REST
-• RESTEasy Reactive - JAX-RS implementation
-• Jackson 2.18.3 - JSON processing
-• Swagger UI - API documentation
-• WebSockets - Real-time communication
+# Web & API
+• RESTEasy Reactive - High-performance JAX-RS
+• Jackson - JSON processing with JSR310 support
+• OpenAPI + Swagger UI - API documentation
+• Jakarta Bean Validation - Input validation
 
-# Containerization
-• Docker support built-in
-• GraalVM native compilation
-• Kubernetes integration
+# Development & Quality
+• MapStruct - Type-safe object mapping
+• Spotless - Code formatting with Palantir Java Format
+• JUnit 5 + RESTAssured - Testing framework
+• Docker - Complete containerization support</code></pre>
 
-# Additional Services
-• MinIO 8.5.11 - Object storage client
-• Quartz 2.5.0 - Job scheduling
-• Caffeine 3.2.0 - High performance caching
-• gRPC 1.69.1 - High performance RPC framework</code></pre>
+                <h3 style="color: var(--primary-color); margin: 30px 0 20px 0;">Key API Endpoints</h3>
+                <pre><code># Application APIs
+GET    /api/entity-devices     - List entity devices with pagination
+POST   /api/entity-devices     - Create new entity device
+GET    /api/entity-devices/{id} - Get entity device details
+PUT    /api/entity-devices/{id} - Update entity device
+DELETE /api/entity-devices/{id} - Delete entity device
 
-                <h3 style="color: var(--primary-color); margin: 30px 0 20px 0;">API Endpoints</h3>
-                <pre><code>GET  /q/health        - Health check (JSON)
-GET  /q/health-ui     - Health check UI
-GET  /q/metrics       - Application metrics
-GET  /q/swagger-ui    - API documentation
-GET  /q/dev           - Dev UI (dev mode only)</code></pre>
+# WebSocket Streaming
+GET    /stream/*              - Real-time streaming endpoints
+
+# Common Utilities
+GET    /common/*              - Common utility endpoints
+
+# System & Monitoring
+GET    /q/health              - Health check (JSON)
+GET    /q/health-ui           - Health check UI  
+GET    /q/metrics             - Application metrics
+GET    /q/swagger-ui          - API documentation
+GET    /q/dev                 - Dev UI (dev mode only)
+GET    /observability/*       - Custom observability endpoints</code></pre>
             </div>
         </div>
     </section>

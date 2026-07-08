@@ -8,7 +8,7 @@ import java.io.InputStream;
  * MinIO Helper providing high-level storage operations with profile flexibility
  *
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 7/26/25
  * Time: 2:30 PM
  */

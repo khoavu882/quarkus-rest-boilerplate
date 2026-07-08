@@ -5,6 +5,9 @@ CLAUDE.md
 # AI Agent
 .ai/
 .agent/
+.claude/
+.mcp.json
+agent-docs/
 ai-cache/
 agent-cache/
 *.ai-session
@@ -129,9 +132,3 @@ coverage/
 # JVM crash logs
 hs_err_pid*
 replay_pid*
-
-# Ignore Gradle project-specific cache directory
-.gradle
-
-# Ignore Gradle build output directory
-build

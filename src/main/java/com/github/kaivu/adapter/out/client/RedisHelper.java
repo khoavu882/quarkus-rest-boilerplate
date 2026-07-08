@@ -11,7 +11,7 @@ import java.util.Optional;
  * Redis Helper providing high-level cache operations with enhanced functionality
  *
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 3/19/25
  * Time: 5:18 PM
  */

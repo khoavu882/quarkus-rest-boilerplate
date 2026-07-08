@@ -2,7 +2,8 @@ package com.github.kaivu.adapter.in.rest.dto.request;
 
 import com.github.kaivu.common.exception.ServiceException;
 import com.github.kaivu.config.handler.ErrorsEnum;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.util.List;
 
 /**
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 4/9/24
  * Time: 4:59 PM
  */
@@ -27,12 +28,15 @@ public abstract class PageableRequest implements Serializable {
     @QueryParam("keyword")
     private String keyword;
 
-    @Size
+    @Min(0)
     @DefaultValue("0")
     @QueryParam("page")
     private int page;
 
-    @Size(max = 20)
+    // @Size only validates CharSequence/Collection/Map/Array — it was a silent no-op on this
+    // primitive int, leaving page size effectively unbounded. @Min/@Max actually enforce it.
+    @Min(1)
+    @Max(20)
     @DefaultValue("20")
     @QueryParam("size")
     private int size;
