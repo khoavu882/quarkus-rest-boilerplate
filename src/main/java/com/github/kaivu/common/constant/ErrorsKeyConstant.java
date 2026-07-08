@@ -10,6 +10,7 @@ public final class ErrorsKeyConstant {
     // http request defined error key constants
     public static final String INTERNAL_SERVER_ERROR = "internal_server_error";
     public static final String NOT_ACCEPTABLE = "not_acceptable";
+    public static final String RANGE_NOT_SATISFIABLE = "range_not_satisfiable";
     public static final String PERMISSION_DENIED = "permission_denied";
     public static final String UNAUTHORIZED = "unauthorized";
     public static final String INVALID_REDIRECT = "invalid_redirect";
