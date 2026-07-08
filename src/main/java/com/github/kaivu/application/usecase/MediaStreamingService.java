@@ -2,6 +2,7 @@ package com.github.kaivu.application.usecase;
 
 import com.github.kaivu.adapter.in.rest.dto.vm.RangeInfo;
 import com.github.kaivu.adapter.in.rest.dto.vm.StreamingResponse;
+import com.github.kaivu.application.exception.RangeNotSatisfiableException;
 import com.github.kaivu.application.port.IMediaFileRepository;
 import com.github.kaivu.common.context.LanguageContext;
 import com.github.kaivu.common.exception.ServiceException;
@@ -96,25 +97,44 @@ public class MediaStreamingService {
             return new RangeInfo(0, fileSize - 1);
         }
 
-        // Parse "bytes=start-end" format
+        // Parse "bytes=start-end" format (RFC 7233): "start-end", "start-" (to EOF), or "-suffixLength"
+        // (last N bytes) are all valid forms.
         if (rangeHeader.startsWith("bytes=")) {
             String range = rangeHeader.substring(6);
-            String[] parts = range.split("-");
 
             long startByte = 0;
             long endByte = fileSize - 1;
 
-            if (parts.length > 0 && !parts[0].isEmpty()) {
-                startByte = Long.parseLong(parts[0]);
+            try {
+                if (range.startsWith("-")) {
+                    long suffixLength = Long.parseLong(range.substring(1));
+                    startByte = Math.max(0, fileSize - suffixLength);
+                } else {
+                    String[] parts = range.split("-");
+                    if (parts.length > 0 && !parts[0].isEmpty()) {
+                        startByte = Long.parseLong(parts[0]);
+                    }
+
+                    if (parts.length > 1 && !parts[1].isEmpty()) {
+                        endByte = Math.min(Long.parseLong(parts[1]), fileSize - 1);
+                    }
+                }
+            } catch (NumberFormatException ex) {
+                throw rangeNotSatisfiable();
             }
 
-            if (parts.length > 1 && !parts[1].isEmpty()) {
-                endByte = Math.min(Long.parseLong(parts[1]), fileSize - 1);
+            if (startByte < 0 || startByte >= fileSize || startByte > endByte) {
+                throw rangeNotSatisfiable();
             }
 
             return new RangeInfo(startByte, endByte);
         }
 
         return new RangeInfo(0, fileSize - 1);
+    }
+
+    private ServiceException rangeNotSatisfiable() {
+        return new RangeNotSatisfiableException(ErrorsEnum.FILES_RANGE_NOT_SATISFIABLE)
+                .withLocale(languageContext.getCurrentLocale());
     }
 }

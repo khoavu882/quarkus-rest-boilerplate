@@ -496,13 +496,13 @@
             <div class="code-block">
                 <h3 style="color: var(--primary-color); margin-bottom: 20px;">Prerequisites</h3>
                 <pre><code>• Java 21 or higher
-• Gradle 7.5+ (included via wrapper)
+• Gradle 8.5+ (included via wrapper)
 • Docker (optional, for containerization)</code></pre>
 
                 <h3 style="color: var(--primary-color); margin: 30px 0 20px 0;">Clone and Run</h3>
                 <pre><code># Clone the repository
 git clone &lt;repository-url&gt;
-cd quarkus-rest
+cd quarkus-rest-boilerplate
 
 # Run in development mode with live reload
 ./gradlew quarkusDev
@@ -518,7 +518,7 @@ cd quarkus-rest
 java -jar build/quarkus-app/quarkus-run.jar
 
 # Build native executable (requires GraalVM)
-./gradlew build -Dquarkus.package.type=native</code></pre>
+./gradlew build -Dquarkus.package.native=true</code></pre>
 
                 <h3 style="color: var(--primary-color); margin: 30px 0 20px 0;">Docker Support</h3>
                 <pre><code># One-Command Docker Setup (Recommended)

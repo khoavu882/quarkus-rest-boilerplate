@@ -23,8 +23,8 @@ RUN microdnf install -y glibc-langpack-en gzip \
     && chmod "g+rwX" /work \
     && chown 1001:root /work
 
-# Copy the native executable - use the exact filename we know exists
-COPY --chown=1001:root build/quarkus-rest-1.0.0-runner /work/application
+# Copy the native executable - wildcard so this doesn't break on every version bump
+COPY --chown=1001:root build/*-runner /work/application
 
 EXPOSE 8080
 USER 1001
