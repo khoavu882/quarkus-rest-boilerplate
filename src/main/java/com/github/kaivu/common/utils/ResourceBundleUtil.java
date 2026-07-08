@@ -1,5 +1,6 @@
 package com.github.kaivu.common.utils;
 
+import com.github.kaivu.common.constant.AppConstant;
 import com.github.kaivu.common.context.ObservabilityContext;
 import com.github.kaivu.common.exception.ObservableServiceException;
 import com.github.kaivu.common.exception.ServiceException;
@@ -13,11 +14,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @ApplicationScoped
 public class ResourceBundleUtil {
+
+    private static final Map<String, String> MESSAGE_CACHE = new ConcurrentHashMap<>();
 
     private ResourceBundleUtil() {
         throw new IllegalStateException("Utility class");
@@ -26,6 +31,27 @@ public class ResourceBundleUtil {
     public static String getKeyWithResourceBundle(String bundleName, Locale locale, String key) {
         Locale localForBundle = locale != null ? locale : Locale.getDefault();
         return ResourceBundle.getBundle(bundleName, localForBundle).getString(key);
+    }
+
+    /**
+     * Resolves a bundle key, caching the result per bundle/key/locale. Falls back to the raw key
+     * (and logs) instead of throwing when the key is missing — used by AppErrorEnum implementations,
+     * where a bundle gap must never crash the mapper that is trying to render the original error.
+     */
+    public static String getKeyWithResourceBundleOrFallback(String bundleName, Locale locale, String key) {
+        String cacheKey = bundleName + AppConstant.DOT + key + AppConstant.DOT + locale;
+        return MESSAGE_CACHE.computeIfAbsent(cacheKey, ignored -> {
+            try {
+                return getKeyWithResourceBundle(bundleName, locale, key);
+            } catch (MissingResourceException ex) {
+                log.error(
+                        "Missing i18n key '{}' for locale '{}' in bundle '{}' — add it to the bundle's *.properties files",
+                        key,
+                        locale,
+                        bundleName);
+                return key;
+            }
+        });
     }
 
     public static String getKeyWithResourceBundleOrThrow(String bundleName, Locale locale, String key) {

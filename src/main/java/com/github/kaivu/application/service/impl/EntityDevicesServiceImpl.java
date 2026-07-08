@@ -90,6 +90,6 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
     @Override
     @WithTransaction
     public Uni<Void> delete(UUID identify) throws EntityNotFoundException {
-        return getById(identify).flatMap(entity -> entityDeviceRepository.delete(entity));
+        return getById(identify).flatMap(entityDeviceRepository::delete);
     }
 }

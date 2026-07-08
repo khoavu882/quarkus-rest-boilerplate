@@ -1,12 +1,9 @@
 package com.github.kaivu.config.handler.mapper;
 
-import com.github.kaivu.common.constant.AppConstant;
 import com.github.kaivu.common.constant.AppHeaderConstant;
-import com.github.kaivu.common.constant.EntitiesConstant;
-import com.github.kaivu.common.constant.ErrorsKeyConstant;
-import com.github.kaivu.common.utils.ResourceBundleUtil;
 import com.github.kaivu.config.handler.ErrorMessage;
 import com.github.kaivu.config.handler.ErrorResponse;
+import com.github.kaivu.config.handler.ErrorsEnum;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
@@ -37,12 +34,14 @@ public class MissingResourceExceptionMapper implements ExceptionMapper<MissingRe
 
         log.error(errorId, ex);
 
-        String errorKey = EntitiesConstant.SYSTEM + "." + ErrorsKeyConstant.BUNDLE_DOES_NOT_EXIST;
-        String message = ResourceBundleUtil.getKeyWithResourceBundle(
-                AppConstant.I18N_ERROR, requestContext.getLanguage(), errorKey);
+        // Resolved via ErrorsEnum's cached, fallback-safe getMessage — never via a raw
+        // ResourceBundle lookup here, since this mapper's whole job is handling a bundle
+        // lookup failure; it must not be able to throw the same exception while doing so.
+        ErrorsEnum errorsEnum = ErrorsEnum.SYSTEM_BUNDLE_DOES_NOT_EXIST;
+        String message = errorsEnum.getMessage(requestContext.getLanguage());
 
         ErrorMessage errorMessage = new ErrorMessage();
-        errorMessage.setKey(errorKey);
+        errorMessage.setKey(errorsEnum.getFullKey());
         errorMessage.setMessage(message);
 
         ErrorResponse errorResponse = new ErrorResponse(errorId, errorMessage);

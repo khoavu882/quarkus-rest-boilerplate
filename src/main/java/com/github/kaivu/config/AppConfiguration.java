@@ -68,10 +68,6 @@ public interface AppConfiguration {
     // ==================== NESTED INTERFACES ====================
 
     interface HttpConfig {
-        @WithName("enable-compression")
-        @WithDefault("true")
-        boolean enableCompression();
-
         @WithName("auth-logging")
         @WithDefault("true")
         boolean authLogging();

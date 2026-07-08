@@ -24,6 +24,20 @@ grouped by release tag. Format loosely follows [Keep a Changelog](https://keepac
   resolver now falls back to the raw key and logs instead of throwing.
 - Two `log.error(...)` calls were passing `ex.getMessage()` instead of the throwable, discarding the
   stack trace on failure paths that need it most.
+- A hand-rolled response filter (`HttpFilters.handleCompression`) gzip-compressed response bodies but
+  its `Content-Encoding: gzip` header write never reached the actual HTTP response, so any client
+  honoring HTTP semantics (browsers, Swagger UI, `curl`) received unparseable compressed bytes labeled
+  as plain JSON. Removed — redundant with the already-present, correctly-implemented
+  `quarkus.http.enable-compression`.
+- `MissingResourceExceptionMapper` — the mapper whose job is handling a bundle-lookup failure —
+  resolved its own response message via a raw, throwable `ResourceBundle` lookup instead of the safe,
+  cached, fallback-protected path every other error in the codebase uses, meaning it could itself
+  throw the same exception it exists to handle. The duplicated cache+fallback logic in `ErrorsEnum`
+  and `ClientErrorsEnum` is now consolidated into `ResourceBundleUtil.getKeyWithResourceBundleOrFallback`.
+- `EntityDeviceUseCaseImpl.delete()` invoked the page-cache invalidation `Uni` from inside `.invoke()`
+  instead of `.call()`, so it was built but never subscribed to — Mutiny does nothing until
+  something subscribes. Deleted entities kept appearing in cached list/page results until the cache
+  TTL expired.
 
 ### Changed
 - `AppMetrics`'s cache hit/miss/error counters were tracked only in-process; registered as Micrometer
