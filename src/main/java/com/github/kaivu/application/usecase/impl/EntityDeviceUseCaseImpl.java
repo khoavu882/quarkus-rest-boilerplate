@@ -172,10 +172,8 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
                                     entityDeviceRepository.delete(entity))
                             .discardItems();
                 })
-                .invoke(() -> {
-                    log.debug("UseCase: Deleted entity and cleared caches: {}", id);
-                    invalidatePageCacheAsync();
-                });
+                .call(ignored -> invalidatePageCacheAsync())
+                .invoke(() -> log.debug("UseCase: Deleted entity and cleared caches: {}", id));
     }
 
     /**
