@@ -2,6 +2,7 @@ package com.github.kaivu.config.handler.mapper;
 
 import com.github.kaivu.application.exception.NotAcceptableException;
 import com.github.kaivu.application.exception.PermissionDeniedException;
+import com.github.kaivu.application.exception.RangeNotSatisfiableException;
 import com.github.kaivu.application.exception.UnauthorizedException;
 import com.github.kaivu.common.constant.AppHeaderConstant;
 import com.github.kaivu.common.constant.ObservabilityConstant;
@@ -132,6 +133,8 @@ public class ServiceExceptionMapper implements ExceptionMapper<ServiceException>
             responseBuilder = Response.status(Response.Status.FORBIDDEN);
         } else if (ex.getClass().equals(NotAcceptableException.class)) {
             responseBuilder = Response.status(Response.Status.NOT_ACCEPTABLE);
+        } else if (ex.getClass().equals(RangeNotSatisfiableException.class)) {
+            responseBuilder = Response.status(Response.Status.REQUESTED_RANGE_NOT_SATISFIABLE);
         } else {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST).entity(errorResponse);
         }
