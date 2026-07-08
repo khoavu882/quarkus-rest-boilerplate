@@ -101,7 +101,7 @@ quarkus:
 
   native:
     additional-build-args:
-      - ${QUARKUS_NATIVE_ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.config.ApplicationConfiguration}
+      - ${QUARKUS_NATIVE_ADDITIONAL_BUILD_ARGS:--initialize-at-run-time=com.github.kaivu.config.AppConfiguration}
     container-build: ${QUARKUS_NATIVE_CONTAINER_BUILD:false}
 
 minio:

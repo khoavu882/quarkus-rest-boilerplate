@@ -11,17 +11,18 @@ services:
       - "8080:8080"
       - "9000:9000"   # Management port
     environment:
-      DEMO_HOST: postgresql
-      DEMO_PORT: 5432
-      DEMO_DB: db_local
-      DEMO_USERNAME: postgres
-      DEMO_PASSWORD: postgres
-      DEMO_SCHEMA: sch_local
-      ENABLE_QUARKUS_MANAGEMENT: "true"
+      QUARKUS_DATASOURCE_HOST: postgresql
+      QUARKUS_DATASOURCE_PORT: 5432
+      QUARKUS_DATASOURCE_DB: db_local
+      QUARKUS_DATASOURCE_USERNAME: postgres
+      QUARKUS_DATASOURCE_PASSWORD: postgres
+      QUARKUS_DATASOURCE_SCHEMA: sch_local
+      QUARKUS_MANAGEMENT_ENABLED: "true"
       # Redis configuration
       QUARKUS_REDIS_HOSTS: redis://redis:6379
-      # MinIO configuration
-      MINIO_ENDPOINT: http://minio:9090
+      # MinIO configuration — port 9000 is MinIO's container-internal listen port
+      # (see the minio service's own healthcheck below); 9090 is only the host-side mapping.
+      MINIO_URL: http://minio:9000
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
       # Tracing configuration
