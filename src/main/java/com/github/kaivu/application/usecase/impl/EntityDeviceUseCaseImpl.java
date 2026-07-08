@@ -11,7 +11,6 @@ import com.github.kaivu.application.port.IEntityDeviceRepository;
 import com.github.kaivu.application.service.CacheService;
 import com.github.kaivu.application.usecase.EntityDeviceUseCase;
 import com.github.kaivu.common.constant.ObservabilityConstant;
-import com.github.kaivu.common.context.AsyncObservabilityContext;
 import com.github.kaivu.common.context.LanguageContext;
 import com.github.kaivu.common.context.ObservabilityContext;
 import com.github.kaivu.common.context.TenantObservabilityContext;
@@ -51,7 +50,6 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
     private final ObservabilityService observabilityService;
     private final ObservabilityContext observabilityContext;
     private final TenantObservabilityContext tenantContext;
-    private final AsyncObservabilityContext asyncContext;
     private final LanguageContext languageContext;
 
     @Inject
@@ -62,7 +60,6 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
             ObservabilityService observabilityService,
             ObservabilityContext observabilityContext,
             TenantObservabilityContext tenantContext,
-            AsyncObservabilityContext asyncContext,
             LanguageContext languageContext) {
         this.config = config;
         this.entityDeviceRepository = entityDeviceRepository;
@@ -70,7 +67,6 @@ public class EntityDeviceUseCaseImpl implements EntityDeviceUseCase {
         this.observabilityService = observabilityService;
         this.observabilityContext = observabilityContext;
         this.tenantContext = tenantContext;
-        this.asyncContext = asyncContext;
         this.languageContext = languageContext;
     }
 

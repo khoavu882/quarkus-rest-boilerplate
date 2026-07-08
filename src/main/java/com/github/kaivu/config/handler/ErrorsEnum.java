@@ -41,6 +41,9 @@ public enum ErrorsEnum implements AppErrorEnum {
     ENTITY_DEVICE_NOT_FOUND(EntitiesConstant.ENTITY_DEVICE, ErrorsKeyConstant.NOT_FOUND),
     ENTITY_DEVICE_NAME_ALREADY_EXISTS(EntitiesConstant.ENTITY_DEVICE, ErrorsKeyConstant.ALREADY_EXISTS),
 
+    // Media/File Streaming Errors
+    FILES_RANGE_NOT_SATISFIABLE(EntitiesConstant.FILES, ErrorsKeyConstant.NOT_ACCEPTABLE),
+
     // User Errors
     USER_NOT_FOUND(EntitiesConstant.USER, ErrorsKeyConstant.NOT_FOUND),
     ;

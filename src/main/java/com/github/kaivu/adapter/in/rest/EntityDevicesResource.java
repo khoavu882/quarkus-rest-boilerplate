@@ -33,8 +33,12 @@ import java.util.UUID;
 @Tag(name = "Entity Devices", description = "Entity Devices Resource")
 public class EntityDevicesResource {
 
+    private final EntityDeviceUseCase entityDeviceUseCase;
+
     @Inject
-    EntityDeviceUseCase entityDeviceUseCase;
+    public EntityDevicesResource(EntityDeviceUseCase entityDeviceUseCase) {
+        this.entityDeviceUseCase = entityDeviceUseCase;
+    }
 
     @POST
     @Operation(operationId = "createEntityDevice", summary = "Create a new Entity Device")

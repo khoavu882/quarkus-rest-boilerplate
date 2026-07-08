@@ -4,6 +4,7 @@ import com.github.kaivu.application.exception.EntityConflictException;
 import com.github.kaivu.application.exception.EntityNotFoundException;
 import com.github.kaivu.application.exception.NotAcceptableException;
 import com.github.kaivu.application.exception.PermissionDeniedException;
+import com.github.kaivu.application.exception.RangeNotSatisfiableException;
 import com.github.kaivu.application.exception.UnauthorizedException;
 import com.github.kaivu.common.constant.AppConstant;
 import com.github.kaivu.common.constant.AppHeaderConstant;
@@ -51,6 +52,7 @@ public class CompositeExceptionMapper implements ExceptionMapper<CompositeExcept
         handlers.put(EntityNotFoundException.class, this::handleNotFound);
         handlers.put(EntityConflictException.class, this::handleConflict);
         handlers.put(NotAcceptableException.class, this::handleNotAcceptable);
+        handlers.put(RangeNotSatisfiableException.class, this::handleRangeNotSatisfiable);
         handlers.put(ServiceException.class, this::handleServiceException);
         return handlers;
     }
@@ -99,6 +101,15 @@ public class CompositeExceptionMapper implements ExceptionMapper<CompositeExcept
         NotAcceptableException exception = (NotAcceptableException) ex;
         return buildErrorResponse(
                 Response.Status.NOT_ACCEPTABLE,
+                exception.getEntityName(),
+                exception.getErrorKey(),
+                exception.getMessage());
+    }
+
+    private Response handleRangeNotSatisfiable(Throwable ex) {
+        RangeNotSatisfiableException exception = (RangeNotSatisfiableException) ex;
+        return buildErrorResponse(
+                Response.Status.REQUESTED_RANGE_NOT_SATISFIABLE,
                 exception.getEntityName(),
                 exception.getErrorKey(),
                 exception.getMessage());
