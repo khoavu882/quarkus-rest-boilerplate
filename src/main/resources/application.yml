@@ -205,5 +205,4 @@ app:
   
   # HTTP Configuration - Custom application HTTP settings
   http:
-    enable-compression: ${APP_HTTP_ENABLE_COMPRESSION:true}
     auth-logging: ${APP_HTTP_AUTH_LOGGING:true}

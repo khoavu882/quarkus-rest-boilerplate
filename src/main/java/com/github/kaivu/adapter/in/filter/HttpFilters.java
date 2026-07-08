@@ -21,11 +21,8 @@ import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.time.Instant;
-import java.util.List;
 import java.util.Locale;
-import java.util.zip.GZIPOutputStream;
 
 @Slf4j
 @Provider
@@ -33,7 +30,6 @@ import java.util.zip.GZIPOutputStream;
 public class HttpFilters implements ContainerRequestFilter, ContainerResponseFilter {
 
     private static final String MANAGEMENT_PREFIX_PATH = "/q/";
-    private static final String GZIP_ENCODING = "gzip";
     private static final String REQUEST_START_TIME = "X-StartTime";
 
     @Inject
@@ -95,9 +91,6 @@ public class HttpFilters implements ContainerRequestFilter, ContainerResponseFil
 
             // Enhanced logging with observability context
             logHttpRequestWithObservability(requestContext, responseContext);
-
-            // Handle compression
-            handleCompression(requestContext, responseContext);
 
         } finally {
             // Clean up observability context
@@ -335,20 +328,5 @@ public class HttpFilters implements ContainerRequestFilter, ContainerResponseFil
             return "server_error";
         }
         return "unknown_error";
-    }
-
-    private void handleCompression(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
-            throws IOException {
-        // Check if compression is enabled
-        if (!config.http().enableCompression()) {
-            return;
-        }
-
-        String encoding = requestContext.getHeaderString(HttpHeaders.ACCEPT_ENCODING);
-        if (encoding != null && encoding.contains(GZIP_ENCODING)) {
-            responseContext.getHeaders().put(HttpHeaders.CONTENT_ENCODING, List.of(GZIP_ENCODING));
-            OutputStream outputStream = responseContext.getEntityStream();
-            responseContext.setEntityStream(new GZIPOutputStream(outputStream));
-        }
     }
 }

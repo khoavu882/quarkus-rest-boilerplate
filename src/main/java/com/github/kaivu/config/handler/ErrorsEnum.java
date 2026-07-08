@@ -6,13 +6,10 @@ import com.github.kaivu.common.constant.ErrorsKeyConstant;
 import com.github.kaivu.common.exception.AppErrorEnum;
 import com.github.kaivu.common.utils.ResourceBundleUtil;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Khoa Vu.
@@ -21,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * Time: 10:10 AM
  */
 @Getter
-@Slf4j
 public enum ErrorsEnum implements AppErrorEnum {
 
     // Auth Errors
@@ -48,7 +44,6 @@ public enum ErrorsEnum implements AppErrorEnum {
     USER_NOT_FOUND(EntitiesConstant.USER, ErrorsKeyConstant.NOT_FOUND),
     ;
 
-    private static final Map<String, String> MESSAGE_CACHE = new ConcurrentHashMap<>();
     private static final Map<String, ErrorsEnum> ENUM_MAP = new HashMap<>();
     private final String entityName;
     private final String errorKey;
@@ -66,20 +61,7 @@ public enum ErrorsEnum implements AppErrorEnum {
     @Override
     public String getMessage(Locale locale, Object... args) {
         String messageTemplate =
-                MESSAGE_CACHE.computeIfAbsent(getFullKey() + AppConstant.DOT + locale.toString(), key -> {
-                    try {
-                        return ResourceBundleUtil.getKeyWithResourceBundle(
-                                AppConstant.I18N_ERROR, locale, getFullKey());
-                    } catch (MissingResourceException ex) {
-                        // A missing bundle key must never break the exception mapper that is
-                        // rendering this very error — fall back to the enum name instead of throwing.
-                        log.error(
-                                "Missing i18n key '{}' for locale '{}' — add it to error_messages*.properties",
-                                getFullKey(),
-                                locale);
-                        return getFullKey();
-                    }
-                });
+                ResourceBundleUtil.getKeyWithResourceBundleOrFallback(AppConstant.I18N_ERROR, locale, getFullKey());
         return args.length > 0 ? String.format(messageTemplate, args) : messageTemplate;
     }
 
