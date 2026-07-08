@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 
 /**
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 3/13/25
  * Time: 11:20 AM
  */

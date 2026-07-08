@@ -2,7 +2,7 @@ package com.github.kaivu.adapter.in.rest.dto.vm;
 
 /**
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 7/27/25
  * Time: 2:20 AM
  */

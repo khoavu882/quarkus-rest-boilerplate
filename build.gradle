@@ -25,7 +25,6 @@ dependencies {
     implementation "io.quarkus:quarkus-smallrye-health"
     implementation "io.quarkus:quarkus-opentelemetry"
     implementation "io.quarkus:quarkus-mutiny"
-    implementation "io.quarkus:quarkus-quartz"
     implementation "io.quarkus:quarkus-rest"
     implementation "io.quarkus:quarkus-rest-jackson"
     implementation "io.quarkus:quarkus-rest-client-jackson"
@@ -37,9 +36,6 @@ dependencies {
 
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate6:${jacksonVersion}"
-    implementation "commons-io:commons-io:${commonsIoVersion}"
-    implementation "org.aspectj:aspectjweaver:${aspectjVersion}"
-    implementation "org.apache.tika:tika-core:${tikaVersion}"
     implementation "org.mapstruct:mapstruct:${mapstructVersion}"
     implementation "io.minio:minio:${minioVersion}"
 

@@ -27,15 +27,4 @@ public class RedisManagerProvider {
         log.info("Creating DEFAULT Redis manager");
         return new RedisManager(redisHelper);
     }
-
-    /**
-     * Demo Redis Manager (uses DEMO profile RedisHelper)
-     */
-    @Produces
-    @Singleton
-    @RedisProfile(RedisProfileType.DEMO)
-    public RedisManager demoRedisManager(@RedisProfile(RedisProfileType.DEMO) RedisHelper redisHelper) {
-        log.info("Creating DEMO Redis manager");
-        return new RedisManager(redisHelper);
-    }
 }

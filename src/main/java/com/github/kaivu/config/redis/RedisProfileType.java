@@ -10,12 +10,7 @@ public enum RedisProfileType {
     /**
      * Default Redis connection (uses main quarkus.redis configuration)
      */
-    DEFAULT("default"),
-
-    /**
-     * Demo environment Redis connection
-     */
-    DEMO("demo");
+    DEFAULT("default");
 
     private final String configKey;
 

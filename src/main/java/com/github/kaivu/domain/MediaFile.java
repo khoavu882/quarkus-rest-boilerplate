@@ -12,7 +12,7 @@ import lombok.ToString;
 
 /**
  * Created by Khoa Vu.
- * Mail: khoavd12@fpt.com
+ * Mail: kai.vu.dev@gmail.com
  * Date: 7/27/25
  * Time: 2:23 AM
  */

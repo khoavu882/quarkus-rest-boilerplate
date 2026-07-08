@@ -1,17 +1,15 @@
 package com.github.kaivu.application.service.impl;
 
-import com.github.kaivu.adapter.out.persistence.EntityDeviceRepository;
-import com.github.kaivu.application.exception.EntityConflictException;
 import com.github.kaivu.application.exception.EntityNotFoundException;
+import com.github.kaivu.application.port.IEntityDeviceRepository;
 import com.github.kaivu.application.service.EntityDevicesService;
+import com.github.kaivu.common.context.LanguageContext;
 import com.github.kaivu.config.handler.ErrorsEnum;
 import com.github.kaivu.domain.EntityDevice;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.core.Context;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -28,11 +26,14 @@ import java.util.UUID;
 @ApplicationScoped
 public class EntityDevicesServiceImpl implements EntityDevicesService {
 
-    @Context
-    ContainerRequestContext requestContext;
+    private final IEntityDeviceRepository entityDeviceRepository;
+    private final LanguageContext languageContext;
 
     @Inject
-    EntityDeviceRepository entityDeviceRepository;
+    public EntityDevicesServiceImpl(IEntityDeviceRepository entityDeviceRepository, LanguageContext languageContext) {
+        this.entityDeviceRepository = entityDeviceRepository;
+        this.languageContext = languageContext;
+    }
 
     @Override
     public Uni<Optional<EntityDevice>> findById(UUID id) {
@@ -47,15 +48,19 @@ public class EntityDevicesServiceImpl implements EntityDevicesService {
     @Override
     public Uni<EntityDevice> getById(UUID identify) throws EntityNotFoundException {
         return findById(identify)
-                .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityNotFoundException(
-                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(requestContext.getLanguage(), identify))));
+                .map(entityOpt ->
+                        entityOpt.orElseThrow(() -> new EntityNotFoundException(ErrorsEnum.ENTITY_DEVICE_NOT_FOUND)
+                                .withLocale(languageContext.getCurrentLocale())
+                                .withArgs(identify)));
     }
 
     @Override
-    public Uni<EntityDevice> getByName(String name) throws EntityConflictException {
+    public Uni<EntityDevice> getByName(String name) throws EntityNotFoundException {
         return findByName(name)
-                .map(entityOpt -> entityOpt.orElseThrow(() -> new EntityConflictException(
-                        ErrorsEnum.ENTITY_DEVICE_NOT_FOUND.withLocale(requestContext.getLanguage(), name))));
+                .map(entityOpt ->
+                        entityOpt.orElseThrow(() -> new EntityNotFoundException(ErrorsEnum.ENTITY_DEVICE_NOT_FOUND)
+                                .withLocale(languageContext.getCurrentLocale())
+                                .withArgs(name)));
     }
 
     @Override

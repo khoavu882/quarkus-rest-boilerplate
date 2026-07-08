@@ -16,25 +16,25 @@ public class ErrorMessage {
     private String path;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String errorKey;
+    private String key;
 
     private String message;
 
-    public ErrorMessage(String path, String errorKey, String message) {
+    public ErrorMessage(String path, String key, String message) {
         this.path = path;
-        this.errorKey = errorKey;
+        this.key = key;
         this.message = message;
     }
 
     public ErrorMessage(String message) {
         this.path = null;
-        this.errorKey = null;
+        this.key = null;
         this.message = message;
     }
 
-    public ErrorMessage(String errorKey, String message) {
+    public ErrorMessage(String key, String message) {
         this.path = null;
-        this.errorKey = errorKey;
+        this.key = key;
         this.message = message;
     }
 
