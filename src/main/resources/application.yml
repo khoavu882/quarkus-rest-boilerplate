@@ -79,10 +79,10 @@ quarkus:
     info-title: Demo Service
     info-version: 1.0.0
     info-description: Just an example service
-    info-terms-of-service: Your terms here
+    info-terms-of-service: https://github.com/khoavu882/quarkus-rest-boilerplate
     info-contact-email: khoavu882@gmail.com
     info-contact-name: Vu Dang Khoa
-    info-contact-url: http://aomacannada.can
+    info-contact-url: https://github.com/khoavu882/quarkus-rest-boilerplate
     info-license-name: Apache 2.0
     info-license-url: https://www.apache.org/licenses/LICENSE-2.0.html
     security-scheme: jwt
